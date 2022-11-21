@@ -1,0 +1,32 @@
+{
+  "name": "image-flux",
+  "version": "1.0.0",
+  "private": true,
+  "browserslist": [
+    "defaults",
+    "Edge >= 15",
+    "Chrome >= 29",
+    "Safari >= 9",
+    "ie >= 11",
+    "Firefox >= 28",
+    "iOS >= 9.1",
+    "Android >= 4.4"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "watch": "vite build --watch",
+    "preview": "vite preview",
+    "phpstan": "vendor/bin/phpstan analyse",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:serve": "vitepress serve docs",
+    "compile": "npm run phpstan && npm run build && cd lambda && npm run build && cd .."
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^3.2.0",
+    "vite": "^3.2.3",
+    "vitepress": "^1.0.0-alpha.28",
+    "vue": "^3.2.45"
+  }
+}

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="193px" height="206px" viewBox="0 0 193 206" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icon-mask</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#265BAB" offset="0%"></stop>
+            <stop stop-color="#638ECF" offset="100%"></stop>
+        </linearGradient>
+        <path d="M0,0 L46,0 L46,20 C46,25.5228475 41.5228475,30 36,30 L10,30 C4.4771525,30 0,25.5228475 0,20 L0,0 Z" id="path-2"></path>
+        <linearGradient x1="0%" y1="50%" x2="100%" y2="50%" id="linearGradient-4">
+            <stop stop-color="#4A6ED3" offset="0%"></stop>
+            <stop stop-color="#A7BEE2" offset="100%"></stop>
+        </linearGradient>
+        <path d="M0,0 L46,0 L46,20 C46,25.5228475 41.5228475,30 36,30 L10,30 C4.4771525,30 0,25.5228475 0,20 L0,0 Z" id="path-5"></path>
+        <linearGradient x1="0%" y1="50%" x2="100%" y2="50%" id="linearGradient-7">
+            <stop stop-color="#A7BEE2" offset="0%"></stop>
+            <stop stop-color="#4A6ED3" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="icon-mask">
+            <path d="M96,40 C111.752052,40 126.017091,46.1646641 136.341341,56.1447718 C146.628154,66.0886919 153,79.823481 153,95 C153,109.819107 145.331785,120.273545 137.074033,131.85745 C132.746806,137.927646 128.226217,144.282427 124.349463,151.594777 C123.921551,152.401905 122.552755,152.549581 121.201486,152.832461 C118.14892,153.4715 114.092456,153.596458 109.988601,153.56749 L109.144527,153.559296 C108.72518,153.554151 108.305864,153.547469 107.893138,153.539675 L107.0501,153.522166 C105.453169,153.486141 103.879053,153.43527 102.378668,153.386825 C100.0082,153.310285 97.8178534,153.240234 96,153.240234 C93.7440083,153.240234 91.1547469,153.34117 88.447747,153.447674 C87.5097861,153.484576 86.5574038,153.522055 85.6037961,153.555748 L84.7572964,153.584566 C84.3435257,153.598068 83.9293156,153.610658 83.5218094,153.621819 L82.6909303,153.6428 C82.4171307,153.649095 82.143697,153.654734 81.8794465,153.659473 L81.0566632,153.671845 C77.1899405,153.718322 73.4923533,153.607277 70.6826986,152.966241 C69.3580817,152.664024 68.0982405,152.408773 67.6291656,151.555186 C64.9589655,146.696154 61.6839321,141.87978 58.2916219,137.020866 L57.520924,135.918651 L56.8302802,134.932614 L56.3623315,134.264615 L55.5896839,133.160389 C55.3329523,132.79303 55.0763478,132.425283 54.8223766,132.060394 L54.0541414,130.95349 L53.8706113,130.688028 L52.9557824,129.358253 C45.6601432,118.702887 39,107.619977 39,95 C39,79.823481 45.3718456,66.0886919 55.6586594,56.1447718 C65.9829088,46.1646641 80.2479476,40 96,40 Z M98.2332947,52.1923841 C94.2606665,51.4974507 90.1073,51.4357882 85.9011723,52.1019734 C75.6733246,53.7219053 67.0703536,59.3341328 61.4293275,67.0983392 C55.7883013,74.8625457 53.1092201,84.778731 54.729152,95.0065786 C55.1791339,97.8476528 55.9376061,100.563197 56.9629234,103.12392 L62.6152274,117.240511 L62.7478536,102.03495 C62.8394736,91.5307371 66.5767547,81.6513708 72.9101212,73.8346145 C79.1842541,66.0909654 88.0078883,60.3713969 98.3653308,58.0764741 L113.147053,54.8012533 Z" id="Combined-Shape" stroke="#265BAB" stroke-width="6" fill-rule="nonzero"></path>
+            <path d="M127,153 L127,181 C127,189.836556 119.836556,197 111,197 L108.935691,197.000938 C108.282885,202.053811 102.740536,206 96,206 C89.2594644,206 83.7171153,202.053811 83.0643089,197.000938 L81,197 C72.163444,197 65,189.836556 65,181 L65,153 L127,153 Z" id="Combined-Shape" fill="url(#linearGradient-1)" fill-rule="nonzero"></path>
+            <g id="Group" transform="translate(73.000000, 160.000000)">
+                <g id="Clipped">
+                    <mask id="mask-3" fill="white">
+                        <use xlink:href="#path-2"></use>
+                    </mask>
+                    <g id="e"></g>
+                    <ellipse id="Oval" fill="url(#linearGradient-4)" fill-rule="nonzero" mask="url(#mask-3)" cx="5" cy="8" rx="22" ry="3"></ellipse>
+                </g>
+                <g id="Clipped">
+                    <mask id="mask-6" fill="white">
+                        <use xlink:href="#path-5"></use>
+                    </mask>
+                    <g id="e"></g>
+                    <ellipse id="Oval" fill="url(#linearGradient-7)" fill-rule="nonzero" mask="url(#mask-6)" cx="40" cy="19" rx="23" ry="3"></ellipse>
+                </g>
+            </g>
+            <line x1="96.5" y1="9.5" x2="159.5" y2="36.5" id="Path" stroke="#275CAC" stroke-width="7" stroke-linecap="square"></line>
+            <line x1="159.5" y1="36.5" x2="183.5" y2="95.5" id="Path" stroke="#275CAC" stroke-width="7" stroke-linecap="square"></line>
+            <line x1="183.5" y1="95.5" x2="162.5" y2="154.5" id="Path" stroke="#275CAC" stroke-width="7" stroke-linecap="square"></line>
+            <line x1="96.5" y1="9.5" x2="30.5" y2="36.5" id="Path" stroke="#275CAC" stroke-width="7" stroke-linecap="square"></line>
+            <line x1="30.5" y1="36.5" x2="9.5" y2="95.5" id="Path" stroke="#275CAC" stroke-width="7" stroke-linecap="square"></line>
+            <line x1="9.5" y1="95.5" x2="30.5" y2="154.5" id="Path" stroke="#275CAC" stroke-width="7" stroke-linecap="square"></line>
+            <circle id="Oval" fill="#FFD80E" fill-rule="nonzero" cx="162.5" cy="154.5" r="9.5"></circle>
+            <circle id="Oval" fill="#FFD80E" fill-rule="nonzero" cx="30.5" cy="154.5" r="9.5"></circle>
+            <circle id="Oval" fill="#FFD80E" fill-rule="nonzero" cx="9.5" cy="95.5" r="9.5"></circle>
+            <circle id="Oval" fill="#FFD80E" fill-rule="nonzero" cx="183.5" cy="95.5" r="9.5"></circle>
+            <circle id="Oval" fill="#FFD80E" fill-rule="nonzero" cx="159.5" cy="36.5" r="9.5"></circle>
+            <circle id="Oval" fill="#FFD80E" fill-rule="nonzero" cx="30.5" cy="36.5" r="9.5"></circle>
+            <circle id="Oval" fill="#FFD80E" fill-rule="nonzero" cx="96.5" cy="9.5" r="9.5"></circle>
+        </g>
+    </g>
+</svg>

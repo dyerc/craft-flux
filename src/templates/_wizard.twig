@@ -1,0 +1,171 @@
+{% extends '_layouts/cp' %}
+
+{% import '_includes/forms' as forms %}
+{% from 'flux/_macros' import configWarning %}
+
+{% do view.registerAssetBundle('dyerc\\flux\\assetbundles\\FluxAssets') %}
+
+{% set crumbs = [
+  { label: 'Settings'|t('app'), url: url('settings') },
+  { label: 'Plugins'|t('app'), url: url('settings/plugins') }
+] %}
+
+{% set title = 'Flux' %}
+
+{% set fullPageForm = true %}
+
+{% block actionButton %}
+  <a href="{{ url('settings/plugins/flux') }}" class="btn">Exit Setup Wizard</a>
+{% endblock %}
+
+{% block content %}
+
+  {% if craft.app.request.getParam('wizard') == "ready" %}
+    {% include "flux/_wizard/logo" %}
+
+    <div class="flux__install-now">
+      <div class="flux__intro">
+        <h1>You're ready to install Flux!</h1>
+
+        <p>If you're planning to use Flux in production you could install or update Flux as part of your deployment process. Alternatively, you can install it right now!</p>
+
+        <br>
+
+        <input type="hidden" name="action" value="flux/aws/update-code-bundle">
+        <button type="submit" class="btn submit">{{ 'Install Now'|t('app') }}</button>
+
+        &nbsp;&nbsp;
+
+        <a href="{{ url('settings/plugins/flux') }}" class="btn">Install Later</a>
+      </div>
+    </div>
+  {% else %}
+    <input type="hidden" name="action" value="flux/settings/wizard-test">
+    <input type="hidden" name="pluginHandle" value="flux">
+
+    {% include "flux/_wizard/logo" %}
+
+    <div class="flux__wizard">
+      <div class="flux__intro">
+        <h1>Thank you for using Flux!</h1>
+
+        <p>Setting up Flux is a process of preparing your <a href="https://aws.amazon.com" target="_blank" rel="noopener">Amazon Web Services</a> account (hereafter referred to as AWS), configuring the Flux plugin settings and finally installing Flux. The following wizard aims to guide you through this process. Let's get started...</p>
+      </div>
+
+      <div class="flux__step">
+        <div class="flux__step-number">
+          <span class="flux__step-count">1</span>
+          <span class="flux__step-description">Site Prefix</span>
+        </div>
+
+        <div class="flux__step-instruct">
+          <p>If you use or plan to use Flux for multiple sites in the same AWS account, it's advisable to customize this resource prefix. Where practical, Flux will prefix every resource it creates with this prefix so that you can easily distinguish between sites and resources.</p>
+
+          <div class="split">
+            {{ forms.autosuggestField({
+              suggestEnvVars: true,
+              name: 'settings[awsResourcePrefix]',
+              value: settings.awsResourcePrefix,
+              required: true,
+              errors: settings.getErrors('awsResourcePrefix'),
+            }) }}
+          </div>
+        </div>
+      </div>
+
+      <div class="flux__step">
+        <div class="flux__step-number">
+          <span class="flux__step-count">2</span>
+          <span class="flux__step-description">Create S3 Bucket</span>
+        </div>
+
+        <div class="flux__step-instruct">
+          <p>Please <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html" target="_blank" rel="noopener">create an S3 bucket</a> which will store resized images to be served by CloudFront. You can leave everything as the default apart from choosing a bucket name and region. The root prefix will not be shown to the user and is another prefix to help separate others applications using this bucket.</p>
+
+          <div class="split">
+            {{ forms.autosuggestField({
+              label: "S3 Bucket"|t('flux'),
+              name: 'settings[manualBucket]',
+              suggestEnvVars: true,
+              value: settings.awsBucket,
+              placeholder: 'Bucket'|t('flux')
+            }) }}
+
+            {{ forms.autosuggestField({
+              label: "S3 Root Prefix"|t('flux'),
+              name: 'settings[rootPrefix]',
+              suggestEnvVars: true,
+              value: settings.rootPrefix,
+            }) }}
+          </div>
+        </div>
+      </div>
+
+      <div class="flux__step flux__step">
+        <div class="flux__step-number">
+          <span class="flux__step-count">3</span>
+          <span class="flux__step-description">Create IAM User</span>
+        </div>
+
+        <div class="flux__step-instruct">
+          <p>In the <a href="https://console.aws.amazon.com/iam/" target="_blank">IAM Users Console</a>, choose <b>Users</b> > <b>Add users</b>. Enter a name, for instance <b>Flux</b> and choose <b>Programmatic access</b>. Continue with the <b>Next</b> button past the permissions, tags and review sections. We will add more fine-grained access controls in the next step. After clicking <b>Create user</b>, enter the Access Key ID and Secret below. We recommend adding them to your .env file and entering the corresponding keys for this.</p>
+
+          {{ forms.autosuggestField({
+            label: "AWS Access Key ID"|t('flux'),
+            suggestEnvVars: true,
+            name: 'settings[awsAccessKeyId]',
+            value: settings.awsAccessKeyId,
+            required: true
+          }) }}
+
+          {{ forms.autosuggestField({
+            label: "AWS Secret Access Key"|t('flux'),
+            suggestEnvVars: true,
+            name: 'settings[awsSecretAccessKey]',
+            value: settings.awsSecretAccessKey,
+            required: true
+          }) }}
+        </div>
+      </div>
+
+      <div class="flux__step flux__step">
+        <div class="flux__step-number">
+          <span class="flux__step-count">4</span>
+          <span class="flux__step-description">Add User Permissions</span>
+        </div>
+
+        <div class="flux__step-instruct">
+          <p>For security reasons, Flux should only have access to the parts of your AWS account that it strictly needs. Under the user you created in step 2, choose <b>Add inline policy</b>. The name of this policy can be anything, eg. <i>Flux-Policy</i>. Copy and paste the policy generated by the button below. You can also view this policy in the Utilities section.</p>
+
+          <a href="javascript:void(0)" class="btn js-generate-user-policy">Generate IAM User Policy</a>
+
+          {% include "flux/_wizard/userPolicyModal" %}
+        </div>
+      </div>
+
+      <div class="flux__step flux__step">
+        <div class="flux__step-number">
+          <span class="flux__step-count">5</span>
+          <span class="flux__step-description">Create CloudFront Distribution</span>
+        </div>
+
+        <div class="flux__step-instruct">
+          <p>Next <a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-creating-console.html" target="_blank" rel="noopener">create a CloudFront distribution</a> which will serve your files. Everything can be left as the default value and will be automatically configured by Flux.</p>
+
+          {{ forms.autosuggest({
+            label: "Distribution ID"|t('flux'),
+            name: 'settings[manualCloudFrontDistributionId]',
+            suggestEnvVars: true,
+            value: settings.cloudFrontDistributionId,
+            placeholder: 'CloudFront Distribution Id'|t('flux')
+          }) }}
+        </div>
+      </div>
+
+      <button class="btn submit">Test Connection</button>
+
+    </div>
+
+  {% endif %}
+
+{% endblock %}
