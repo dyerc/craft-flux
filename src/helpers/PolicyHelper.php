@@ -5,17 +5,23 @@
 
 namespace dyerc\flux\helpers;
 
+use craft\helpers\App;
 use dyerc\flux\Flux;
 use dyerc\flux\models\SettingsModel;
 
 class PolicyHelper
 {
-    public static function iamUserPolicy(string|null $bucket = null): array
+    public static function iamUserPolicy(string|null $bucket = null, string|null $rootPrefix = null): array
     {
+        /* @var SettingsModel */
+        $settings = Flux::getInstance()->getSettings();
+
         if (!$bucket) {
-            /* @var SettingsModel */
-            $settings = Flux::getInstance()->getSettings();
-            $bucket = $settings->awsBucket;
+            $bucket = App::parseEnv($settings->awsBucket);
+        }
+
+        if (!$rootPrefix) {
+            $rootPrefix = $settings->rootPrefix;
         }
 
         return [
@@ -50,7 +56,7 @@ class PolicyHelper
                         "s3-object-lambda:Get*",
                         "s3-object-lambda:List*"
                     ],
-                    "Resource" => "arn:aws:s3:::$bucket/*"
+                    "Resource" => empty($rootPrefix) ? "arn:aws:s3:::$bucket/*" : "arn:aws:s3:::$bucket/$rootPrefix/*"
                 ],
                 // CloudFront & Lambda
                 [
@@ -88,7 +94,8 @@ class PolicyHelper
     {
         /* @var SettingsModel */
         $settings = Flux::getInstance()->getSettings();
-        $bucket = $settings->awsBucket;
+        $bucket = App::parseEnv($settings->awsBucket);
+        $rootPrefix = $settings->rootPrefix;
 
         $actions = ["s3:GetObject", "s3:PutObject"];
 
@@ -99,7 +106,7 @@ class PolicyHelper
                     "Effect" => "Allow",
                     "Principal" => "*",
                     "Action" => "s3:GetObject",
-                    "Resource" => "arn:aws:s3:::$bucket/*"
+                    "Resource" => empty($rootPrefix) ? "arn:aws:s3:::$bucket/*" : "arn:aws:s3:::$bucket/$rootPrefix/*"
                 ]
             ]
         ];
@@ -111,7 +118,7 @@ class PolicyHelper
                     "AWS" => $arn
                 ],
                 "Action" => $actions,
-                "Resource" => "arn:aws:s3:::$bucket/*"
+                "Resource" => empty($rootPrefix) ? "arn:aws:s3:::$bucket/*" : "arn:aws:s3:::$bucket/$rootPrefix/*"
             ];
         }
 

@@ -11,7 +11,8 @@ $(document).ready(function() {
 
   $generateUserPolicyBtn.click(function() {
     const data = {
-      bucket: "test"
+      bucket: $('input[name="settings[manualBucket]"]').val(),
+      root: $('input[name="settings[rootPrefix]"]').val()
     };
 
     Craft.sendActionRequest('POST', 'flux/aws/build-bucket-policy', {

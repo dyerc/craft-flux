@@ -55,65 +55,69 @@ class FluxUtility extends Utility
         /* @var SettingsModel */
         $settings = Flux::getInstance()->getSettings();
 
-        $lambda = self::lambdaStatus();
-        $cloudfront = Flux::getInstance()->cloudfront->getStatus();
-        $s3 = Flux::getInstance()->s3->getStatus();
-        $info = [];
+        if ($settings->isAwsConfigured()) {
+            $lambda = self::lambdaStatus();
+            $cloudfront = Flux::getInstance()->cloudfront->getStatus();
+            $s3 = Flux::getInstance()->s3->getStatus();
+            $info = [];
 
-        if ($lambda['installed']) {
-            $info[] = [
-                'label' => 'Viewer Request Function',
-                'value' => $lambda['functions']['viewerRequest']['name']
-            ];
-            $info[] = [
-                'label' => 'Origin Response Function',
-                'value' => $lambda['functions']['originResponse']['name']
-            ];
-            $info[] = [
-                'label' => 'Origin Response Function Memory',
-                'value' => $lambda['functions']['originResponse']['memory'] . "MB"
-            ];
-            $info[] = [
-                'label' => 'Lambda Function Version',
-                'value' => $lambda['version']
-            ];
+            if ($lambda['installed']) {
+                $info[] = [
+                    'label' => 'Viewer Request Function',
+                    'value' => $lambda['functions']['viewerRequest']['name']
+                ];
+                $info[] = [
+                    'label' => 'Origin Response Function',
+                    'value' => $lambda['functions']['originResponse']['name']
+                ];
+                $info[] = [
+                    'label' => 'Origin Response Function Memory',
+                    'value' => $lambda['functions']['originResponse']['memory'] . "MB"
+                ];
+                $info[] = [
+                    'label' => 'Lambda Function Version',
+                    'value' => $lambda['version']
+                ];
+            }
+
+            if ($cloudfront) {
+                $info[] = [
+                    'label' => 'CloudFront Distribution ID',
+                    'value' => $cloudfront['id']
+                ];
+                $info[] = [
+                    'label' => 'CloudFront Domain',
+                    'value' => $cloudfront['domain']
+                ];
+            }
+
+            if ($s3) {
+                $info[] = [
+                    'label' => 'S3 Bucket',
+                    'value' => $s3['bucket']
+                ];
+                $info[] = [
+                    'label' => "S3 Path",
+                    'value' => $settings->rootPrefix . "/"
+                ];
+            }
+
+            return Craft::$app->getView()->renderTemplate('flux/_utility', [
+                'lambda' => $lambda,
+                'cloudfront' => $cloudfront,
+                's3' => $s3,
+                'componentInfo' => array_merge($info, []),
+                'iamUserPolicy' => PolicyHelper::iamUserPolicy(),
+                'bucketPolicy' => PolicyHelper::bucketPolicy(
+                    array_key_exists('functions', $lambda) ? array_map(function ($func) {
+                        return $func['role'];
+                    }, $lambda['functions']) : []
+                ),
+                'lambdaRolePolicy' => PolicyHelper::lambdaAssumeRolePolicy()
+            ]);
+        } else {
+            return Craft::$app->getView()->renderTemplate('flux/_utility_not_configured');
         }
-
-        if ($cloudfront) {
-            $info[] = [
-                'label' => 'CloudFront Distribution ID',
-                'value' => $cloudfront['id']
-            ];
-            $info[] = [
-                'label' => 'CloudFront Domain',
-                'value' => $cloudfront['domain']
-            ];
-        }
-
-        if ($s3) {
-            $info[] = [
-                'label' => 'S3 Bucket',
-                'value' => $s3['bucket']
-            ];
-            $info[] = [
-                'label' => "S3 Path",
-                'value' => $settings->rootPrefix . "/"
-            ];
-        }
-
-        return Craft::$app->getView()->renderTemplate('flux/_utility', [
-            'lambda' => $lambda,
-            'cloudfront' => $cloudfront,
-            's3' => $s3,
-            'componentInfo' => array_merge($info, []),
-            'iamUserPolicy' => PolicyHelper::iamUserPolicy(),
-            'bucketPolicy' => PolicyHelper::bucketPolicy(
-                array_key_exists('functions', $lambda) ? array_map(function ($func) {
-                    return $func['role'];
-                }, $lambda['functions']) : []
-            ),
-            'lambdaRolePolicy' => PolicyHelper::lambdaAssumeRolePolicy()
-        ]);
     }
 
     private static function lambdaStatus(): array

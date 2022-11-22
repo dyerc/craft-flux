@@ -87,10 +87,11 @@ class Lambda extends Component
     {
         /* @var SettingsModel */
         $settings = Flux::getInstance()->getSettings();
+        $prefix = App::parseEnv($settings->awsResourcePrefix);
 
         return [
-            'viewerRequest' => $this->getStatus($settings->awsResourcePrefix . self::VIEWER_REQUEST_FUNCTION_SUFFIX),
-            'originResponse' => $this->getStatus($settings->awsResourcePrefix . self::ORIGIN_RESPONSE_FUNCTION_SUFFIX)
+            'viewerRequest' => $this->getStatus($prefix . self::VIEWER_REQUEST_FUNCTION_SUFFIX),
+            'originResponse' => $this->getStatus($prefix . self::ORIGIN_RESPONSE_FUNCTION_SUFFIX)
         ];
     }
 
@@ -178,7 +179,7 @@ class Lambda extends Component
             Craft::getAlias('@dyerc/flux/lambda/request/index.js')
         );
         $func = $this->deployFunction(
-            $settings->awsResourcePrefix . self::VIEWER_REQUEST_FUNCTION_SUFFIX,
+            App::parseEnv($settings->awsResourcePrefix) . self::VIEWER_REQUEST_FUNCTION_SUFFIX,
             $bundle,
             [ 'MemorySize' => 128 ]
         );
@@ -197,7 +198,7 @@ class Lambda extends Component
             Craft::getAlias('@dyerc/flux/lambda/response/node_modules.zip')
         );
         $func = $this->deployFunction(
-            $settings->awsResourcePrefix . self::ORIGIN_RESPONSE_FUNCTION_SUFFIX,
+            App::parseEnv($settings->awsResourcePrefix) . self::ORIGIN_RESPONSE_FUNCTION_SUFFIX,
             $bundle,
             [
                 'MemorySize' => $settings->lambdaMemory,
@@ -213,8 +214,8 @@ class Lambda extends Component
     {
         /* @var SettingsModel */
         $settings = Flux::getInstance()->getSettings();
-        $prefix = $settings->awsResourcePrefix;
-        $distributionId = $settings->cloudFrontDistributionId;
+        $prefix = App::parseEnv($settings->awsResourcePrefix);
+        $distributionId = App::parseEnv($settings->cloudFrontDistributionId);
 
         $functions = [
             [
@@ -251,7 +252,7 @@ class Lambda extends Component
         $updatedConfig['IfMatch'] = $distribution['ETag'];
 
         $updatedConfig['DistributionConfig']['Origins']['Items'] = array_map(function($item) use ($settings) {
-            $item['OriginPath'] = "/" . $settings->awsResourcePrefix;
+            $item['OriginPath'] = "/" . App::parseEnv($settings->awsResourcePrefix);
             return $item;
         }, $updatedConfig['DistributionConfig']['Origins']['Items']);
 

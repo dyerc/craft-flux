@@ -36,9 +36,10 @@ class AwsController extends Controller
 
         $request = Craft::$app->getRequest();
         $bucket = App::parseEnv($request->getRequiredBodyParam('bucket'));
+        $root = App::parseEnv($request->getRequiredBodyParam('root'));
 
         return $this->asRaw(
-            PolicyHelper::prettyPrint(PolicyHelper::iamUserPolicy($bucket))
+            PolicyHelper::prettyPrint(PolicyHelper::iamUserPolicy($bucket, $root))
         );
     }
 

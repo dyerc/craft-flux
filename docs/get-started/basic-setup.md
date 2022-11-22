@@ -1,6 +1,6 @@
 # Basic Setup
 
-Flux aims to make it easy to set up and maintain the AWS resources related to processing and serving image transforms. After initially installing Flux you will be presented with a setup wizard guiding you through preparing your Amazon Web Services account. You can rerun the wizard by selecting **Run Setup Wizard* at the top right of the Flux settings page.
+Flux aims to make it easy to set up and maintain the AWS resources related to processing and serving image transforms. After initially installing Flux you will be presented with a setup wizard guiding you through preparing your Amazon Web Services account. You can rerun the wizard by selecting **Run Setup Wizard** at the top right of the Flux settings page.
 
 ## Setup Wizard
 

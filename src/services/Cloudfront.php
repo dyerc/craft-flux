@@ -25,7 +25,7 @@ class Cloudfront extends Component
 
             $this->_client = new CloudFrontClient([
                 'version' => 'latest',
-                'region' => $settings->awsRegion,
+                'region' => App::parseEnv($settings->awsRegion),
                 'credentials' => [
                     'key' => App::parseEnv($settings->awsAccessKeyId),
                     'secret' => App::parseEnv($settings->awsSecretAccessKey)
@@ -40,7 +40,7 @@ class Cloudfront extends Component
     {
         /* @var SettingsModel */
         $settings = Flux::getInstance()->getSettings();
-        return $settings->cloudFrontDistributionId;
+        return App::parseEnv($settings->cloudFrontDistributionId);
     }
 
     public function getDistributions(): array
@@ -208,9 +208,9 @@ class Cloudfront extends Component
         }
 
         $this->client()->createInvalidation([
-            'DistributionId' => $settings->cloudFrontDistributionId,
+            'DistributionId' => App::parseEnv($settings->cloudFrontDistributionId),
             'InvalidationBatch' => [
-                'CallerReference' => $settings->awsResourcePrefix . "-" . time(),
+                'CallerReference' => App::parseEnv($settings->awsResourcePrefix) . "-" . time(),
                 'Paths' => [
                     'Items' => $paths,
                     'Quantity' => count($paths)

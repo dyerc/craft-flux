@@ -6,6 +6,7 @@
 namespace dyerc\flux\controllers;
 
 use Craft;
+use craft\helpers\App;
 use craft\helpers\ArrayHelper;
 use craft\web\Controller;
 use yii\web\Response;
@@ -97,7 +98,7 @@ class SettingsController extends Controller {
             $buckets = Flux::getInstance()->s3->getBuckets();
 
             foreach ($buckets as $bucket) {
-                if ($bucket['bucket'] == $postedSettings['manualBucket']) {
+                if ($bucket['bucket'] == App::parseEnv($postedSettings['manualBucket'])) {
                     $postedSettings['awsBucket'] = ArrayHelper::remove($postedSettings, 'manualBucket');
                     $postedSettings['awsRegion'] = $bucket['region'];
                     $bucketReady = true;
@@ -108,7 +109,7 @@ class SettingsController extends Controller {
             $distributions = Flux::getInstance()->cloudfront->getDistributions();
 
             foreach ($distributions as $distro) {
-                if ($distro['id'] == $postedSettings['manualCloudFrontDistributionId']) {
+                if ($distro['id'] == App::parseEnv($postedSettings['manualCloudFrontDistributionId'])) {
                     $postedSettings['cloudFrontDistributionId'] = ArrayHelper::remove($postedSettings, 'manualCloudFrontDistributionId');
                     $postedSettings['cloudFrontDomain'] = $distro['domain'];
                     $distributionReady = true;
@@ -116,7 +117,7 @@ class SettingsController extends Controller {
                 }
             }
         } catch (\Exception $e) {
-            Craft::warning($e->getTraceAsString());
+            Craft::error($e->getTraceAsString());
         }
 
         if (!$bucketReady) {

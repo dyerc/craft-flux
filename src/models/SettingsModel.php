@@ -7,6 +7,7 @@ namespace dyerc\flux\models;
 
 use Craft;
 use craft\base\Model;
+use craft\helpers\App;
 use craft\helpers\ArrayHelper;
 
 class SettingsModel extends Model
@@ -117,9 +118,14 @@ class SettingsModel extends Model
     public int $lambdaTimeout = 15;
 
 
+    public function isAwsConfigured(): bool
+    {
+        return !empty($this->awsAccessKeyId) && !empty($this->awsSecretAccessKey) && !empty($this->awsBucket) && !empty($this->cloudFrontDistributionId);
+    }
+
     public function getCloudfrontEndpoint(): string
     {
-        $root = "https://" . $this->cloudFrontDomain . '/';
+        $root = "https://" . App::parseEnv($this->cloudFrontDomain) . '/';
         return $root;
     }
 
@@ -128,7 +134,7 @@ class SettingsModel extends Model
         $volumes = Craft::$app->volumes->allVolumes;
 
         $sources = array_map(function ($volume) {
-            if (is_a($volume->fs, "craft\\awss3\\Fs") && $volume->fs->settings['bucket'] == $this->awsBucket) {
+            if (is_a($volume->fs, "craft\\awss3\\Fs") && $volume->fs->settings['bucket'] == App::parseEnv($this->awsBucket)) {
                 $fs = $volume->fs;
 
                 return [
@@ -154,8 +160,8 @@ class SettingsModel extends Model
             'verifyQuery' => $this->verifyQuery,
             'verifySecret' => $this->verifySecret,
 
-            'bucket' => $this->awsBucket,
-            'region' => $this->awsRegion,
+            'bucket' => App::parseEnv($this->awsBucket),
+            'region' => App::parseEnv($this->awsRegion),
 
             'jpegQuality' => $this->jpegQuality,
             'webpQuality' => $this->webpQuality,

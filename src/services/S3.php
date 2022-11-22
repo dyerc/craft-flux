@@ -27,7 +27,7 @@ class S3 extends Component
 
             $this->_client = new S3Client([
                 'version' => 'latest',
-                'region' => $settings->awsRegion,
+                'region' => App::parseEnv($settings->awsRegion),
                 'credentials' => [
                     'key' => App::parseEnv($settings->awsAccessKeyId),
                     'secret' => App::parseEnv($settings->awsSecretAccessKey)
@@ -42,21 +42,22 @@ class S3 extends Component
     {
         /* @var SettingsModel */
         $settings = Flux::getInstance()->getSettings();
+        $bucket = App::parseEnv($settings->awsBucket);
 
         try {
             $response = $this->client()->getBucketPolicy([
-                'Bucket' => $settings->awsBucket
+                'Bucket' => $bucket
             ]);
 
             $policy = $response['Policy']->getContents();
-            $permissions = str_contains($policy, ":role/" . $settings->awsResourcePrefix)
+            $permissions = str_contains($policy, ":role/" . App::parseEnv($settings->awsResourcePrefix))
                 && str_contains($policy, "s3:PutObject")
-                && str_contains($policy, "arn:aws:s3:::" . $settings->awsBucket);
+                && str_contains($policy, "arn:aws:s3:::" . $bucket);
 
             return [
                 'available' => true,
                 'permission' => $permissions,
-                'bucket' => $settings->awsBucket
+                'bucket' => $bucket
             ];
         } catch (\Exception $e) {
             return null;
@@ -98,10 +99,11 @@ class S3 extends Component
         /* @var SettingsModel */
         $settings = Flux::getInstance()->getSettings();
         $master = PolicyHelper::bucketPolicy($functionRoles);
+        $bucket = App::parseEnv($settings->awsBucket);
 
         try {
             $response = $this->client()->getBucketPolicy([
-                'Bucket' => $settings->awsBucket
+                'Bucket' => $bucket
             ]);
 
             $policy = json_decode($response['Policy']->getContents(), true);
@@ -141,7 +143,7 @@ class S3 extends Component
             $encoded = json_encode($policy);
 
             $this->client()->putBucketPolicy([
-                'Bucket' => $settings->awsBucket,
+                'Bucket' => $bucket,
                 'Policy' => $encoded
             ]);
         }
@@ -153,7 +155,7 @@ class S3 extends Component
         $settings = Flux::getInstance()->getSettings();
 
         $params = [
-            'Bucket' => $settings->awsBucket,
+            'Bucket' => App::parseEnv($settings->awsBucket),
             'Prefix' => $prefix,
             'MaxKeys' => 1000,
         ];
@@ -171,7 +173,7 @@ class S3 extends Component
 
             // Recursively fetch more results
             if ($objects['NextContinuationToken']) {
-                $output = array_merge($output, $this->listObjectsPrefixed($prefix, $objects['NextContinuationToken']));
+                $output = array_merge($output, $this->listObjects($prefix, $objects['NextContinuationToken']));
             }
 
             return $output;
@@ -186,7 +188,7 @@ class S3 extends Component
         $settings = Flux::getInstance()->getSettings();
 
         $this->client()->deleteObjects([
-            'Bucket' => $settings->awsBucket,
+            'Bucket' => App::parseEnv($settings->awsBucket),
             'Delete' => [
                 'Objects' => array_map(function ($key) {
                     return [ 'Key' => $key ];
