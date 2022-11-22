@@ -21,7 +21,7 @@ class PolicyHelper
         }
 
         if (!$rootPrefix) {
-            $rootPrefix = $settings->rootPrefix;
+            $rootPrefix = App::parseEnv($settings->rootPrefix);
         }
 
         return [
@@ -103,7 +103,7 @@ class PolicyHelper
         /* @var SettingsModel */
         $settings = Flux::getInstance()->getSettings();
         $bucket = App::parseEnv($settings->awsBucket);
-        $rootPrefix = $settings->rootPrefix;
+        $rootPrefix = App::parseEnv($settings->rootPrefix);
 
         $actions = ["s3:GetObject", "s3:PutObject"];
 

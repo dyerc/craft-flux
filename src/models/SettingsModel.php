@@ -154,7 +154,7 @@ class SettingsModel extends Model
         }, $volumes);
 
         return [
-            'rootPrefix' => $this->rootPrefix,
+            'rootPrefix' => App::parseEnv($this->rootPrefix),
             'sources' => $sources,
 
             'verifyQuery' => $this->verifyQuery,

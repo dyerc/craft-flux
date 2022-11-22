@@ -39,6 +39,11 @@ describe('request', () => {
     expect(result.uri).toEqual("/images/_1920x1080_fit_center-center_80/image.jpg");
   });
 
+  test('parses width and height', async () => {
+    const result = await handle("/images/image.jpg?mode=crop&pos=center-center&w=2208&h=1242&q=90", {}, { verifyQuery: false });
+    expect(result.uri).toEqual("/images/_2208x1242_crop_center-center_90/image.jpg");
+  });
+
   test('ignores request without a mode', async () => {
     const result = await handle("/images/image.jpg?w=1920&h=1080&q=70", {}, { verifyQuery: false });
     expect(result.uri).toEqual("/images/image.jpg");

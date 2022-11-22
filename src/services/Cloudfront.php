@@ -223,10 +223,11 @@ class Cloudfront extends Component
     {
         /* @var SettingsModel */
         $settings = Flux::getInstance()->getSettings();
+        $rootPrefix = App::parseEnv($settings->rootPrefix);
 
         $path = Flux::getInstance()->transformer->getPath($asset);
-        if (strlen($settings->rootPrefix) > 0) {
-            $path = $settings->rootPrefix . "/" . $path;
+        if (strlen($rootPrefix) > 0) {
+            $path = $rootPrefix . "/" . $path;
         }
 
         $prefix = pathinfo($path, PATHINFO_DIRNAME);
@@ -265,9 +266,9 @@ class Cloudfront extends Component
             }
         }
 
-        $this->invalidateCache(array_map(function ($path) use ($settings) {
-            if (str_starts_with($path, $settings->rootPrefix)) {
-                return substr($path, strlen($settings->rootPrefix));
+        $this->invalidateCache(array_map(function ($path) use ($rootPrefix) {
+            if (str_starts_with($path, $rootPrefix)) {
+                return substr($path, strlen($rootPrefix));
             } else {
                 return $path;
             }

@@ -98,7 +98,7 @@ class FluxUtility extends Utility
                 ];
                 $info[] = [
                     'label' => "S3 Path",
-                    'value' => $settings->rootPrefix . "/"
+                    'value' => App::parseEnv($settings->rootPrefix) . "/"
                 ];
             }
 

@@ -169,6 +169,7 @@ export function parseRequest(request: CloudFrontRequest, params: ParsedUrlQuery,
 export function parseManipulations(params: ParsedUrlQuery, extension: string, config: FluxConfig): Manipulations|null {
   // ?mode=... must be set as well as dimension, otherwise forward on request unmodified
   if (!params.mode || (!params.w && !params.h)) {
+    log(config, "Request must contain a mode and a width or height");
     return null;
   }
 

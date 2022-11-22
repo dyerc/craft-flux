@@ -49,7 +49,7 @@ class AwsController extends Controller
 
         Queue::push(new LambdaDeployJob());
 
-        $notice = Craft::t('flux', 'Installing AWS Lambda functions');
+        $notice = Craft::t('flux', 'Installing / updating AWS configuration');
         Craft::$app->getSession()->setNotice($notice);
 
         return $this->redirectToPostedUrl();

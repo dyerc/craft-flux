@@ -43,7 +43,6 @@ const handler: CloudFrontResponseHandler = (event, _, callback) => {
           return writeFile(compilePath(config.rootPrefix, request.uri.substring(1)), buffer, config);
         })
         .then(buffer => {
-          response.headers['content-type'] = [{ key: 'Content-Type', value: 'image/' + transform.extension }];
           response.headers['server'] = [{ key: 'Server', value: 'Flux' }];
 
           if (buffer.length > (512 * 1024)) {
@@ -57,6 +56,8 @@ const handler: CloudFrontResponseHandler = (event, _, callback) => {
                 statusDescription: "Moved Temporarily",
               }));
           } else {
+            response.headers['content-type'] = [{ key: 'Content-Type', value: 'image/' + transform.extension }];
+
             // Directly return the body because it should be under the CloudFront 1MB threshold
             return callback(null, Object.assign({},
               response as CloudFrontResponseResult,
