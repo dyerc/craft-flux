@@ -268,11 +268,12 @@ class Cloudfront extends Component
 
         $this->invalidateCache(array_map(function ($path) use ($rootPrefix) {
             if (str_starts_with($path, $rootPrefix)) {
-                return substr($path, strlen($rootPrefix));
+                return substr($path, strlen($rootPrefix)) . '*';
             } else {
-                return $path;
+                return $path . '*';
             }
         }, $purgePaths));
+
         Flux::getInstance()->s3->deleteObjects($purgeObjects);
     }
 }

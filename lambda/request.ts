@@ -1,3 +1,8 @@
+/*!
+ * Flux
+ * Copyright(c) Chris Dyer
+ */
+
 import {
   parse as parseQueryString
 } from "querystring";
