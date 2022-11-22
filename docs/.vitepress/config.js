@@ -5,12 +5,10 @@ export default {
   themeConfig: {
     logo: '/resources/icon.svg',
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/dyerc/flux' },
+      { icon: 'github', link: 'https://github.com/dyerc/craft-flux' },
     ],
     nav: [
-      { text: 'Guide', link: '/guide' },
-      { text: 'Configs', link: '/configs' },
-      { text: 'Changelog', link: 'https://github.com/...' }
+      { text: 'Changelog', link: 'https://github.com/dyerc/craft-flux/blob/develop/CHANGELOG.md' }
     ],
     sidebar: [
       {

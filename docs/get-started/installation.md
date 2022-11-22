@@ -19,7 +19,7 @@ cd /path/to/project
 2. Then tell Composer to require the plugin, and Craft to install it:
 
 ```shell
-composer require dyerc/flux
+composer require dyerc/craft-flux
 ```
 
 3. In the Control Panel, go to Settings → Plugins and click the **Install** button for Flux.
