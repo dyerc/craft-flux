@@ -1,5 +1,6 @@
 export default {
   title: 'Flux',
+  base: '/plugins/flux/',
   description: 'Just playing around.',
   themeConfig: {
     logo: '/resources/icon.svg',

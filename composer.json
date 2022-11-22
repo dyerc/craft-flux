@@ -14,7 +14,7 @@
         "cloudfront"
     ],
     "support": {
-        "docs": "https://github.com/dyerc/craft-flux/blob/master/README.md",
+        "docs": "https://cdyer.co.uk/plugins/flux",
         "issues": "https://github.com/dyerc/craft-flux/issues"
     },
     "license": "proprietary",
@@ -40,7 +40,7 @@
         "handle": "flux",
         "developer": "Chris Dyer",
         "developerUrl": "https://cdyer.co.uk",
-        "documentationUrl": "https://github.com/dyerc/craft-flux/blob/master/README.md",
+        "documentationUrl": "https://cdyer.co.uk/plugins/flux",
         "changelogUrl": "https://raw.githubusercontent.com/dyerc/craft-flux/master/CHANGELOG.md",
         "class": "dyerc\\flux\\Flux"
     },

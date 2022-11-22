@@ -2,7 +2,7 @@
 /**
  * Flux plugin for Craft CMS 4.x
  *
- * Generate blurred previews of assets as a field
+ * Transform and cache your images through AWS Lambda & CloudFront
  *
  * @link      https://cdyer.co.uk
  * @copyright Copyright (c) 2022 Chris Dyer
