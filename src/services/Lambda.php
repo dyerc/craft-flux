@@ -55,7 +55,7 @@ class Lambda extends Component
                 'FunctionName' => $name
             ]);
 
-            preg_match("/\d\.\d\.\d/", $function['Configuration']['Description'], $m);
+            preg_match("/\d\.\d\.\d(-\S*)*/", $function['Configuration']['Description'], $m);
             $version = empty($m) ? "Unknown" : $m[0];
 
             return [

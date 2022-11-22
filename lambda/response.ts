@@ -35,8 +35,14 @@ const handler: CloudFrontResponseHandler = (event, _, callback) => {
       fetchSource(transform, config)
         .then(buffer => transformSource(buffer, transform))
         .then(buffer => {
-          writeFile(compilePath(config.rootPrefix, request.uri.substring(1)), buffer, config);
-
+          /*
+            In theory, we could write the transformed file to S3 asynchronously as we return it to the user
+            however, in the event that it's too big, and we have to redirect them, we need to ensure the
+            transformed file is outputted and ready for CloudFront to return.
+           */
+          return writeFile(compilePath(config.rootPrefix, request.uri.substring(1)), buffer, config);
+        })
+        .then(buffer => {
           response.headers['content-type'] = [{ key: 'Content-Type', value: 'image/' + transform.extension }];
           response.headers['server'] = [{ key: 'Server', value: 'Flux' }];
 

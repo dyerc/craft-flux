@@ -45,12 +45,20 @@ class PolicyHelper
                     ],
                     "Resource" => "*"
                 ],
-                // S3 operations on bucket in use
+                // S3 operations on entire bucket
+                [
+                    "Effect" => "Allow",
+                    "Action" => [
+                        "s3:PutBucketPolicy",
+                        "s3:List*",
+                    ],
+                    "Resource" => "arn:aws:s3:::$bucket"
+                ],
+                // S3 operations on bucket scope in use
                 [
                     "Effect" => "Allow",
                     "Action" => [
                         "s3:Get*",
-                        "s3:List*",
                         "s3:Put*",
                         "s3:DeleteObject",
                         "s3-object-lambda:Get*",
