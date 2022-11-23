@@ -14,22 +14,16 @@ export default {
       {
         text: 'Get Started',
         items: [
+          { text: 'How it Works', link: '/get-started/how-flux-works' },
           { text: 'Installation', link: '/get-started/installation' },
           { text: 'Basic Setup', link: '/get-started/basic-setup' },
           { text: 'Deployment', link: '/get-started/deployment' },
-          { text: 'Transform Parameters', link: '/get-started/transform-parameters' },
-          { text: 'Configuration', link: '/get-started/configuration' }
-        ]
-      },
-      {
-        text: 'Section Title B',
-        items: [
-          { text: 'Item C', link: '/item-c' },
-          { text: 'Item D', link: '/item-d' }
+          { text: 'Transforming Images', link: '/get-started/transforming-images' }
         ]
       },
       {
         items: [
+          { text: 'Troubleshooting', link: '/troubleshooting' },
           { text: 'FAQ', link: '/faq' }
         ]
       }

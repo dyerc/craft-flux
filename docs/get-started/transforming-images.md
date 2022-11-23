@@ -1,6 +1,35 @@
 # Transform Parameters
 
-Flux aims to be a drop-in replacement for Craft's own built in image transforms. It is compatible with named transforms, `getUrl({})`, `do asset.setTransform({})`  or other variations. At present, focal points defined through the Craft assets area are not supported.
+Flux aims to be a drop-in replacement for Craft's own built in image transforms. At present, focal points defined through the Craft assets area are not supported. You can transform your assets with Flux in any of the following ways:
+
+Directly within a template:
+
+```twig
+<img src="{{ asset.getUrl({
+  mode: 'crop',
+  width: 100,
+  height: 100,
+  quality: 75,
+}) }}">
+```
+
+Via named transforms:
+
+```twig
+<img src="{{ asset.getUrl('transform') }}">
+```
+
+Or using `setTransform()`:
+
+```twig
+{% do asset.setTransform({ mode: 'crop', width: 100 }) %}
+<img src="{{ asset.url }}"
+     width="{{ asset.width }}"
+     height="{{ asset.height }}"
+>
+```
+
+## Defining Transforms 
 
 ### width [int]
 Width of the image, in pixels. Leave as `null` to auto-scale the width to match the height.
@@ -18,6 +47,7 @@ Height of the image, in pixels. Leave as `null` to auto-scale the height to matc
 
 ### format [string]
 *Allowed values:* `'jpg'`, `'png'`, `'webp'`
+
 The transform's resulting image format.
 
 ### position [string]

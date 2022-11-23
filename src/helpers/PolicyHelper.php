@@ -50,6 +50,7 @@ class PolicyHelper
                 [
                     "Effect" => "Allow",
                     "Action" => [
+                        "s3:GetBucketPolicy",
                         "s3:PutBucketPolicy",
                         "s3:List*",
                     ],

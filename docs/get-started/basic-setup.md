@@ -4,7 +4,9 @@ Flux aims to make it easy to set up and maintain the AWS resources related to pr
 
 ## Setup Wizard
 
+The easiest way to get started is by following the **Setup Wizard**. At the appropriate point in the wizard you are required to create or enter the name of an S3 bucket to store your transformed assets, as well as creating a CloudFront distribution to serve them. When you have entered these details and click **Test Connection**, Flux will attempt to use the details to fetch the S3 bucket region and CloudFront endpoint, in doing so testing everything is ready to go.
 
+Once the wizard is complete, Flux is not yet installed. You are prompted whether to install immediately or to do this later, perhaps when deploying your site.
 
 ## Manual Requirements
 

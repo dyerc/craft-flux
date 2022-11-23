@@ -24,4 +24,4 @@ This will keep Flux installed, but disable it in all environments except for pro
 
 ## Deployment Process
 
-Flux is designed to be *installed* to AWS whenever you amend Flux settings or update the plugin. You can check on the status of Flux's installation, purge the cache or install it through the Utilities section of your Craft admin area.
+Flux is designed to be installed to AWS whenever you amend Flux settings or update the plugin. You can check on the status of Flux's installation, purge the cache or install it through the Utilities section of your Craft admin area.

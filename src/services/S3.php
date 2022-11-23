@@ -67,6 +67,7 @@ class S3 extends Component
                 'bucket' => $bucket
             ];
         } catch (\Exception $e) {
+            Craft::error($e->getMessage());
             return null;
         }
     }
