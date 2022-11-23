@@ -129,6 +129,19 @@ class SettingsModel extends Model
         return $root;
     }
 
+    public function configurationReinstallRequired(array $newSettings): bool
+    {
+        $sensitive = ["loggingEnabled", "rootPrefix", "verifyQuery", "cacheEnabled", "awsBucket", "awsRegion", "jpgQuality", "webpQuality", "acceptWebp", "lambdaMemory", "lambdaTimeout"];
+
+        foreach ($sensitive as $key) {
+            if (key_exists($key, $newSettings) && $newSettings[$key] != $this->{$key}) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function lambdaConfig(): array
     {
         $volumes = Craft::$app->volumes->allVolumes;
@@ -154,11 +167,14 @@ class SettingsModel extends Model
         }, $volumes);
 
         return [
+            'loggingEnabled' => $this->loggingEnabled,
             'rootPrefix' => App::parseEnv($this->rootPrefix),
             'sources' => $sources,
 
             'verifyQuery' => $this->verifyQuery,
             'verifySecret' => $this->verifySecret,
+
+            'cacheEnabled' => $this->cacheEnabled,
 
             'bucket' => App::parseEnv($this->awsBucket),
             'region' => App::parseEnv($this->awsRegion),

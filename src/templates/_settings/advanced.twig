@@ -1,0 +1,73 @@
+{% import '_includes/forms' as forms %}
+{% from 'flux/_macros' import configWarning %}
+
+{{ forms.lightswitchField({
+  instructions: 'Automatically serve WebP files if the users browser supports it via the Accept header.'|t('flux'),
+  label: "Accept WebP"|t('flux'),
+  warning: config.acceptWebp is defined ? configWarning('acceptWebp'),
+  name: 'settings[acceptWebp]',
+  on: settings.acceptWebp,
+}) }}
+
+{{ forms.textField({
+  label: "Default JPG Quality"|t('flux'),
+  warning: config.jpegQuality is defined ? configWarning('jpegQuality'),
+  name: 'settings[jpegQuality]',
+  value: settings.jpegQuality,
+  errors: settings.getErrors('jpegQuality'),
+}) }}
+
+{{ forms.textField({
+  label: "Default WebP Quality"|t('flux'),
+  warning: config.webpQuality is defined ? configWarning('webpQuality'),
+  name: 'settings[webpQuality]',
+  value: settings.webpQuality,
+  errors: settings.getErrors('webpQuality'),
+}) }}
+
+{{ forms.lightswitchField({
+  instructions: 'Log more detailed information to CloudWatch.'|t('flux'),
+  label: "Enable Logging"|t('flux'),
+  warning: config.loggingEnabled is defined ? configWarning('loggingEnabled'),
+  name: 'settings[loggingEnabled]',
+  on: settings.loggingEnabled,
+}) }}
+
+{{ forms.selectField({
+  instructions: 'Processor size is proportional to memory assigned so it is sensible to be generous with memory allowance, in order to reduce overall processing time. This memory limit applies to the origin response Lambda function.'|t('flux'),
+  label: "Lambda Memory"|t('flux'),
+  warning: config.lambdaMemory is defined ? configWarning('lambdaMemory'),
+  name: 'settings[lambdaMemory]',
+  value: settings.lambdaMemory,
+  errors: settings.getErrors('lambdaMemory'),
+  options: [
+    { label: "128 MB", value: "128" },
+    { label: "256 MB", value: "256" },
+    { label: "512 MB", value: "512" },
+    { label: "768 MB", value: "768" },
+    { label: "1024 MB", value: "1024" },
+    { label: "2048 MB", value: "2048" },
+    { label: "4096 MB", value: "4096" },
+    { label: "8192 MB", value: "8192" },
+  ]
+}) }}
+
+{{ forms.selectField({
+  instructions: 'Maximum time a conversion operation can run.'|t('flux'),
+  label: "Lambda Timeout"|t('flux'),
+  warning: config.lambdaTimeout is defined ? configWarning('lambdaTimeout'),
+  name: 'settings[lambdaTimeout]',
+  value: settings.lambdaTimeout,
+  errors: settings.getErrors('lambdaTimeout'),
+  options: [
+    { label: "3 seconds", value: "3" },
+    { label: "5 seconds", value: "5" },
+    { label: "10 seconds", value: "10" },
+    { label: "12 seconds", value: "12" },
+    { label: "15 seconds", value: "15" },
+    { label: "20 seconds", value: "20" },
+    { label: "30 seconds", value: "30" },
+    { label: "45 seconds", value: "45" },
+    { label: "60 seconds", value: "60" },
+  ]
+}) }}

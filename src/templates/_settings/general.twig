@@ -1,0 +1,38 @@
+{% import '_includes/forms' as forms %}
+{% from 'flux/_macros' import configWarning %}
+
+<div class="flex">
+  <div class="flex-grow field">
+    {{ forms.lightswitchField({
+      instructions: 'Intercept image transforms and route them through CloudFront'|t('flux'),
+      label: "Enabled"|t('flux'),
+      warning: config.enabled is defined ? configWarning('enabled'),
+      name: 'settings[enabled]',
+      on: settings.enabled,
+    }) }}
+
+    {{ forms.lightswitchField({
+      instructions: 'Ensure requests originated from Craft by appending an HMAC verification token. Disabling will allow CloudFront to generate any transform variations based on any request it receives.'|t('flux'),
+      label: "Verify Queries"|t('flux'),
+      warning: config.verifyQuery is defined ? configWarning('verifyQuery'),
+      name: 'settings[verifyQuery]',
+      on: settings.verifyQuery,
+    }) }}
+
+    {{ forms.lightswitchField({
+      instructions: 'For local asset file systems, store a duplicate in S3 to speed up processing asset variations. This will use more storage space in S3 at the expense of faster transforms. Has no effect for S3 based filesystems.'|t('flux'),
+      label: "Cached Original Assets"|t('flux'),
+      warning: config.cacheEnabled is defined ? configWarning('cacheEnabled'),
+      name: 'settings[cacheEnabled]',
+      on: settings.cacheEnabled,
+    }) }}
+
+    {{ forms.lightswitchField({
+      instructions: 'When an asset is changed, automatically submit a CloudFront invalidation and purge any transformed files clearing the cache.'|t('flux'),
+      label: "Auto Purge Assets"|t('flux'),
+      warning: config.autoPurgeAssets is defined ? configWarning('autoPurgeAssets'),
+      name: 'settings[autoPurgeAssets]',
+      on: settings.autoPurgeAssets,
+    }) }}
+  </div>
+</div>

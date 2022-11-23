@@ -62,6 +62,7 @@ class SettingsController extends Controller {
         }
 
         $settings = Flux::$plugin->settings;
+        $reinstallRequired = $settings->configurationReinstallRequired($postedSettings);
         $settings->setAttributes($postedSettings, false);
 
         $settings->validate();
@@ -74,6 +75,8 @@ class SettingsController extends Controller {
 
         Craft::$app->getPlugins()->savePluginSettings(Flux::$plugin, $settings->getAttributes());
         Craft::$app->getSession()->setNotice(Craft::t('flux', 'Plugin settings saved.'));
+
+        Craft::$app->getSession()->addFlash('flux-reinstall', $reinstallRequired);
 
         return $this->redirectToPostedUrl();
     }
