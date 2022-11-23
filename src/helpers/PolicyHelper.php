@@ -5,6 +5,7 @@
 
 namespace dyerc\flux\helpers;
 
+use Craft;
 use craft\helpers\App;
 use dyerc\flux\Flux;
 use dyerc\flux\models\SettingsModel;
@@ -105,6 +106,11 @@ class PolicyHelper
         $bucket = App::parseEnv($settings->awsBucket);
         $rootPrefix = App::parseEnv($settings->rootPrefix);
 
+        // If we are using S3, grant access to the entire bucket
+        if (self::getHasS3Filesystems()) {
+            $rootPrefix = "";
+        }
+
         $actions = ["s3:GetObject", "s3:PutObject"];
 
         $policy = [
@@ -180,5 +186,18 @@ class PolicyHelper
     public static function prettyPrint(mixed $data): string
     {
         return json_encode($data, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);
+    }
+
+    private static function getHasS3Filesystems(): bool
+    {
+        $filesystems = Craft::$app->fs->getAllFilesystems();
+
+        foreach ($filesystems as $fs) {
+            if (is_a($fs, "craft\\awss3\\Fs")) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
