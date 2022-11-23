@@ -3,7 +3,7 @@ export default {
   base: '/plugins/flux/',
   description: 'Just playing around.',
   themeConfig: {
-    logo: '/resources/icon.svg',
+    logo: '/icon.svg',
     socialLinks: [
       { icon: 'github', link: 'https://github.com/dyerc/craft-flux' },
     ],

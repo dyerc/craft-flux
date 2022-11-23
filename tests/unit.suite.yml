@@ -1,0 +1,4 @@
+modules:
+  enabled:
+    - \craft\test\Craft
+    # Don't delete any other enabled modules.

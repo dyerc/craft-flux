@@ -250,19 +250,22 @@ class Cloudfront extends Component
         */
         $fileName = pathinfo($asset->filename, PATHINFO_FILENAME);
 
+        /*
+         * Match any transformed files based on their path and file name
+         */
         foreach ($items as $item) {
             $rel = substr($item, strlen($prefix) + 1); // +1 to remove first /
-            $chunks = explode('/', $rel);
-            if (count($chunks) == 2 && strlen($chunks[0]) > 0 && $chunks[0][0] == '_') {
-                // Split off the last . to retrieve the file extension
-                $parts = explode('.', $chunks[1]);
-                $ext = array_pop($parts);
-                $parts = array(implode('.', $parts), $ext);
 
-                if ($parts[0] == $fileName) {
-                    // $purgePaths[] = $item;
-                    $purgeObjects[] = $item;
-                }
+            $parent = dirname($rel);
+            $baseName = pathinfo($rel, PATHINFO_FILENAME);
+
+            /*
+             * $parent will start with '_' if it is a transform folder
+             * basename($rel) will be the filename
+             */
+            if (str_starts_with($parent, '_') && $fileName == $baseName) {
+                $purgePaths[] = $item;
+                $purgeObjects[] = $item;
             }
         }
 

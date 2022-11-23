@@ -19,11 +19,13 @@ use craft\events\ModelEvent;
 use craft\events\PluginEvent;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterUrlRulesEvent;
+use craft\helpers\Queue;
 use craft\helpers\UrlHelper;
 use craft\services\Plugins;
 use craft\services\Utilities;
 use craft\web\twig\variables\CraftVariable;
 use craft\web\UrlManager;
+use dyerc\flux\jobs\PurgeAssetJob;
 use dyerc\flux\models\SettingsModel;
 use dyerc\flux\services\Aws;
 use dyerc\flux\services\Cloudfront;
@@ -138,7 +140,9 @@ class Flux extends Plugin
                 if ($settings->autoPurgeAssets) {
                     /* @var Asset $asset */
                     $asset = $event->sender;
-                    $this->cloudfront->purgeAsset($asset);
+                    Queue::push(new PurgeAssetJob([
+                        'asset' => $asset
+                    ]));
                 }
             }
         );
@@ -152,7 +156,9 @@ class Flux extends Plugin
                 if ($settings->autoPurgeAssets) {
                     /* @var Asset $asset */
                     $asset = $event->sender;
-                    $this->cloudfront->purgeAsset($asset);
+                    Queue::push(new PurgeAssetJob([
+                        'asset' => $asset
+                    ]));
                 }
             }
         );
