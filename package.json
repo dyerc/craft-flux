@@ -22,6 +22,7 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:serve": "vitepress serve docs",
+    "docs:deploy": "npm run docs:build && ./deploy.sh",
     "compile": "npm run phpstan && npm run build && cd lambda && npm run build && cd ..",
     "test": "npm run test:lambda && npm run test:php",
     "test:lambda": "cd lambda && npm test && cd ..",

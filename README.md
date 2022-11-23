@@ -15,7 +15,7 @@ Flux integrates your site image transforms with AWS, using Lambda and CloudFront
 - Transforms are completely URL based, no database queries are needed
 - Automatically purge and invalidate CloudFront when assets change
 
-![Flux diagram](../resources/how_it_works.svg)
+<p><img src="https://raw.githubusercontent.com/dyerc/craft-flux/master/docs/resources/how_it_works.svg"></p>
 
 ## Documentation
 
