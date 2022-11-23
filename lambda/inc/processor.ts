@@ -18,9 +18,10 @@ export function fetchSource(request: TransformRequest, config: FluxConfig): Prom
     fileName = request.sourceFilename;
   }
 
+  // Read original file from S3
   if (request.source.type === FluxSourceType.LOCAL) {
     return new Promise((resolve, reject) => {
-      const sourceFile = compilePath(config.rootPrefix, request.source.subFolder || "", request.sourcePath, fileName);
+      const sourceFile = compilePath(request.source.subFolder || "", request.sourcePath, fileName);
 
       readFile(sourceFile, config)
         .then(buffer => resolve(buffer))

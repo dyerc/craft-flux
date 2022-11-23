@@ -203,7 +203,7 @@ describe('response', () => {
 
     // @ts-ignore
     expect(mockS3Client).toHaveReceivedCommandWith(GetObjectCommand, {
-      Key: "Flux/data/folder/image.jpg"
+      Key: "data/folder/image.jpg"
     });
     // @ts-ignore
     expect(mockS3Client).toHaveReceivedCommandWith(PutObjectCommand, {

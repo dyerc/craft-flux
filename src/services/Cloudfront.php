@@ -234,13 +234,15 @@ class Cloudfront extends Component
         $items = Flux::getInstance()->s3->listObjects($prefix);
 
         $purgePaths = [$path];
-        $purgeObjects = [];
+        $deleteObjects = [];
 
         /*
-         * Remove the file itself if it is a cached object and not the actual asset itself
+         * Remove the file itself if it is a cached object and not the actual asset itself. Double check for S3 based filesystems
          */
-        if (!is_a($asset->volume->fs, "craft\\awss3\\Fs")) {
-            $purgeObjects[] = $path;
+        $originalPath = (!empty($asset->fs->subfolder) ? rtrim($asset->fs->subfolder, '/') . '/' : '') . $asset->getPath();
+
+        if (!is_a($asset->volume->fs, "craft\\awss3\\Fs") && $originalPath != $path) {
+            $deleteObjects[] = $path;
         }
 
         /*
@@ -265,18 +267,19 @@ class Cloudfront extends Component
              */
             if (str_starts_with($parent, '_') && $fileName == $baseName) {
                 $purgePaths[] = $item;
-                $purgeObjects[] = $item;
+                $deleteObjects[] = $item;
             }
         }
 
-        $this->invalidateCache(array_map(function ($path) use ($rootPrefix) {
-            if (str_starts_with($path, $rootPrefix)) {
+        $purgePaths = array_map(function ($path) use ($rootPrefix) {
+            if (strlen($rootPrefix) && str_starts_with($path, $rootPrefix)) {
                 return substr($path, strlen($rootPrefix)) . '*';
             } else {
-                return $path . '*';
+                return '/' . $path . '*';
             }
-        }, $purgePaths));
+        }, $purgePaths);
 
-        Flux::getInstance()->s3->deleteObjects($purgeObjects);
+        $this->invalidateCache($purgePaths);
+        Flux::getInstance()->s3->deleteObjects($deleteObjects);
     }
 }

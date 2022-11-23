@@ -45,7 +45,7 @@ class TransformerTest extends TestCase
         ]);
     }
 
-    public function testGeneratingUrlForAssetWithVerification(): void
+    public function testGeneratesUrlForAssetWithVerification(): void
     {
         $expected = "volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080";
         $v = hash_hmac('sha256', $expected, Flux::$plugin->settings->verifySecret);
@@ -60,7 +60,7 @@ class TransformerTest extends TestCase
         );
     }
 
-    public function testGeneratingUrlForAssetWithoutVerification(): void
+    public function testGeneratesUrlForAssetWithoutVerification(): void
     {
         Flux::$plugin->settings->verifyQuery = false;
 
@@ -74,7 +74,28 @@ class TransformerTest extends TestCase
         );
     }
 
-    public function testGeneratingUrlForAssetWithNamedTransform(): void
+    public function testDoesntGenerateUrlWhenDisabled(): void
+    {
+        Flux::$plugin->settings->enabled = false;
+
+        // Stub the builtin transform process
+        Craft::$app->set('imageTransforms', $this->make(ImageTransforms::class, [
+            'getTransformByHandle' => $this->make(ImageTransform::class, [
+                'width' => 400,
+                'height' => 200,
+                'getImageTransformer' => $this->make(ImageTransformer::class, [
+                    'getTransformUrl' => fn(Asset $asset, ImageTransform $transform) => 'w=' . $transform->width . '&h=' . $transform->height,
+                ]),
+            ])
+        ]));
+
+        $this->assertSame(
+            "w=400&h=200",
+            $this->asset->getUrl([ 'transform' => 'mockedTransform' ])
+        );
+    }
+
+    public function testGeneratesUrlForAssetWithNamedTransform(): void
     {
         Flux::$plugin->settings->verifyQuery = false;
 
