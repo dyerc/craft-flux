@@ -1,4 +1,4 @@
 modules:
   enabled:
+    - Asserts
     - \craft\test\Craft
-    # Don't delete any other enabled modules.

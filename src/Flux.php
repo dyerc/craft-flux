@@ -90,10 +90,7 @@ class Flux extends Plugin
         $this->_registerServices();
         $this->_registerVariables();
         $this->_registerDefaults();
-
-        if ($settings->enabled) {
-            $this->_registerEvents();
-        }
+        $this->_registerEvents();
 
         // Register control panel events
         if (Craft::$app->getRequest()->getIsCpRequest()) {
@@ -119,25 +116,25 @@ class Flux extends Plugin
 
     private function _registerEvents(): void
     {
+        /* @var SettingsModel */
+        $settings = $this->getSettings();
+
         Event::on(Asset::class, Asset::EVENT_BEFORE_GENERATE_TRANSFORM,
-            function (GenerateTransformEvent $event) {
-                /* @var SettingsModel */
-                $settings = $this->getSettings();
-                $event->url = $this->transformer->getUrl($event->asset, $event->transform);
+            function (GenerateTransformEvent $event) use ($settings) {
+                if ($settings->enabled) {
+                    $event->url = $this->transformer->getUrl($event->asset, $event->transform);
+                }
             }
         );
 
         // Purge objects after an asset is changed
         Event::on(Asset::class, Asset::EVENT_AFTER_SAVE,
-            function (ModelEvent $event) {
+            function (ModelEvent $event) use ($settings) {
                 if ($event->isNew) {
                     return;
                 }
 
-                /* @var SettingsModel */
-                $settings = $this->getSettings();
-
-                if ($settings->autoPurgeAssets) {
+                if ($settings->enabled && $settings->autoPurgeAssets) {
                     /* @var Asset $asset */
                     $asset = $event->sender;
                     Queue::push(new PurgeAssetJob([
@@ -149,11 +146,11 @@ class Flux extends Plugin
 
         // Purge objects after an asset is deleted
         Event::on(Asset::class, Asset::EVENT_BEFORE_DELETE,
-            function (ModelEvent $event) {
+            function (ModelEvent $event) use ($settings) {
                 /* @var SettingsModel */
                 $settings = $this->getSettings();
 
-                if ($settings->autoPurgeAssets) {
+                if ($settings->enabled && $settings->autoPurgeAssets) {
                     /* @var Asset $asset */
                     $asset = $event->sender;
                     Queue::push(new PurgeAssetJob([

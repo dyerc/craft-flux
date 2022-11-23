@@ -58,7 +58,7 @@ class FluxUtility extends Utility
         if ($settings->isAwsConfigured()) {
             $lambda = self::lambdaStatus();
             $cloudfront = Flux::getInstance()->cloudfront->getStatus();
-            $s3 = Flux::getInstance()->s3->getStatus();
+            $s3 = Flux::getInstance()->s3->getStatus(self::lambdaRoles($lambda));
             $info = [];
 
             if ($lambda['installed']) {
@@ -140,5 +140,18 @@ class FluxUtility extends Utility
                 'installed' => false
             ];
         }
+    }
+
+    private static function lambdaRoles($status): array
+    {
+        $roles = [];
+
+        if (key_exists('functions', $status)) {
+            $roles = array_map(function ($func) {
+                return $func['role'];
+            }, $status['functions']);
+        }
+
+        return array_values($roles);
     }
 }

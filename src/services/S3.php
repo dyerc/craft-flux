@@ -38,7 +38,7 @@ class S3 extends Component
         return $this->_client;
     }
 
-    public function getStatus(): array|null
+    public function getStatus($roles = []): array|null
     {
         /* @var SettingsModel */
         $settings = Flux::getInstance()->getSettings();
@@ -50,9 +50,16 @@ class S3 extends Component
             ]);
 
             $policy = $response['Policy']->getContents();
-            $permissions = str_contains($policy, ":role/" . App::parseEnv($settings->awsResourcePrefix))
-                && str_contains($policy, "s3:PutObject")
-                && str_contains($policy, "arn:aws:s3:::" . $bucket);
+
+            // Very basic naive check first
+            $permissions = !empty($roles) && str_contains($policy, "s3:PutObject") && str_contains($policy, "s3:GetObject");
+
+            // Ensure all roles are mentioned by the bucket policy
+            foreach ($roles as $role) {
+                if ($permissions && !str_contains($policy, $role)) {
+                    $permissions = false;
+                }
+            }
 
             return [
                 'available' => true,

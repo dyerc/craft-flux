@@ -3,7 +3,6 @@
 namespace dyerc\fluxtests\unit\services;
 
 use Codeception\Stub\Expected;
-use Codeception\Test\Unit;
 
 use craft\base\Fs;
 use craft\elements\Asset;
@@ -13,7 +12,6 @@ use dyerc\flux\Flux;
 use dyerc\flux\services\Cloudfront;
 use dyerc\flux\services\S3;
 use UnitTester;
-use Craft;
 
 class CloudfrontTest extends TestCase
 {
