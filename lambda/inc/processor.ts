@@ -1,10 +1,10 @@
 import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import axios from "axios";
-import sharp, {FitEnum} from "sharp";
+import sharp, { FitEnum } from "sharp";
 import type { Readable } from 'stream';
 
-import {compilePath, removeRootPrefix, TransformMode, TransformRequest} from "./parser";
-import {FluxConfig, FluxSourceType} from "./config";
+import { compilePath, TransformMode, TransformRequest } from "./parser";
+import { FluxConfig, FluxSourceType } from "./config";
 import { log } from "./logging";
 
 const S3 = new S3Client({});

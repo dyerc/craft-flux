@@ -8,7 +8,7 @@ import {
 } from "querystring";
 import { CloudFrontRequestHandler } from "aws-lambda";
 
-import { parseRequest, transformPath, validHmacToken} from "./inc/parser";
+import { parseRequest, transformPath, validHmacToken } from "./inc/parser";
 import { DefaultConfig } from "./inc/config";
 import { log } from "./inc/logging";
 

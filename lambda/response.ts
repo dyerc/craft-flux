@@ -9,8 +9,8 @@ import {
 import { CloudFrontResponseHandler, CloudFrontResponseResult } from "aws-lambda";
 
 import { DefaultConfig } from "./inc/config";
-import {compilePath, parseRequest, removeRootPrefix} from "./inc/parser";
-import { fetchSource, transformSource, writeFile} from "./inc/processor";
+import { compilePath, parseRequest, removeRootPrefix } from "./inc/parser";
+import { fetchSource, transformSource, writeFile } from "./inc/processor";
 import { log } from "./inc/logging";
 
 const handler: CloudFrontResponseHandler = (event, _, callback) => {
