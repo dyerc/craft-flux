@@ -18,3 +18,5 @@ Flux integrates your site image transforms with AWS, using Lambda and CloudFront
 <br>
 
 ![Flux diagram](./resources/how_it_works.svg)
+
+![Flux difference graph](./resources/flux_difference_graph.svg)
