@@ -1,7 +1,10 @@
+const fathom = ['script', { src: "https://cdn.usefathom.com/script.js", "data-spa": "auto", "data-site": "GMDYKVSM", "defer": true }];
+
 export default {
   title: 'Flux',
   base: '/plugins/flux/',
-  description: 'Just playing around.',
+  description: 'Flux integrates your site image transforms with AWS, using Lambda and CloudFront to process, cache and serve your images.',
+  head: process.env.NODE_ENV === "production" ? [fathom] : [],
   themeConfig: {
     logo: '/icon.svg',
     socialLinks: [
