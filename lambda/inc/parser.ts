@@ -129,6 +129,7 @@ export function parseRequest(request: CloudFrontRequest, params: ParsedUrlQuery,
 
   if (!source) {
     log(config, "Unable to parse source", sourcePrefix);
+    log(config, "Available sources", config.sources.map(s => s.handle));
     return null;
   }
 
