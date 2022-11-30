@@ -79,6 +79,7 @@ class PolicyHelper
                         "iam:GetRolePolicy",
                         "iam:PutRolePolicy",
                         "iam:CreateRole",
+                        "iam:CreateServiceLinkedRole",
                         "iam:ListAttachedRolePolicies",
                         "iam:ListRolePolicies",
                         "iam:ListRoles",
