@@ -1,6 +1,6 @@
 # Troubleshooting
 
-If you've ever used AWS, you know how complex it can become. Flux aims to help as much as possible, however with so many settings, permissions and account variations, sometimes things won't go according to plan. If you experience issue, below are things you can do to investigate and find a solution yourself, or to get more information for when you [submit an issue](https://github.com/dyerc/craft-flux/issues/new/choose).
+If you've ever used AWS, you know how complex it can become. Flux aims to help as much as possible, however with so many settings, permissions and account variations, sometimes things won't go according to plan. If you experience an issue, below are things you can do to investigate and find a solution yourself, or to get more information for when you [submit an issue](https://github.com/dyerc/craft-flux/issues/new/choose). Alternatively, please feel free to [email me](https://cdyer.co.uk/contact) and I will be pleased to help.
 
 ## Check the status
 
@@ -12,8 +12,8 @@ Some issues can be fixed by reinstalling Flux, a few other common problems are l
 
 ### Common Lambda Issues
 
-- However, the i icon to see the version installed. A warning triangle can signify and update is required.
-- Your AWS settings such as the resource prefix have been changed since Flux was last installed. It cannot see the Lambda functions with the expected naming
+- Hover the "i" icon to see the version installed. A warning triangle can signify an update is required.
+- Check if your AWS settings such as the resource prefix have been changed since Flux was last installed. If so it will not be able to see the Lambda functions with the expected naming scheme
 
 ### Common S3 Issues
 

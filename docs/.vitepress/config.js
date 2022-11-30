@@ -1,4 +1,4 @@
-const fathom = ['script', { src: "https://cdn.usefathom.com/script.js", "data-spa": "auto", "data-site": "GMDYKVSM", "defer": true }];
+const fathom = ['script', { src: "https://hoverfly.cdengine.co.uk/script.js", "data-spa": "auto", "data-site": "GMDYKVSM", "defer": true }];
 
 export default {
   title: 'Flux',

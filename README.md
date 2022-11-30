@@ -40,6 +40,12 @@ To install the plugin, search for “Flux” in the Craft Plugin Store, or insta
 composer require dyerc/craft-flux
 ```
 
+## Roadmap
+
+- [ ] Support for asset focal points defined in the Craft admin area
+- [ ] Reduce reliance on CloudFront invalidations when assets are changed
+- [ ] Animated gif support
+
 ---
 
 Created by [Chris Dyer](https://cdyer.co.uk).
