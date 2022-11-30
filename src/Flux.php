@@ -138,7 +138,7 @@ class Flux extends Plugin
                     /* @var Asset $asset */
                     $asset = $event->sender;
                     Queue::push(new PurgeAssetJob([
-                        'asset' => $asset
+                        'assetId' => $asset->id
                     ]));
                 }
             }
@@ -154,7 +154,7 @@ class Flux extends Plugin
                     /* @var Asset $asset */
                     $asset = $event->sender;
                     Queue::push(new PurgeAssetJob([
-                        'asset' => $asset
+                        'assetId' => $asset->id
                     ]));
                 }
             }

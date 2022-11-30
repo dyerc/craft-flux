@@ -252,7 +252,11 @@ class Lambda extends Component
         $updatedConfig['IfMatch'] = $distribution['ETag'];
 
         $updatedConfig['DistributionConfig']['Origins']['Items'] = array_map(function($item) use ($settings) {
-            $item['OriginPath'] = "/" . App::parseEnv($settings->rootPrefix);
+            if (strlen($settings->rootPrefix) > 0) {
+                $item['OriginPath'] = "/" . App::parseEnv($settings->rootPrefix);
+            } else {
+                $item['OriginPath'] = "";
+            }
             return $item;
         }, $updatedConfig['DistributionConfig']['Origins']['Items']);
 

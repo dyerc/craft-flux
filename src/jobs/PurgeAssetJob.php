@@ -5,13 +5,14 @@
 
 namespace dyerc\flux\jobs;
 
+use Craft;
 use craft\elements\Asset;
 use craft\queue\BaseJob;
 use dyerc\flux\Flux;
 
 class PurgeAssetJob extends BaseJob
 {
-    public Asset $asset;
+    public int|null $assetId;
 
     protected function defaultDescription(): ?string
     {
@@ -20,6 +21,12 @@ class PurgeAssetJob extends BaseJob
 
     public function execute($queue): void
     {
-        Flux::getInstance()->cloudfront->purgeAsset($this->asset);
+        if ($this->assetId) {
+            $asset = Asset::find()->id($this->assetId)->one();
+
+            if ($asset) {
+                Flux::getInstance()->cloudfront->purgeAsset($asset);
+            }
+        }
     }
 }
