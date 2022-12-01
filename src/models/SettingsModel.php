@@ -131,7 +131,7 @@ class SettingsModel extends Model
 
     public function configurationReinstallRequired(array $newSettings): bool
     {
-        $sensitive = ["loggingEnabled", "rootPrefix", "verifyQuery", "cacheEnabled", "awsBucket", "awsRegion", "jpgQuality", "webpQuality", "acceptWebp", "lambdaMemory", "lambdaTimeout"];
+        $sensitive = ["loggingEnabled", "rootPrefix", "verifyQuery", "cacheEnabled", "awsBucket", "awsRegion", "jpegQuality", "webpQuality", "acceptWebp", "lambdaMemory", "lambdaTimeout"];
 
         foreach ($sensitive as $key) {
             if (key_exists($key, $newSettings) && $newSettings[$key] != $this->{$key}) {
@@ -144,7 +144,7 @@ class SettingsModel extends Model
 
     public function lambdaConfig(): array
     {
-        $volumes = Craft::$app->volumes->allVolumes;
+        $volumes = Craft::$app->getVolumes()->getAllVolumes();
 
         $sources = array_map(function ($volume) {
             if (is_a($volume->fs, "craft\\awss3\\Fs") && $volume->fs->settings['bucket'] == App::parseEnv($this->awsBucket)) {
@@ -184,6 +184,11 @@ class SettingsModel extends Model
 
             'acceptWebp' => $this->acceptWebp
         ];
+    }
+
+    public function lambdaConfigHash(): string
+    {
+        return md5(json_encode($this->lambdaConfig()));
     }
 
     protected function defineRules(): array

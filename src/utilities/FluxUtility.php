@@ -125,13 +125,20 @@ class FluxUtility extends Utility
         $status = Flux::getInstance()->lambda->getFunctionStatuses();
         $installed = $status['viewerRequest'] && $status['originResponse'];
 
+        /* @var SettingsModel */
+        $settings = Flux::getInstance()->getSettings();
+        $configHash = $settings->lambdaConfigHash();
+
         if ($installed) {
             $version = $status['viewerRequest']['version'] == $status['originResponse']['version'] ? $status['viewerRequest']['version'] : "Mismatch";
+
+            $configCurrent = $status['viewerRequest']['config'] == $status['originResponse']['config'] && $status['viewerRequest']['config'] == $configHash;
 
             return [
                 'installed' => true,
                 'version' => $version,
                 'updateAvailable' => Flux::getInstance()->version != $version,
+                'configCurrent' => $configCurrent,
                 'lastModified' => $status['viewerRequest']['lastModified'],
                 'functions' => $status
             ];

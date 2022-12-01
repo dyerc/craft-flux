@@ -55,8 +55,14 @@ class Lambda extends Component
                 'FunctionName' => $name
             ]);
 
-            preg_match("/\d\.\d\.\d(-\S*)*/", $function['Configuration']['Description'], $m);
-            $version = empty($m) ? "Unknown" : $m[0];
+            $version = $configHash = "Unknown";
+
+            preg_match("/(\d\.\d\.\d(-\S*)*)\s([a-z\d]+)/", $function['Configuration']['Description'], $m);
+
+            if ($m && count($m) == 4) {
+                $version = $m[1];
+                $configHash = $m[3];
+            }
 
             return [
                 'name' => $name,
@@ -64,6 +70,7 @@ class Lambda extends Component
                 'role' => $function['Configuration']['Role'],
                 'arn' => $function['Configuration']['FunctionArn'],
                 'version' => $version,
+                'config' => $configHash,
                 'memory' => $function['Configuration']['MemorySize'],
                 'lastModified' => DateTime::createFromFormat(DateTimeInterface::RFC3339_EXTENDED, $function['Configuration']['LastModified'])
             ];
@@ -123,9 +130,14 @@ class Lambda extends Component
      */
     public function deployFunction(string $name, string $zipBundle, array $overrides = []): array
     {
+        /* @var SettingsModel */
+        $settings = Flux::getInstance()->getSettings();
+        $configHash = $settings->lambdaConfigHash();
+        $functionVersion = Flux::getInstance()->version;
+
         $config = array_merge([
             'FunctionName' => $name,
-            'Description' => "Deployed by Flux v" . Flux::getInstance()->version,
+            'Description' => "Deployed by Flux v$functionVersion $configHash",
             'Runtime' => 'nodejs16.x'
         ], $overrides);
 

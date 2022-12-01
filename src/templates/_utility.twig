@@ -11,11 +11,22 @@
           <span class="error" title="{{ 'Failed'|t('app') }}" aria-label="{{ 'Failed'|t('app') }}" data-icon="error"></span>
         {% elseif lambda.updateAvailable %}
           <span class="warning" title="{{ 'Update available'|t('flux') }}" aria-label="{{ 'Update available'|t('flux') }}" data-icon="alert"></span>
+        {% elseif not lambda.configCurrent %}
+          <span class="warning" title="{{ 'Configuration outdated'|t('flux') }}" aria-label="{{ 'Configuration outdated'|t('flux') }}" data-icon="alert"></span>
         {% else %}
           <span class="success" title="{{ 'Passed'|t('app') }}" aria-label="{{ 'Passed'|t('app') }}" data-icon="check"></span>
         {% endif %}
       </td>
-      <td>Lambda Functions {% if lambda.installed %}<span class="info">Version: {{ lambda.version }}<br />Installed: {{ lambda.lastModified|date("F jS \\a\\t g:ia") }}</span>{% endif %}</td>
+      <td>
+        Lambda Functions
+        {% if lambda.installed %}
+          <span class="info">
+            Version: {{ lambda.version }}<br />
+            Configuration: {% if lambda.configCurrent %}Current{% else %}Needs Update{% endif %}<br />
+            Installed: {{ lambda.lastModified|date("F jS \\a\\t g:ia") }}
+          </span>
+        {% endif %}
+      </td>
     </tr>
 
     {# CloudFront #}
