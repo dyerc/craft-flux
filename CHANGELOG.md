@@ -1,9 +1,13 @@
-# Flux Changelog
+# Flux Release Notes
 
-All notable changes to this project will be documented in this file.
+## 4.0.1 - 2022-12-01
+### Added
+- Additional verification that currently installed AWS configuration matches current Craft settings.
+- Additional logging if a Craft volume can't be determined
 
-The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
+### Fixed
+- Fixed issue installing to AWS due to insufficient iam credentials ([#2](https://github.com/dyerc/craft-flux/issues/2)).
 
-## 1.0.0 - 2022-11-23
+## 4.0.0 - 2022-11-23
 
 - Initial release.
