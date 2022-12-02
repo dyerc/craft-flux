@@ -41,6 +41,9 @@ class TransformerTest extends TestCase
                 'handle' => 'volume',
             ]),
             'folderId' => 2,
+            'kind' => 'image',
+            '_width' => 800,
+            '_height' => 600,
             'filename' => 'foo.jpg',
         ]);
     }
@@ -114,6 +117,26 @@ class TransformerTest extends TestCase
             $this->asset->getUrl([
                 'transform' => 'mockedTransform'
             ])
+        );
+    }
+
+    public function testGeneratesImgMarkup(): void
+    {
+        Flux::$plugin->settings->verifyQuery = false;
+
+        $this->assertSame(
+            "<img src=\"https://cloudfront/volume/foo.jpg?mode=crop&amp;pos=center-center&amp;w=800\" width=\"800\" height=\"600\">",
+            (string)$this->asset->getImg([ 'width' => 800 ])
+        );
+    }
+
+    public function testGeneratesSrcset(): void
+    {
+        Flux::$plugin->settings->verifyQuery = false;
+
+        $this->assertSame(
+            "https://cloudfront/volume/foo.jpg?mode=crop&pos=center-center&w=800, https://cloudfront/volume/foo.jpg?mode=crop&pos=center-center&w=1600 2x",
+            $this->asset->getSrcset(['1x', '2x'], ['width' => 800])
         );
     }
 }
