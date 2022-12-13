@@ -6,6 +6,7 @@ import { ParsedUrlQuery } from "querystring";
 import { FluxConfig, FluxSource } from "./config";
 import { CloudFrontRequest } from "aws-lambda";
 import { log } from "./logging";
+import { isNumeric } from "./helpers";
 
 const WEBP_EXT = "webp";
 
@@ -45,11 +46,16 @@ export interface TransformRequest {
   manipulations: Manipulations
 }
 
+export interface FocalPoint {
+  x: number
+  y: number
+}
+
 export interface Manipulations {
   mode: TransformMode
   width: number|string
   height: number|string
-  position: string
+  position: string|FocalPoint
   quality?: number
 }
 
@@ -66,7 +72,7 @@ export function requestAccepts(request: CloudFrontRequest) {
 }
 
 export function parseTransformPathSegment(uri: string): string|undefined {
-  const matches = uri.match(/_(\d+|AUTO)x(\d+|AUTO)_(fit|crop|stretch)_([a-z]+-[a-z]+)_?(\d+)?/);
+  const matches = uri.match(/_(\d+|AUTO)x(\d+|AUTO)_(fit|crop|stretch)_([a-z\d\\.]+-[a-z\d\\.]+)_?(\d+)?/);
   return matches ? matches[0] : undefined;
 }
 
@@ -184,8 +190,21 @@ export function parseManipulations(params: ParsedUrlQuery, extension: string, co
   transform.width = coerceInt(params.w as string, transform.width);
   transform.height = coerceInt(params.h as string, transform.height);
 
-  if (params.pos && CropPositions.includes(params.pos as string)) {
-    transform.position = params.pos as string;
+  if (params.pos) {
+    if (CropPositions.includes(params.pos as string)) {
+      transform.position = params.pos as string;
+    } else if (!Array.isArray(params.pos) && params.pos.indexOf('-') !== -1) {
+      // Check if pos param is a number-number format eg. 0.9987-0.4365
+      const coords = params.pos.split('-');
+
+      // If all coords are valid numbers, round to 3dp and assign to position
+      if (coords.length === 2 && coords.every(x => isNumeric(x))) {
+        transform.position = {
+          x: parseFloat(coords[0]),
+          y: parseFloat(coords[1])
+        }
+      }
+    }
   }
 
   if (params.q) {
@@ -207,7 +226,13 @@ export function parseManipulations(params: ParsedUrlQuery, extension: string, co
 export function transformPath(request: TransformRequest): string {
   const m = request.manipulations;
 
-  let transform = `_${m.width}x${m.height}_${m.mode}_${m.position}`;
+  let transform = `_${m.width}x${m.height}_${m.mode}_`;
+
+  if (typeof m.position === 'string') {
+    transform += m.position;
+  } else {
+    transform += `${m.position.x.toFixed(3)}-${m.position.y.toFixed(3)}`;
+  }
 
   if (m.quality) {
     transform += `_${m.quality}`;

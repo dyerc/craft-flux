@@ -236,4 +236,22 @@ describe('response', () => {
     expect(t?.ext).toEqual("png");
     s.close();
   });
+
+  test('crops around focal point', async () => {
+    const s = createOriginServer({
+      '/uploads/image.jpg': 'image.jpg'
+    });
+
+    const mockS3Client = mockClient(S3Client);
+    mockS3Client.on(GetObjectCommand).rejects();
+    mockS3Client.on(PutObjectCommand).resolves({});
+    mockS3Client.on(PutObjectCommand).resolves({});
+
+    const result = await handle("/testAssets/_1400x300_crop_0.476-0.129/image.jpg?mode=fit&pos=0.4763-0.1287&w=1400&h=300", { status: "403" }, { loggingEnabled: true, verifyQuery: false });
+
+    expect(result.status).toEqual("200");
+    // @ts-ignore
+    fs.writeFileSync("test.jpg", result.body, 'base64');
+    s.close();
+  });
 });

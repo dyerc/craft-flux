@@ -69,6 +69,11 @@ describe('request', () => {
     expect(result.uri).toEqual("/images/_AUTOx920_fit_bottom-center_70/image.jpg");
   });
 
+  test('processes request with focal point', async () => {
+    const result = await handle("/images/image.jpg?mode=fit&h=920&pos=0.7259-0.1642&q=70", {}, { verifyQuery: false });
+    expect(result.uri).toEqual("/images/_AUTOx920_fit_0.726-0.164_70/image.jpg");
+  });
+
   test('processes request with jpg image format', async () => {
     const result = await handle("/images/image.jpg?mode=fit&w=1920&h=1080&f=jpg", {
       requestHeaders: {
