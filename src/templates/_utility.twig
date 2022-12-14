@@ -21,7 +21,7 @@
         Lambda Functions
         {% if lambda.installed %}
           <span class="info">
-            Version: {{ lambda.version }}<br />
+            Version: {{ lambda.version }} {% if lambda.updateAvailable %}({{ lambda.availableVersion }} Available){% endif %}<br />
             Configuration: {% if lambda.configCurrent %}Current{% else %}Needs Update{% endif %}<br />
             Installed: {{ lambda.lastModified|date("F jS \\a\\t g:ia") }}
           </span>

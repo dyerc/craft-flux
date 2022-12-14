@@ -137,6 +137,7 @@ class FluxUtility extends Utility
             return [
                 'installed' => true,
                 'version' => $version,
+                'availableVersion' => Flux::getInstance()->version,
                 'updateAvailable' => Flux::getInstance()->version != $version,
                 'configCurrent' => $configCurrent,
                 'lastModified' => $status['viewerRequest']['lastModified'],
