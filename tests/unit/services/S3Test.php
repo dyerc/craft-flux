@@ -45,13 +45,16 @@ class S3Test extends TestCase
                     'Flux/volume/_159x240_crop_center-center_80/foo.jpg',
                     'Flux/volume/_159x240_crop_center-center_80/foo.webp',
                     'Flux/volume/_159x240_crop_center-center_80/bar.jpg',
+                    'Flux/volume/another/_159x240_crop_center-center_80/foo.webp',
+                    'Flux/volume/_159x240_crop_center-center_80/another/foo.webp',
                 ];
             }),
             'deleteObjects' => Expected::once(function ($objects) {
                 $this->assertSame([
-                    "Flux/volume/foo.jpg",
-                    "Flux/volume/_159x240_crop_center-center_80/foo.jpg",
-                    "Flux/volume/_159x240_crop_center-center_80/foo.webp"
+                    'Flux/volume/foo.jpg',
+                    'Flux/volume/_159x240_crop_center-center_80/foo.jpg',
+                    'Flux/volume/_159x240_crop_center-center_80/foo.webp',
+                    'Flux/volume/another/_159x240_crop_center-center_80/foo.webp'
                 ], $objects);
             })
         ]));

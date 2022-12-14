@@ -246,7 +246,7 @@ class S3 extends Component
         foreach ($items as $item) {
             $rel = substr($item, strlen($prefix) + 1); // +1 to remove first /
 
-            $parent = dirname($rel);
+            $parent = basename(dirname($rel));
             $baseName = pathinfo($rel, PATHINFO_FILENAME);
 
             /*
