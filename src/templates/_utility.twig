@@ -64,10 +64,20 @@
     {{ tag('button', {
       type: 'button',
       class: ['btn', 'formsubmit'],
-      text: 'Purge CloudFront Cache'|t('flux'),
+      text: 'Purge Transformed Assets'|t('flux'),
+      data: {
+        action: 'flux/aws/purge-cloudfront',
+        confirm: 'This will remove all transformed files and invalidate CloudFront. Transformed versions will be regenerated the next time they are requested. Are you sure you want to proceed?'|t('flux'),
+      },
+    }) }}
+
+    {{ tag('button', {
+      type: 'button',
+      class: ['btn', 'formsubmit'],
+      text: 'Invalidate CloudFront'|t('flux'),
       data: {
         action: 'flux/aws/invalidate-cloudfront',
-        confirm: 'Are you sure you want to invalidate and clear the CloudFront cache for this site? Charges can apply over a certain number of invalidations per month.'|t('flux'),
+        confirm: 'Are you sure you want to invalidate and clear the CloudFront cache for this site?'|t('flux'),
       },
     }) }}
   </form>

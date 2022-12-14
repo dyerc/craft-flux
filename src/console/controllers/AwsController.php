@@ -54,4 +54,22 @@ class AwsController extends Controller
             return ExitCode::OK;
         }
     }
+
+    /**
+     * Purges all transformed assets and invalidates CloudFront
+     *
+     * @return int
+     */
+    public function actionPurge(): int
+    {
+        $volumes = Craft::$app->getVolumes()->getAllVolumes();
+
+        foreach ($volumes as $volume) {
+            Flux::getInstance()->s3->purgeAllTransformedVersions($volume);
+        }
+
+        Flux::getInstance()->cloudfront->invalidateCache();
+
+        return ExitCode::OK;
+    }
 }

@@ -13,7 +13,7 @@ class LambdaDeployJob extends BaseJob
 {
     protected function defaultDescription(): ?string
     {
-        return "Updating AWS";
+        return "Updating AWS Flux Installation";
     }
 
     public function execute($queue): void

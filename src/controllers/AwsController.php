@@ -15,6 +15,7 @@ use craft\web\Controller;
 use dyerc\flux\helpers\PolicyHelper;
 use dyerc\flux\jobs\InvalidateCloudFrontJob;
 use dyerc\flux\jobs\LambdaDeployJob;
+use dyerc\flux\jobs\PurgeCloudFrontJob;
 use yii\web\Response;
 
 class AwsController extends Controller
@@ -61,7 +62,19 @@ class AwsController extends Controller
 
         Queue::push(new InvalidateCloudFrontJob());
 
-        $notice = Craft::t('flux', 'Purging CloudFront cache');
+        $notice = Craft::t('flux', 'Invalidating CloudFront');
+        Craft::$app->getSession()->setNotice($notice);
+
+        return $this->redirectToPostedUrl();
+    }
+
+    public function actionPurgeCloudfront(): Response
+    {
+        $this->requirePostRequest();
+
+        Queue::push(new PurgeCloudFrontJob());
+
+        $notice = Craft::t('flux', 'Purging CloudFront');
         Craft::$app->getSession()->setNotice($notice);
 
         return $this->redirectToPostedUrl();

@@ -128,9 +128,9 @@ class Flux extends Plugin
         );
 
         /*
-         *  Purge all transformed version when the asset is changed. Image manipulation through
-         *  the admin area such as cropping seems to show up as a change without any dirty attributes/fields
-         *  so purge everything, no matter how minor the change.
+         *  Purge all transformed versions when the asset is changed. Image manipulation through
+         *  the admin area such as cropping seems to show up as a change without any dirty
+         *  attributes/fields, so purge everything, no matter how minor the change.
          */
         Event::on(Asset::class, Asset::EVENT_BEFORE_SAVE,
             function (ModelEvent $event) use ($settings) {
@@ -149,7 +149,9 @@ class Flux extends Plugin
             }
         );
 
-        // Purge objects after an asset is deleted
+        /*
+         *  Purge transformed versions before an asset is deleted
+         */
         Event::on(Asset::class, Asset::EVENT_BEFORE_DELETE,
             function (ModelEvent $event) use ($settings) {
                 /* @var SettingsModel */

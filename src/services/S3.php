@@ -11,6 +11,7 @@ use Aws\S3\S3Client;
 use Craft;
 use craft\elements\Asset;
 use craft\helpers\App;
+use craft\models\Volume;
 use dyerc\flux\Flux;
 use dyerc\flux\helpers\PolicyHelper;
 use dyerc\flux\models\SettingsModel;
@@ -258,5 +259,67 @@ class S3 extends Component
         }
 
         $this->deleteObjects($deleteObjects);
+    }
+
+    public function purgeAllTransformedVersions(Volume $volume, array $ignore = [])
+    {
+        /* @var SettingsModel */
+        $settings = Flux::getInstance()->getSettings();
+        $rootPrefix = App::parseEnv($settings->rootPrefix);
+
+        $prefix = $volume->handle;
+
+        if (strlen($rootPrefix) > 0) {
+            $prefix = $rootPrefix . "/" . $prefix;
+        }
+
+        $items = $this->listObjects($prefix);
+        $items = $this->filterAssetPaths($items, $ignore, $prefix);
+
+        /*
+         *  For non S3 filesystems, everything must be a Flux related file so wipe everything
+         *  within the volume prefix. Otherwise only delete files that match our transform
+         *  related pattern
+         */
+        if (is_a($volume->fs, "craft\\awss3\\Fs")) {
+            $deleteObjects = [];
+
+            // Remove all live assets from the list, just to be doubly sure nothing live can be deleted
+            $items = $this->filterAssetPaths($items, Asset::find()->volume($volume)->all(), $prefix);
+
+            foreach ($items as $item) {
+                $rel = substr($item, strlen($prefix) + 1); // +1 to remove first /
+
+                $parent = basename(dirname($rel));
+
+                /*
+                 * $parent will start with '_' if it is a transform folder
+                 * basename($rel) will be the filename
+                 */
+                if (str_starts_with($parent, '_')) {
+                    $deleteObjects[] = $item;
+                }
+            }
+            $this->deleteObjects($deleteObjects);
+        } else {
+            $this->deleteObjects($items);
+        }
+    }
+
+    /**
+     * @param string[] $paths
+     * @param Asset[] $needles
+     * @param string $prefix
+     * @return array
+     */
+    private function filterAssetPaths(array $paths, array $needles, string $prefix): array
+    {
+        $prefixedNeedles = array_map(function ($asset) use ($prefix) {
+            return $prefix . $asset->path;
+        }, $needles);
+
+        return array_filter($paths, function ($item) use ($prefixedNeedles) {
+            return !in_array($item, $prefixedNeedles);
+        });
     }
 }

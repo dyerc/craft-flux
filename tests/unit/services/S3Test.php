@@ -20,7 +20,7 @@ class S3Test extends TestCase
      */
     protected $tester;
 
-    public function testPurgesAssets()
+    public function testPurgesAsset()
     {
         $asset = $this->make(Asset::class, [
             'getVolume' => $this->make(Volume::class, [
@@ -39,16 +39,19 @@ class S3Test extends TestCase
         Flux::getInstance()->set('s3', $this->make(S3::class, [
             'listObjects' => Expected::once(function () {
                 return [
+                    'Flux/volume/foo.webp',
                     'Flux/volume/foo.jpg',
                     'Flux/volume/bar.jpg',
                     'Flux/volume/_159x240_crop_center-center_80/foo.jpg',
+                    'Flux/volume/_159x240_crop_center-center_80/foo.webp',
                     'Flux/volume/_159x240_crop_center-center_80/bar.jpg',
                 ];
             }),
             'deleteObjects' => Expected::once(function ($objects) {
                 $this->assertSame([
                     "Flux/volume/foo.jpg",
-                    "Flux/volume/_159x240_crop_center-center_80/foo.jpg"
+                    "Flux/volume/_159x240_crop_center-center_80/foo.jpg",
+                    "Flux/volume/_159x240_crop_center-center_80/foo.webp"
                 ], $objects);
             })
         ]));
@@ -56,7 +59,7 @@ class S3Test extends TestCase
         Flux::getInstance()->s3->purgeTransformedVersions($asset);
     }
 
-    public function testPurgesAssetsFromS3()
+    public function testPurgesAssetFromS3()
     {
         Flux::$plugin->settings->rootPrefix = "";
 
@@ -93,5 +96,92 @@ class S3Test extends TestCase
         ]));
 
         Flux::getInstance()->s3->purgeTransformedVersions($asset);
+    }
+
+    public function testPurgesAllAssets()
+    {
+        Flux::$plugin->settings->rootPrefix = "Flux";
+
+        $volume = $this->make(Volume::class, [
+            'getFs' => $this->make(Fs::class, [
+                'hasUrls' => true,
+            ]),
+            'getTransformFs' => $this->make(Fs::class, [
+                'hasUrls' => true,
+            ]),
+            'handle' => 'volume',
+        ]);
+
+        Flux::getInstance()->set('s3', $this->make(S3::class, [
+            'listObjects' => Expected::once(function () {
+                return [
+                    'Flux/volume/foo.webp',
+                    'Flux/volume/foo.jpg',
+                    'Flux/volume/bar.jpg',
+                    'Flux/volume/_159x240_crop_center-center_80/foo.jpg',
+                    'Flux/volume/_159x240_crop_center-center_80/foo.webp',
+                    'Flux/volume/_159x240_crop_center-center_80/bar.jpg',
+                ];
+            }),
+            'deleteObjects' => Expected::once(function ($objects) {
+                $this->assertSame([
+                    'Flux/volume/foo.webp',
+                    'Flux/volume/foo.jpg',
+                    'Flux/volume/bar.jpg',
+                    'Flux/volume/_159x240_crop_center-center_80/foo.jpg',
+                    'Flux/volume/_159x240_crop_center-center_80/foo.webp',
+                    'Flux/volume/_159x240_crop_center-center_80/bar.jpg',
+                ], $objects);
+            })
+        ]));
+
+        Flux::getInstance()->s3->purgeAllTransformedVersions($volume);
+    }
+
+    public function testPurgesAllAssetsFromS3()
+    {
+        Flux::$plugin->settings->rootPrefix = "Flux";
+
+        $volume = $this->make(Volume::class, [
+            'getFs' => $this->make(AwsFs::class, [
+                'hasUrls' => true,
+            ]),
+            'getTransformFs' => $this->make(Fs::class, [
+                'hasUrls' => true,
+            ]),
+            'handle' => 'volume',
+        ]);
+
+        $asset = $this->make(Asset::class, [
+            'getVolume' => $volume,
+            'folderPath' => '/_actual/',
+            'filename' => 'foo.jpg',
+        ]);
+
+        Flux::getInstance()->set('s3', $this->make(S3::class, [
+            'listObjects' => Expected::once(function () {
+                return [
+                    'Flux/volume/foo.webp',
+                    'Flux/volume/foo.jpg',
+                    'Flux/volume/bar.jpg',
+                    'Flux/volume/myfolder/_159x240_crop_center-center_80/bar.jpg',
+                    'Flux/volume/_actual/foo.jpg',
+                    'Flux/volume/_myfolder/another/bar.jpg',
+                    'Flux/volume/_159x240_crop_center-center_80/foo.jpg',
+                    'Flux/volume/_159x240_crop_center-center_80/foo.webp',
+                    'Flux/volume/_159x240_crop_center-center_80/bar.jpg',
+                ];
+            }),
+            'deleteObjects' => Expected::once(function ($objects) {
+                $this->assertSame([
+                    'Flux/volume/myfolder/_159x240_crop_center-center_80/bar.jpg',
+                    'Flux/volume/_159x240_crop_center-center_80/foo.jpg',
+                    'Flux/volume/_159x240_crop_center-center_80/foo.webp',
+                    'Flux/volume/_159x240_crop_center-center_80/bar.jpg',
+                ], $objects);
+            })
+        ]));
+
+        Flux::getInstance()->s3->purgeAllTransformedVersions($volume, [$asset]);
     }
 }
