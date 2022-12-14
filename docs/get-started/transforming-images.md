@@ -1,6 +1,6 @@
 # Transform Parameters
 
-Flux aims to be a drop-in replacement for Craft's own built in image transforms. At present, focal points defined through the Craft assets area are not supported. You can transform your assets with Flux in any of the following ways:
+Flux aims to be a drop-in replacement for Craft's own built in image transforms. You can transform your assets with Flux in any of the following ways:
 
 Directly within a template:
 

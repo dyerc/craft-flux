@@ -11,9 +11,9 @@ Flux integrates your site image transforms with AWS, using Lambda and CloudFront
 - Process image transforms on demand, only when they are requested by the user
 - Automatically serve WebP to browsers that support it without having to explicitly define WebP transforms in your templates
 - Supports all Craft filesystems, including local folders
-- Compatible with your existing Craft template code and named transforms. Simply enable Flux and your templates don't need to change
+- Compatible with your existing Craft template code, named transforms and focal points. Simply enable Flux and your templates don't need to change
 - Transforms are completely URL based, no database queries are needed
-- Automatically purge and invalidate CloudFront when assets change
+- Automatically purges transformed files when assets change
 
 <br>
 <p><img src="https://raw.githubusercontent.com/dyerc/craft-flux/master/docs/resources/how_it_works.svg"></p>
@@ -39,12 +39,6 @@ To install the plugin, search for “Flux” in the Craft Plugin Store, or insta
 ```shell
 composer require dyerc/craft-flux
 ```
-
-## Roadmap
-
-- [ ] Support for asset focal points defined in the Craft admin area
-- [ ] Reduce reliance on CloudFront invalidations when assets are changed
-- [ ] Animated gif support
 
 ---
 
