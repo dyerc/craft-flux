@@ -258,6 +258,11 @@ class S3 extends Component
             }
         }
 
+        Craft::info(
+            "Purging transformed versions of asset [" . $asset->id . "]: " . join(", ", $deleteObjects),
+            __METHOD__
+        );
+
         $this->deleteObjects($deleteObjects);
     }
 
