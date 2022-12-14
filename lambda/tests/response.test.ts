@@ -247,7 +247,7 @@ describe('response', () => {
     mockS3Client.on(PutObjectCommand).resolves({});
     mockS3Client.on(PutObjectCommand).resolves({});
 
-    const result = await handle("/testAssets/_1400x300_crop_0.476-0.129/image.jpg?mode=fit&pos=0.4763-0.1287&w=1400&h=300", { status: "403" }, { loggingEnabled: true, verifyQuery: false });
+    const result = await handle("/testAssets/_1400x300_crop_0.476-0.129/image.jpg?mode=fit&pos=0.4763-0.1287&w=1400&h=300", { status: "403" }, { verifyQuery: false });
 
     expect(result.status).toEqual("200");
     // @ts-ignore

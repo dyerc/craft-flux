@@ -11,6 +11,7 @@
 namespace dyerc\flux;
 
 use Craft;
+use craft\base\Element;
 use craft\base\Model;
 use craft\base\Plugin;
 use craft\elements\Asset;
@@ -132,7 +133,7 @@ class Flux extends Plugin
          *  the admin area such as cropping seems to show up as a change without any dirty
          *  attributes/fields, so purge everything, no matter how minor the change.
          */
-        Event::on(Asset::class, Asset::EVENT_BEFORE_SAVE,
+        Event::on(Asset::class, Element::EVENT_BEFORE_SAVE,
             function (ModelEvent $event) use ($settings) {
                 if ($event->isNew) {
                     return;
@@ -152,7 +153,7 @@ class Flux extends Plugin
         /*
          *  Purge transformed versions before an asset is deleted
          */
-        Event::on(Asset::class, Asset::EVENT_BEFORE_DELETE,
+        Event::on(Asset::class, Element::EVENT_BEFORE_DELETE,
             function (ModelEvent $event) use ($settings) {
                 /* @var SettingsModel */
                 $settings = $this->getSettings();
