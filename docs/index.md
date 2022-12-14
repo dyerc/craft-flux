@@ -11,9 +11,9 @@ Flux integrates your site image transforms with AWS, using Lambda and CloudFront
 - Process image transforms on demand, only when they are requested by the user
 - Automatically serve WebP to browsers that support it without having to explicitly define WebP transforms in your templates
 - Supports all Craft filesystems, including local folders
-- Compatible with your existing Craft template code and named transforms. Simply enable Flux and your templates don't need to change
+- Compatible with your existing Craft template code, named transforms and focal points. Simply enable Flux and your templates don't need to change
 - Transforms are completely URL based, no database queries are needed
-- Automatically purge and invalidate CloudFront when assets change
+- Automatically purges transformed files when assets change
 
 <br>
 

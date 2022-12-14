@@ -1,5 +1,13 @@
 # Flux Release Notes
 
+## 4.1.0 - 2022-12-14
+- Added asset focal point support
+- Added cache parameter, removing reliance on CloudFront invalidations when an asset is changed
+- Added action to purge all transformed files from utility screen
+- If a Lambda update is available, Flux will now display the target version
+- Fixed issue with purging outdated transformed files
+- Fixed issue with congruency of transform results between Craft and Flux
+
 ## 4.0.1 - 2022-12-01
 - Added additional verification that currently installed AWS configuration matches current Craft settings.
 - Added additional logging if a Craft volume can't be determined
