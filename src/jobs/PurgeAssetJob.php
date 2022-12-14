@@ -25,7 +25,7 @@ class PurgeAssetJob extends BaseJob
             $asset = Asset::find()->id($this->assetId)->one();
 
             if ($asset) {
-                Flux::getInstance()->cloudfront->purgeAsset($asset);
+                Flux::getInstance()->s3->purgeTransformedVersions($asset);
             }
         }
     }

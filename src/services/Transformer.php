@@ -63,6 +63,8 @@ class Transformer extends Component
             $transformKeys['f'] = $transform->format;
         }
 
+        $transformKeys['c'] = $this->getCacheKey($asset);
+
         $path .= '?' . http_build_query($transformKeys);
 
         // Must be handled last so that only the hmac is appended after hashing
@@ -72,5 +74,16 @@ class Transformer extends Component
         }
 
         return $root . $path;
+    }
+
+    public function getCacheKey(Asset $asset): string
+    {
+        $key = join("", [
+            $asset->dateCreated ? $asset->dateCreated->getTimestamp() : "0",
+            $asset->dateModified ? $asset->dateModified->getTimestamp() : "0",
+            $asset->dateUpdated ? $asset->dateUpdated->getTimestamp() : "0"
+        ]);
+
+        return hash("crc32b", $key);
     }
 }

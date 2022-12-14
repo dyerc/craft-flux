@@ -9,6 +9,7 @@ use Aws\Lambda\Exception\LambdaException;
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use Craft;
+use craft\elements\Asset;
 use craft\helpers\App;
 use dyerc\flux\Flux;
 use dyerc\flux\helpers\PolicyHelper;
@@ -204,5 +205,58 @@ class S3 extends Component
                 'Quiet' => true
             ]
         ]);
+    }
+
+    public function purgeTransformedVersions(Asset $asset)
+    {
+        /* @var SettingsModel */
+        $settings = Flux::getInstance()->getSettings();
+        $rootPrefix = App::parseEnv($settings->rootPrefix);
+
+        $path = Flux::getInstance()->transformer->getPath($asset);
+        if (strlen($rootPrefix) > 0) {
+            $path = $rootPrefix . "/" . $path;
+        }
+
+        $prefix = pathinfo($path, PATHINFO_DIRNAME);
+        $items = $this->listObjects($prefix);
+
+        $deleteObjects = [];
+
+        /*
+         * Remove the file itself if it is a cached object and not the actual asset itself. Double check for S3 based filesystems
+         */
+        $originalPath = (!empty($asset->fs->subfolder) ? rtrim($asset->fs->subfolder, '/') . '/' : '') . $asset->getPath();
+
+        if (!is_a($asset->volume->fs, "craft\\awss3\\Fs") && $originalPath != $path) {
+            $deleteObjects[] = $path;
+        }
+
+        /*
+            Match anything _transform/file.*
+            It would be good to use a regex, but we won't because this could potentially iterate
+            thousands of items
+        */
+        $fileName = pathinfo($asset->filename, PATHINFO_FILENAME);
+
+        /*
+         * Match any transformed files based on their path and file name
+         */
+        foreach ($items as $item) {
+            $rel = substr($item, strlen($prefix) + 1); // +1 to remove first /
+
+            $parent = dirname($rel);
+            $baseName = pathinfo($rel, PATHINFO_FILENAME);
+
+            /*
+             * $parent will start with '_' if it is a transform folder
+             * basename($rel) will be the filename
+             */
+            if (str_starts_with($parent, '_') && $fileName == $baseName) {
+                $deleteObjects[] = $item;
+            }
+        }
+
+        $this->deleteObjects($deleteObjects);
     }
 }

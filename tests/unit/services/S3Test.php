@@ -10,11 +10,10 @@ use craft\elements\Asset;
 use craft\models\Volume;
 use craft\test\TestCase;
 use dyerc\flux\Flux;
-use dyerc\flux\services\Cloudfront;
 use dyerc\flux\services\S3;
 use UnitTester;
 
-class CloudfrontTest extends TestCase
+class S3Test extends TestCase
 {
     /**
      * @var UnitTester
@@ -54,16 +53,7 @@ class CloudfrontTest extends TestCase
             })
         ]));
 
-        Flux::getInstance()->set('cloudfront', $this->make(Cloudfront::class, [
-            'invalidateCache' => Expected::once(function ($paths) {
-                $this->assertSame([
-                    "/volume/foo.jpg*",
-                    "/volume/_159x240_crop_center-center_80/foo.jpg*"
-                ], $paths);
-            })
-        ]));
-
-        Flux::getInstance()->cloudfront->purgeAsset($asset);
+        Flux::getInstance()->s3->purgeTransformedVersions($asset);
     }
 
     public function testPurgesAssetsFromS3()
@@ -102,15 +92,6 @@ class CloudfrontTest extends TestCase
             })
         ]));
 
-        Flux::getInstance()->set('cloudfront', $this->make(Cloudfront::class, [
-            'invalidateCache' => Expected::once(function ($paths) {
-                $this->assertSame([
-                    "/volume/foo.jpg*",
-                    "/volume/_159x240_crop_center-center_80/foo.jpg*"
-                ], $paths);
-            })
-        ]));
-
-        Flux::getInstance()->cloudfront->purgeAsset($asset);
+        Flux::getInstance()->s3->purgeTransformedVersions($asset);
     }
 }
