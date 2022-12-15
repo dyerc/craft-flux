@@ -1,4 +1,7 @@
 <?php
+/**
+ * @copyright Copyright (c) Chris Dyer
+ */
 
 namespace dyerc\fluxtests\unit\services;
 
@@ -48,7 +51,7 @@ class TransformerTest extends TestCase
         ]);
     }
 
-    protected function _removeCacheKeys($str)
+    protected function _removeCacheKeys($str): string
     {
         $str = preg_replace("/&c=\w+/", "", $str);
         $str = preg_replace("/&amp;c=\w+/", "", $str);

@@ -8,7 +8,6 @@ namespace dyerc\flux\variables;
 use craft\elements\Asset;
 use craft\helpers\ImageTransforms;
 use dyerc\flux\Flux;
-use dyerc\flux\models\SettingsModel;
 
 class FluxVariable
 {

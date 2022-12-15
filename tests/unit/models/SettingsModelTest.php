@@ -1,4 +1,7 @@
 <?php
+/**
+ * @copyright Copyright (c) Chris Dyer
+ */
 
 namespace dyerc\fluxtests\unit\models;
 
