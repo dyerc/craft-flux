@@ -163,26 +163,22 @@ class PolicyHelper
         /* @var SettingsModel */
         $settings = Flux::getInstance()->getSettings();
 
-        $policy = [
+        return [
             'Version' => '2012-10-17',
-            'Statement' => []
-        ];
-
-        if ($settings->loggingEnabled) {
-            $policy['Statement'][] = [
-                'Effect' => 'Allow',
-                'Action' => [
-                    "logs:CreateLogGroup",
-                    "logs:CreateLogStream",
-                    "logs:PutLogEvents"
-                ],
-                'Resource' => [
-                    "arn:aws:logs:*:*:*"
+            'Statement' => [
+                [
+                    'Effect' => $settings->loggingEnabled ? 'Allow' : 'Deny',
+                    'Action' => [
+                        "logs:CreateLogGroup",
+                        "logs:CreateLogStream",
+                        "logs:PutLogEvents"
+                    ],
+                    'Resource' => [
+                        "arn:aws:logs:*:*:*"
+                    ]
                 ]
-            ];
-        }
-
-        return $policy;
+            ]
+        ];
     }
 
     public static function prettyPrint(mixed $data): string
