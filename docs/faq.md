@@ -19,7 +19,7 @@ In real-world situations, CloudFront bandwidth is most likely to be the largest 
 
 #### Lambda Image Serving (Viewer Request Function)
 
-Viewer requests are often processed in fast as 3ms, although sometimes they can take as long as 180ms. I haven't yet found a discernible reason for the variance other than CloudFront/Lambda resource contention. The 40ms estimate below is used as a pessimistic average. 
+Viewer requests are often processed in as fast as 3ms, although sometimes they can take as long as 180ms. I haven't yet found a discernible reason for the variance other than CloudFront/Lambda resource contention. The 40ms estimate below is used as a pessimistic average. 
 
 *Below are example approximate Lambda costs assuming a 128MB memory allocation. These are purely to give you a rough idea.*
 | Request Count | Billed Duration | Price       |
