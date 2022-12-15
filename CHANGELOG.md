@@ -1,5 +1,11 @@
 # Flux Release Notes
 
+## 4.1.1 - 2022-12-15
+- By default, logging to CloudWatch is now disabled
+- Fixed error installing to AWS when logging is disabled
+- `flux/aws/update` console command will now check version and configuration before reinstalling if necessary
+- Fixed issue with retrieving CloudFront status
+
 ## 4.1.0 - 2022-12-14
 - Added asset focal point support
 - Added cache parameter, removing reliance on CloudFront invalidations when an asset is changed
