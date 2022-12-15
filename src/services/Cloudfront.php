@@ -6,7 +6,7 @@
 namespace dyerc\flux\services;
 
 use Aws\CloudFront\CloudFrontClient;
-use Aws\Lambda\Exception\LambdaException;
+use Aws\CloudFront\Exception\CloudFrontException;
 use craft\helpers\App;
 use dyerc\flux\Flux;
 use dyerc\flux\models\SettingsModel;
@@ -75,7 +75,7 @@ class Cloudfront extends Component
                 'installed' => $distribution['Distribution']['DistributionConfig']['DefaultCacheBehavior']['LambdaFunctionAssociations']['Quantity'] == 2,
                 'domain' => $distribution['Distribution']['DomainName']
             ];
-        } catch (LambdaException $e) {
+        } catch (CloudFrontException $e) {
             return null;
         }
     }

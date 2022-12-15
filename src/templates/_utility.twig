@@ -32,7 +32,7 @@
     {# CloudFront #}
     <tr>
       <td class="thin centeralign">
-        {% if cloudfront.installed != true %}
+        {% if not cloudfront or cloudfront.installed != true %}
           <span class="error" title="{{ 'Failed'|t('app') }}" aria-label="{{ 'Failed'|t('app') }}" data-icon="error"></span>
         {% else %}
           <span class="success" title="{{ 'Passed'|t('app') }}" aria-label="{{ 'Passed'|t('app') }}" data-icon="check"></span>
