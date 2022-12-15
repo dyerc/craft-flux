@@ -79,12 +79,27 @@ class Lambda extends Component
         }
     }
 
-    public function getInstalledVersion(): string|null
+    public function getInstalledVersion(array|null $status = null): string|null
     {
-        $status = $this->getFunctionStatuses();
+        if (!$status) {
+            $status = $this->getFunctionStatuses();
+        }
 
         if ($status['viewerRequest'] && $status['originResponse']) {
             return $status['viewerRequest']['version'] == $status['originResponse']['version'] ? $status['viewerRequest']['version'] : null;
+        } else {
+            return null;
+        }
+    }
+
+    public function getConfigVersion(array|null $status = null): string|null
+    {
+        if (!$status) {
+            $status = $this->getFunctionStatuses();
+        }
+
+        if ($status['viewerRequest'] && $status['originResponse']) {
+            return $status['viewerRequest']['config'] == $status['originResponse']['config'] ? $status['viewerRequest']['config'] : null;
         } else {
             return null;
         }

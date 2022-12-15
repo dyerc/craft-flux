@@ -4,10 +4,10 @@
 
 Flux will incur AWS usage costs for the following services:
 
-- Lambda + Lambda@Edge: request processing
-- S3: transformed asset storage
-- CloudFront: bandwidth serving images
-- CloudWatch: logging (only if enabled)
+- **Lambda + Lambda@Edge**: request processing
+- **S3**: transformed asset storage
+- **CloudFront**: bandwidth serving images
+- **CloudWatch**: logging (only if enabled)
 
 It is difficult to estimate costs because all charges are related to your unique usage characteristics. For instance: 
 
@@ -42,7 +42,7 @@ Flux can be installed as a Craft plugin in the normal way, either through **Sett
 
 1. Delete the CloudFront distribution you created when installing Flux
 2. Delete 2x Lambda functions from the `us-east-1` region
-3. Delete the S3 bucket you created when installing Flux
+3. Delete the S3 bucket you created when installing Flux. If Flux shared this bucket with other applications or Flux installations, edit the bucket policy to remove any *Statement* sections where *Principal* → *AWS* contains your AWS resource prefix.
 4. Remove any logs from CloudWatch
 5. Delete the IAM user you created when installing Flux
 6. In IAM → Roles, delete 2x roles beginning with your prefix and ending `-Viewer-Request-Role` + `-Origin-Response-Role`

@@ -25,3 +25,11 @@ This will keep Flux installed, but disable it in all environments except for pro
 ## Deployment Process
 
 Flux is designed to be installed to AWS whenever you amend Flux settings or update the plugin. You can check on the status of Flux's installation, purge the cache or install it through the Utilities section of your Craft admin area.
+
+You can automate the process of reinstalling Flux if necessary within your deployment process by running the following console command:
+
+```shell
+php craft flux/aws/update
+```
+
+If the Flux installation live on AWS is an outdated version or contains an outdated configuration, Flux will be reinstalled. To reinstall Flux from the console you can use the `flux/aws/install` command which will not check the current status or config.

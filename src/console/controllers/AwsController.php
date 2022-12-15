@@ -8,6 +8,7 @@ namespace dyerc\flux\console\controllers;
 use Craft;
 use dyerc\flux\Flux;
 use craft\console\Controller;
+use dyerc\flux\models\SettingsModel;
 use yii\console\ExitCode;
 
 class AwsController extends Controller
@@ -45,9 +46,18 @@ class AwsController extends Controller
      */
     public function actionUpdate(): int
     {
-        $lambda = Flux::getInstance()->lambda;
+        /* @var SettingsModel */
+        $settings = Flux::getInstance()->getSettings();
 
-        if (Flux::getInstance()->version != $lambda->getInstalledVersion()) {
+        $lambda = Flux::getInstance()->lambda;
+        $status = $lambda->getFunctionStatuses();
+        $configHash = $settings->lambdaConfigHash();
+
+        if (Flux::getInstance()->version != $lambda->getInstalledVersion($status)) {
+            $this->stdout(Craft::t('flux', 'Updating Flux installation to version ' . Flux::getInstance()->version) . PHP_EOL);
+            return $this->actionInstall();
+        } else if ($lambda->getConfigVersion($status) != $configHash) {
+            $this->stdout(Craft::t('flux', 'Flux installed configuration is outdated, reinstalling version ' . Flux::getInstance()->version) . PHP_EOL);
             return $this->actionInstall();
         } else {
             $this->stdout(Craft::t('flux', 'Flux version ' . Flux::getInstance()->version . ' is installed and up-to-date'). PHP_EOL);

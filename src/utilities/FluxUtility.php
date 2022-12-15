@@ -132,7 +132,7 @@ class FluxUtility extends Utility
         if ($installed) {
             $version = $status['viewerRequest']['version'] == $status['originResponse']['version'] ? $status['viewerRequest']['version'] : "Mismatch";
 
-            $configCurrent = $status['viewerRequest']['config'] == $status['originResponse']['config'] && $status['viewerRequest']['config'] == $configHash;
+            $configCurrent = Flux::getInstance()->lambda->getConfigVersion($status) == $configHash;
 
             return [
                 'installed' => true,
