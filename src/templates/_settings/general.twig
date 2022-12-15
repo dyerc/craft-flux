@@ -4,7 +4,7 @@
 <div class="flex">
   <div class="flex-grow field">
     {{ forms.lightswitchField({
-      instructions: 'Intercept image transforms and route them through CloudFront'|t('flux'),
+      instructions: 'Intercept image transforms and route them through Flux and CloudFront'|t('flux'),
       label: "Enabled"|t('flux'),
       warning: config.enabled is defined ? configWarning('enabled'),
       name: 'settings[enabled]',
@@ -20,7 +20,7 @@
     }) }}
 
     {{ forms.lightswitchField({
-      instructions: 'For local asset file systems, store a duplicate in S3 to speed up processing asset variations. This will use more storage space in S3 at the expense of faster transforms. Has no effect for S3 based filesystems.'|t('flux'),
+      instructions: 'For local asset file systems, store a duplicate in S3 to speed up processing asset variations. This will use more storage space in S3 at the expense of faster transforms. For S3 based filesystems this option has no effect because the original versions are already accessible.'|t('flux'),
       label: "Cached Original Assets"|t('flux'),
       warning: config.cacheEnabled is defined ? configWarning('cacheEnabled'),
       name: 'settings[cacheEnabled]',
@@ -28,7 +28,7 @@
     }) }}
 
     {{ forms.lightswitchField({
-      instructions: 'When an asset is changed, automatically submit a CloudFront invalidation and purge any transformed files clearing the cache.'|t('flux'),
+      instructions: 'When an asset is changed, automatically delete any transformed variations from S3.'|t('flux'),
       label: "Auto Purge Assets"|t('flux'),
       warning: config.autoPurgeAssets is defined ? configWarning('autoPurgeAssets'),
       name: 'settings[autoPurgeAssets]',
