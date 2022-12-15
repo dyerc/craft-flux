@@ -26,7 +26,7 @@
 }) }}
 
 {{ forms.lightswitchField({
-  instructions: 'Log more detailed information to CloudWatch.'|t('flux'),
+  instructions: 'Send logs to AWS CloudWatch. CloudFront will create log groups in the region where the request is served (ie. closest to the user). By default logs have an unlimited retention period and are therefore best left disabled unless debugging or profiling.'|t('flux'),
   label: "Enable Logging"|t('flux'),
   warning: config.loggingEnabled is defined ? configWarning('loggingEnabled'),
   name: 'settings[loggingEnabled]',

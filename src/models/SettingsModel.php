@@ -105,7 +105,7 @@ class SettingsModel extends Model
     /**
      * @var bool Log more detailed information to CloudWatch
      */
-    public bool $loggingEnabled = true;
+    public bool $loggingEnabled = false;
 
     /**
      * @var int Maximum memory origin response function can use
