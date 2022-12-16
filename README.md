@@ -16,6 +16,7 @@ Flux integrates your site image transforms with AWS, using Lambda and CloudFront
 - Automatically purges transformed files when assets change
 
 <br>
+
 <p><img src="https://raw.githubusercontent.com/dyerc/craft-flux/master/docs/resources/how_it_works.svg"></p>
 
 <p><img src="https://raw.githubusercontent.com/dyerc/craft-flux/master/docs/resources/flux_difference_graph.svg"></p>
