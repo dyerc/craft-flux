@@ -1,6 +1,5 @@
 {% extends '_layouts/cp' %}
 
-
 {% do view.registerAssetBundle('dyerc\\flux\\assetbundles\\FluxAssets') %}
 
 {% set crumbs = [
@@ -9,21 +8,26 @@
 ] %}
 
 {% set title = 'Flux' %}
-
-{% set tabs = {
-  general: {label: 'General Settings'|t('flux'), url: '#general'},
-  aws: {label: 'AWS Settings'|t('flux'), url: '#aws'},
-  advanced: {label: 'Advanced Settings'|t('flux'), url: '#advanced'},
-} %}
-
 {% set fullPageForm = true %}
 
+{% set tabs = {
+  general: {
+    label: 'General Settings'|t('flux'),
+    url: '#general'
+  },
+  aws: {
+    label: 'AWS Settings'|t('flux'),
+    url: '#aws'
+  },
+  advanced: {
+    label: 'Advanced Settings'|t('flux'),
+    url: '#advanced'
+  },
+} %}
+
 {% block actionButton %}
-
   <a href="{{ url('settings/plugins/flux?wizard=1') }}" class="btn">Run Setup Wizard</a>
-
   <input type="submit" class="btn submit" value="{{ 'Save'|t('app') }}">
-
 {% endblock %}
 
 {% block main %}
