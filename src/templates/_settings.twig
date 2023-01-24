@@ -18,19 +18,6 @@
 
 {% set fullPageForm = true %}
 
-{% set siteColumn = [] %}
-{% if craft.app.getIsMultiSite() %}
-  {% set allSiteOptions = [{value: '', label: 'All Sites'|t('flux')}]|merge(siteOptions) %}
-  {% set siteColumn = {
-    siteId: {
-      type: 'select',
-      heading: 'Site'|t('flux'),
-      options: allSiteOptions,
-      thin: true,
-    }
-  } %}
-{% endif %}
-
 {% block actionButton %}
 
   <a href="{{ url('settings/plugins/flux?wizard=1') }}" class="btn">Run Setup Wizard</a>
