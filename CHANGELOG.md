@@ -1,5 +1,8 @@
 # Flux Release Notes
 
+## 4.1.2 - 2023-01-24
+- Fix an issue in multi-site Craft installs
+
 ## 4.1.1 - 2022-12-15
 - By default, logging to CloudWatch is now disabled
 - Fixed error installing to AWS when logging is disabled
