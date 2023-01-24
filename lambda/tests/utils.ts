@@ -3,7 +3,10 @@ import {
   CloudFrontOrigin,
   CloudFrontEvent,
   CloudFrontResponse,
-  CloudFrontRequestEvent, Context, CloudFrontResponseEvent, CloudFrontHeaders
+  CloudFrontRequestEvent,
+  Context,
+  CloudFrontResponseEvent,
+  CloudFrontHeaders,
 } from "aws-lambda";
 
 import path from "path";
@@ -43,7 +46,7 @@ type CloudFrontEventResponseOptions = {
   querystring?: string;
   requestHeaders?: { [name: string]: { key: string; value: string }[] };
   method?: string;
-  status?: string
+  status?: string;
 };
 
 export type OriginRequestEvent = {
@@ -59,7 +62,7 @@ export const createCloudFrontRequestEvent = ({
   querystring,
   requestHeaders = {},
   method = "GET",
-  body = undefined
+  body = undefined,
 }: CloudFrontEventRequestOptions): CloudFrontRequestEvent => ({
   Records: [
     {
@@ -74,16 +77,16 @@ export const createCloudFrontRequestEvent = ({
             host: [
               {
                 key: "host",
-                value: host
-              }
+                value: host,
+              },
             ],
-            ...requestHeaders
+            ...requestHeaders,
           },
-          body: body
-        }
-      }
-    }
-  ]
+          body: body,
+        },
+      },
+    },
+  ],
 });
 
 export const createCloudFrontResponseEvent = ({
@@ -93,7 +96,7 @@ export const createCloudFrontResponseEvent = ({
   querystring,
   requestHeaders = {},
   method = "GET",
-  status = "200"
+  status = "200",
 }: CloudFrontEventResponseOptions): CloudFrontResponseEvent => ({
   Records: [
     {
@@ -108,20 +111,20 @@ export const createCloudFrontResponseEvent = ({
             host: [
               {
                 key: "host",
-                value: host
-              }
+                value: host,
+              },
             ],
-            ...requestHeaders
-          }
+            ...requestHeaders,
+          },
         },
         response: {
           headers: {},
           status: status,
-          statusDescription: 'OK'
-        }
-      }
-    }
-  ]
+          statusDescription: "OK",
+        },
+      },
+    },
+  ],
 });
 
 export const createCloudfrontContext = (): Context => {
@@ -137,53 +140,55 @@ export const createCloudfrontContext = (): Context => {
     getRemainingTimeInMillis(): number {
       return 0;
     },
-    done(error?: Error, result?: any) {
-    },
-    fail(error: Error | string) {
-    },
-    succeed(messageOrObject: any) {
-    }
+    done(error?: Error, result?: any) {},
+    fail(error: Error | string) {},
+    succeed(messageOrObject: any) {},
   };
-}
+};
 
 export const createOriginServer = (paths = {}) => {
-  return http.createServer((req, res) => {
-    if (req.url != null) {
-      const parsedUrl = url.parse(req.url);
-      // @ts-ignore
-      let pathname = paths[parsedUrl.pathname];
+  return http
+    .createServer((req, res) => {
+      if (req.url != null) {
+        const parsedUrl = url.parse(req.url);
+        // @ts-ignore
+        let pathname = paths[parsedUrl.pathname];
 
-      if (pathname) {
-        const ext = path.extname(pathname);
+        if (pathname) {
+          const ext = path.extname(pathname);
 
-        const map = {
-          '.html': 'text/html',
-          '.png': 'image/png',
-          '.jpg': 'image/jpeg',
-          '.svg': 'image/svg+xml'
-        };
+          const map = {
+            ".html": "text/html",
+            ".png": "image/png",
+            ".jpg": "image/jpeg",
+            ".svg": "image/svg+xml",
+          };
 
-        fs.readFile(path.join(__dirname, "fixtures", pathname), function (err, data) {
-          if (err) {
-            if (err.code === 'ENOENT') {
-              res.statusCode = 404;
-              res.end(`File ${pathname} not found!`);
-            } else {
-              res.statusCode = 500;
-              res.end(`Error getting the file: ${err}.`);
+          fs.readFile(
+            path.join(__dirname, "fixtures", pathname),
+            function (err, data) {
+              if (err) {
+                if (err.code === "ENOENT") {
+                  res.statusCode = 404;
+                  res.end(`File ${pathname} not found!`);
+                } else {
+                  res.statusCode = 500;
+                  res.end(`Error getting the file: ${err}.`);
+                }
+              } else {
+                // @ts-ignore
+                res.setHeader("Content-type", map[ext] || "text/plain");
+                res.end(data);
+              }
             }
-          } else {
-            // @ts-ignore
-            res.setHeader('Content-type', map[ext] || 'text/plain');
-            res.end(data);
-          }
-        });
+          );
+        } else {
+          res.statusCode = 404;
+          res.end(`Path not in mapping`);
+        }
       } else {
-        res.statusCode = 404;
-        res.end(`Path not in mapping`);
+        res.end();
       }
-    } else {
-      res.end();
-    }
-  }).listen(4000);
-}
+    })
+    .listen(4000);
+};

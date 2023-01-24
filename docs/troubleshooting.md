@@ -25,7 +25,7 @@ CloudFront will cache responses and unless this yields an error code, Flux won't
 
 ## Enable and check the logs
 
-Under **Settings** → **Advanced Settings**, check **Enable Logging** is turned on. With this setting enabled Flux will output more debugging information to CloudWatch. 
+Under **Settings** → **Advanced Settings**, check **Enable Logging** is turned on. With this setting enabled Flux will output more debugging information to CloudWatch.
 
 In your AWS console, under **CloudWatch** → **Logs** → **Log groups**, you should see two entries for each Flux installation. This might look something similar to the below:
 

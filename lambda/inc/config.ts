@@ -1,38 +1,38 @@
 export enum FluxSourceType {
-  REMOTE = 'remote',
-  LOCAL = 'local'
+  REMOTE = "remote",
+  LOCAL = "local",
 }
 
 export interface FluxSource {
-  handle: string
-  type: string
+  handle: string;
+  type: string;
 
   // Remote
-  url?: string
+  url?: string;
 
   // S3
-  region?: string
-  bucket?: string
-  subFolder?: string
+  region?: string;
+  bucket?: string;
+  subFolder?: string;
 }
 
 export interface FluxConfig {
-  loggingEnabled: boolean
-  rootPrefix: string
-  sources: FluxSource[]
+  loggingEnabled: boolean;
+  rootPrefix: string;
+  sources: FluxSource[];
 
-  verifyQuery: boolean
-  verifySecret: string
+  verifyQuery: boolean;
+  verifySecret: string;
 
-  cachedEnabled: boolean
+  cachedEnabled: boolean;
 
-  bucket: string
-  region: string
+  bucket: string;
+  region: string;
 
-  jpegQuality: number
-  webpQuality: number
+  jpegQuality: number;
+  webpQuality: number;
 
-  acceptWebp: boolean
+  acceptWebp: boolean;
 }
 
 export const DefaultConfig: FluxConfig = {

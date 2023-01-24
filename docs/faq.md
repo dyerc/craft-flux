@@ -9,7 +9,7 @@ Flux will incur AWS usage costs for the following services:
 - **CloudFront**: bandwidth serving images
 - **CloudWatch**: logging (only if enabled)
 
-It is difficult to estimate costs because all charges are related to your unique usage characteristics. For instance: 
+It is difficult to estimate costs because all charges are related to your unique usage characteristics. For instance:
 
 - Number of images being served
 - Complexity of transform operations
@@ -19,22 +19,22 @@ In real-world situations, CloudFront bandwidth is most likely to be the largest 
 
 #### Lambda Image Serving (Viewer Request Function)
 
-Viewer requests are often processed in as fast as 3ms, although sometimes they can take as long as 180ms. I haven't yet found a discernible reason for the variance other than CloudFront/Lambda resource contention. The 40ms estimate below is used as a pessimistic average. 
+Viewer requests are often processed in as fast as 3ms, although sometimes they can take as long as 180ms. I haven't yet found a discernible reason for the variance other than CloudFront/Lambda resource contention. The 40ms estimate below is used as a pessimistic average.
 
-*Below are example approximate Lambda costs assuming a 128MB memory allocation. These are purely to give you a rough idea.*
-| Request Count | Billed Duration | Price       |
+_Below are example approximate Lambda costs assuming a 128MB memory allocation. These are purely to give you a rough idea._
+| Request Count | Billed Duration | Price |
 | ------------- | --------------- | ----------- |
-| 1             |    ~ 40ms       |  $0.0000016 |
-| 10K           |    ~ 40ms       |  $0.017     |
-| 1M            |    ~ 40ms       |  $2.40      |
+| 1 | ~ 40ms | $0.0000016 |
+| 10K | ~ 40ms | $0.017 |
+| 1M | ~ 40ms | $2.40 |
 
 #### Lambda Image Processing (Origin Response Function)
 
-*Below are example approximate Lambda costs assuming a 512MB memory allocation. These are purely to give you a rough idea.*
-| Output Image Size | Billed Duration | Price     |
+_Below are example approximate Lambda costs assuming a 512MB memory allocation. These are purely to give you a rough idea._
+| Output Image Size | Billed Duration | Price |
 | ----------------- | --------------- | --------- |
-| Very Small  ~70px |           360ms | $0.000009 |
-| Small   ~500px    |           500ms | $0.000012 |
+| Very Small ~70px | 360ms | $0.000009 |
+| Small ~500px | 500ms | $0.000012 |
 
 ## Uninstalling Flux
 
@@ -42,7 +42,7 @@ Flux can be installed as a Craft plugin in the normal way, either through **Sett
 
 1. Delete the CloudFront distribution you created when installing Flux
 2. Delete 2x Lambda functions from the `us-east-1` region
-3. Delete the S3 bucket you created when installing Flux. If Flux shared this bucket with other applications or Flux installations, edit the bucket policy to remove any *Statement* sections where *Principal* → *AWS* contains your AWS resource prefix.
+3. Delete the S3 bucket you created when installing Flux. If Flux shared this bucket with other applications or Flux installations, edit the bucket policy to remove any _Statement_ sections where _Principal_ → _AWS_ contains your AWS resource prefix.
 4. Remove any logs from CloudWatch
 5. Delete the IAM user you created when installing Flux
 6. In IAM → Roles, delete 2x roles beginning with your prefix and ending `-Viewer-Request-Role` + `-Origin-Response-Role`

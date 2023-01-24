@@ -84,7 +84,7 @@
   border-radius: var(--large-border-radius) var(--large-border-radius) 0 0;
   box-shadow: inset 0 -1px 0 0 rgb(154 165 177 / 25%);
   box-sizing: border-box;
-  margin: calc(var(--xl)*-1) var(--neg-padding) var(--xl);
+  margin: calc(var(--xl) * -1) var(--neg-padding) var(--xl);
   padding: var(--m) var(--xl);
 
   display: flex;

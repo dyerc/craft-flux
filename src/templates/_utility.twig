@@ -1,6 +1,8 @@
-{% import "_includes/forms" as forms %}
+{% import '_includes/forms' as forms %}
 
-<h1 style="margin-bottom: 1rem;">{{ "Installation Status"|t('flux') }}</h1>
+<h1 style="margin-bottom: 1rem;">
+  {{ 'Installation Status'|t('flux') }}
+</h1>
 
 <table class="data fullwidth" dir="ltr">
   <tbody>
@@ -8,22 +10,47 @@
     <tr>
       <td class="thin centeralign">
         {% if lambda.installed != true %}
-          <span class="error" title="{{ 'Failed'|t('app') }}" aria-label="{{ 'Failed'|t('app') }}" data-icon="error"></span>
+          <span class="error"
+            title="{{ 'Failed'|t('app') }}"
+            aria-label="{{ 'Failed'|t('app') }}"
+            data-icon="error">
+
+          </span>
         {% elseif lambda.updateAvailable %}
-          <span class="warning" title="{{ 'Update available'|t('flux') }}" aria-label="{{ 'Update available'|t('flux') }}" data-icon="alert"></span>
+          <span class="warning"
+            title="{{ 'Update available'|t('flux') }}"
+            aria-label="{{ 'Update available'|t('flux') }}"
+            data-icon="alert">
+
+          </span>
         {% elseif not lambda.configCurrent %}
-          <span class="warning" title="{{ 'Configuration outdated'|t('flux') }}" aria-label="{{ 'Configuration outdated'|t('flux') }}" data-icon="alert"></span>
+          <span class="warning"
+            title="{{ 'Configuration outdated'|t('flux') }}"
+            aria-label="{{ 'Configuration outdated'|t('flux') }}"
+            data-icon="alert">
+
+          </span>
         {% else %}
-          <span class="success" title="{{ 'Passed'|t('app') }}" aria-label="{{ 'Passed'|t('app') }}" data-icon="check"></span>
+          <span class="success"
+            title="{{ 'Passed'|t('app') }}"
+            aria-label="{{ 'Passed'|t('app') }}"
+            data-icon="check">
+
+          </span>
         {% endif %}
       </td>
       <td>
-        Lambda Functions
-        {% if lambda.installed %}
+        Lambda Functions{% if lambda.installed %}
           <span class="info">
-            Version: {{ lambda.version }} {% if lambda.updateAvailable %}({{ lambda.availableVersion }} Available){% endif %}<br />
-            Configuration: {% if lambda.configCurrent %}Current{% else %}Needs Update{% endif %}<br />
-            Installed: {{ lambda.lastModified|date("F jS \\a\\t g:ia") }}
+            Version: {{ lambda.version }} {% if lambda.updateAvailable %}
+              ({{ lambda.availableVersion }} Available)
+            {% endif %}<br />
+            Configuration:{% if lambda.configCurrent %}
+              Current
+            {% else %}
+              Needs Update
+            {% endif %}<br />
+            Installed: {{ lambda.lastModified|date('F jS \\a\\t g:ia') }}
           </span>
         {% endif %}
       </td>
@@ -33,26 +60,55 @@
     <tr>
       <td class="thin centeralign">
         {% if not cloudfront or cloudfront.installed != true %}
-          <span class="error" title="{{ 'Failed'|t('app') }}" aria-label="{{ 'Failed'|t('app') }}" data-icon="error"></span>
+          <span class="error"
+            title="{{ 'Failed'|t('app') }}"
+            aria-label="{{ 'Failed'|t('app') }}"
+            data-icon="error">
+
+          </span>
         {% else %}
-          <span class="success" title="{{ 'Passed'|t('app') }}" aria-label="{{ 'Passed'|t('app') }}" data-icon="check"></span>
+          <span class="success"
+            title="{{ 'Passed'|t('app') }}"
+            aria-label="{{ 'Passed'|t('app') }}"
+            data-icon="check">
+
+          </span>
         {% endif %}
       </td>
-      <td>CloudFront</td>
+      <td>
+        CloudFront
+      </td>
     </tr>
 
     {# S3 #}
     <tr>
       <td class="thin centeralign">
         {% if s3 and s3.permission %}
-          <span class="success" title="{{ 'Passed'|t('app') }}" aria-label="{{ 'Passed'|t('app') }}" data-icon="check"></span>
+          <span class="success"
+            title="{{ 'Passed'|t('app') }}"
+            aria-label="{{ 'Passed'|t('app') }}"
+            data-icon="check">
+
+          </span>
         {% elseif s3 %}
-          <span class="warning" title="{{ 'Permission issue'|t('flux') }}" aria-label="{{ 'Permission issue'|t('flux') }}" data-icon="alert"></span>
+          <span class="warning"
+            title="{{ 'Permission issue'|t('flux') }}"
+            aria-label="{{ 'Permission issue'|t('flux') }}"
+            data-icon="alert">
+
+          </span>
         {% else %}
-          <span class="error" title="{{ 'Failed'|t('app') }}" aria-label="{{ 'Failed'|t('app') }}" data-icon="error"></span>
+          <span class="error"
+            title="{{ 'Failed'|t('app') }}"
+            aria-label="{{ 'Failed'|t('app') }}"
+            data-icon="error">
+
+          </span>
         {% endif %}
       </td>
-      <td>S3</td>
+      <td>
+        S3
+      </td>
     </tr>
   </tbody>
 </table>
@@ -61,70 +117,111 @@
   <form method="post" action="" accept-charset="UTF-8">
     {{ csrfInput() }}
 
-    {{ tag('button', {
-      type: 'button',
-      class: ['btn', 'formsubmit'],
-      text: 'Purge Transformed Assets'|t('flux'),
-      data: {
-        action: 'flux/aws/purge-cloudfront',
-        confirm: 'This will remove all transformed files and invalidate CloudFront. Transformed versions will be regenerated the next time they are requested. Are you sure you want to proceed?'|t('flux'),
-      },
-    }) }}
+    {{
+      tag(
+        'button',
+        {
+          type: 'button',
+          class: ['btn', 'formsubmit'],
+          text: 'Purge Transformed Assets'|t('flux'),
+          data: {
+            action: 'flux/aws/purge-cloudfront',
+            confirm: 'This will remove all transformed files and invalidate CloudFront. Transformed versions will be regenerated the next time they are requested. Are you sure you want to proceed?'|t(
+              'flux'
+            )
+          }
+        }
+      )
+    }}
 
-    {{ tag('button', {
-      type: 'button',
-      class: ['btn', 'formsubmit'],
-      text: 'Invalidate CloudFront'|t('flux'),
-      data: {
-        action: 'flux/aws/invalidate-cloudfront',
-        confirm: 'Are you sure you want to invalidate and clear the CloudFront cache for this site?'|t('flux'),
-      },
-    }) }}
+    {{
+      tag(
+        'button',
+        {
+          type: 'button',
+          class: ['btn', 'formsubmit'],
+          text: 'Invalidate CloudFront'|t('flux'),
+          data: {
+            action: 'flux/aws/invalidate-cloudfront',
+            confirm: 'Are you sure you want to invalidate and clear the CloudFront cache for this site?'|t(
+              'flux'
+            )
+          }
+        }
+      )
+    }}
   </form>
 </div>
 
-<hr>
+<hr />
 
 <form method="post" action="" accept-charset="UTF-8">
-  <h2>{{ 'Install / Update to AWS'|t('app') }}</h2>
-  <p>{{ 'Rebuild the AWS installation, updating and syncing all configurations, code and settings.'|t('app') }}</p>
+  <h2>
+    {{ 'Install / Update to AWS'|t('app') }}
+  </h2>
+  <p>
+    {{
+      'Rebuild the AWS installation, updating and syncing all configurations, code and settings.'|t(
+        'app'
+      )
+    }}
+  </p>
   {{ actionInput('flux/aws/update-code-bundle') }}
   {{ csrfInput() }}
   <div class="buttons">
-    <button type="submit" class="btn submit">{{ 'Install / Update to AWS'|t('app') }}</button>
+    <button type="submit" class="btn submit">
+      {{ 'Install / Update to AWS'|t('app') }}
+    </button>
   </div>
 </form>
 
-<hr>
+<hr />
 
-<h2>{{ 'AWS Report'|t('flux') }}</h2>
+<h2>
+  {{ 'AWS Report'|t('flux') }}
+</h2>
 <table class="data fullwidth fixed-layout" dir="ltr">
   <tbody>
-  {% for component in componentInfo %}
-    <tr>
-      <th class="light">{{ component.label }}</th>
-      <td>{{ component.value }}</td>
-    </tr>
-  {% endfor %}
+    {% for component in componentInfo %}
+      <tr>
+        <th class="light">
+          {{ component.label }}
+        </th>
+        <td>
+          {{ component.value }}
+        </td>
+      </tr>
+    {% endfor %}
   </tbody>
 </table>
 
-<hr>
+<hr />
 
-<h2>{{ 'AWS Policy Reference'|t('flux') }}</h2>
+<h2>
+  {{ 'AWS Policy Reference'|t('flux') }}
+</h2>
 
 <br />
 
 {% set tabs = {
-  iamPolicy: {label: 'IAM User Policy'|t('flux'), url: '#iam-user-policy'},
-  bucketPolicy: {label: 'S3 Bucket Policy'|t('flux'), url: '#bucket-policy'},
-  lambdaRolePolicy: {label: 'Lambda Role Policy'|t('flux'), url: '#lambda-role-policy'}
+  iamPolicy: {
+    label: 'IAM User Policy'|t('flux'),
+    url: '#iam-user-policy'
+  },
+  bucketPolicy: {
+    label: 'S3 Bucket Policy'|t('flux'),
+    url: '#bucket-policy'
+  },
+  lambdaRolePolicy: {
+    label: 'Lambda Role Policy'|t('flux'),
+    url: '#lambda-role-policy'
+  }
 } %}
 
-{% include "_includes/tabs" with {
+{% include '_includes/tabs' with {
   containerAttributes: {
-    id: 'tabs',
-  },
+    id: 'tabs'
+  }
 } %}
 
 <br />
@@ -132,19 +229,46 @@
 <div id="tabs">
   <div id="iam-user-policy">
     <div class="pane" tabindex="0">
-      <pre><code>{{ iamUserPolicy|json_encode(constant('JSON_PRETTY_PRINT') b-or constant('JSON_UNESCAPED_SLASHES')) }}</code></pre>
+      <pre>
+        <code>
+          {{
+            iamUserPolicy|json_encode(
+              constant('JSON_PRETTY_PRINT')
+                b-or constant('JSON_UNESCAPED_SLASHES')
+            )
+          }}
+        </code>
+      </pre>
     </div>
   </div>
 
   <div id="bucket-policy" class="hidden">
     <div class="pane" tabindex="0">
-      <pre><code>{{ bucketPolicy|json_encode(constant('JSON_PRETTY_PRINT') b-or constant('JSON_UNESCAPED_SLASHES')) }}</code></pre>
+      <pre>
+        <code>
+          {{
+            bucketPolicy|json_encode(
+              constant('JSON_PRETTY_PRINT')
+                b-or constant('JSON_UNESCAPED_SLASHES')
+            )
+          }}
+        </code>
+      </pre>
     </div>
   </div>
 
   <div id="lambda-role-policy" class="hidden">
     <div class="pane" tabindex="0">
-      <pre><code>{{ lambdaRolePolicy|json_encode(constant('JSON_PRETTY_PRINT') b-or constant('JSON_UNESCAPED_SLASHES')) }}</code></pre>
+      <pre>
+        <code>
+          {{
+            lambdaRolePolicy|json_encode(
+              constant('JSON_PRETTY_PRINT')
+                b-or constant('JSON_UNESCAPED_SLASHES')
+            )
+          }}
+        </code>
+      </pre>
     </div>
   </div>
 </div>

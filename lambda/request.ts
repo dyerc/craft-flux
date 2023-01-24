@@ -3,9 +3,7 @@
  * Copyright(c) Chris Dyer
  */
 
-import {
-  parse as parseQueryString
-} from "querystring";
+import { parse as parseQueryString } from "querystring";
 import { CloudFrontRequestHandler } from "aws-lambda";
 
 import { parseRequest, transformPath, validHmacToken } from "./inc/parser";
@@ -40,14 +38,16 @@ const handler: CloudFrontRequestHandler = (event, _, callback) => {
   const transform = parseRequest(request, params, config);
 
   if (transform) {
-    request.uri = '/' + transformPath(transform);
+    request.uri = "/" + transformPath(transform);
     log(config, "Modifying path to", request.uri);
 
     if (transform.sourceFilename) {
-      request.headers['x-flux-source-filename'] = [{
-        key: "X-Flux-Source-Filename",
-        value: transform.sourceFilename
-      }];
+      request.headers["x-flux-source-filename"] = [
+        {
+          key: "X-Flux-Source-Filename",
+          value: transform.sourceFilename,
+        },
+      ];
     }
 
     return callback(null, request);

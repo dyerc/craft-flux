@@ -1,168 +1,277 @@
 {% import '_includes/forms' as forms %}
 {% from 'flux/_macros' import configWarning %}
 
-{{ forms.autosuggestField({
-  label: "AWS Access Key ID"|t('flux'),
-  instructions: "An API key that can be used to clear, flush, purge, generate, deploy and refresh cache through a URL (min. 16 characters)."|t('flux'),
-  suggestEnvVars: true,
-  name: 'settings[awsAccessKeyId]',
-  value: settings.awsAccessKeyId,
-  class: 's3-key-id',
-  required: true,
-  errors: settings.getErrors('awsKey'),
-}) }}
+{{
+  forms.autosuggestField({
+    label: 'AWS Access Key ID'|t('flux'),
+    instructions: 'An API key that can be used to clear, flush, purge, generate, deploy and refresh cache through a URL (min. 16 characters).'|t(
+      'flux'
+    ),
+    suggestEnvVars: true,
+    name: 'settings[awsAccessKeyId]',
+    value: settings.awsAccessKeyId,
+    class: 's3-key-id',
+    required: true,
+    errors: settings.getErrors('awsKey')
+  })
+}}
 
-{{ forms.autosuggestField({
-  label: "AWS Secret Access Key"|t('flux'),
-  instructions: "An API key that can be used to clear, flush, purge, generate, deploy and refresh cache through a URL (min. 16 characters)."|t('flux'),
-  suggestEnvVars: true,
-  name: 'settings[awsSecretAccessKey]',
-  value: settings.awsSecretAccessKey,
-  class: 's3-secret-key',
-  required: true,
-  errors: settings.getErrors('awsSecretAccessKey'),
-}) }}
+{{
+  forms.autosuggestField({
+    label: 'AWS Secret Access Key'|t('flux'),
+    instructions: 'An API key that can be used to clear, flush, purge, generate, deploy and refresh cache through a URL (min. 16 characters).'|t(
+      'flux'
+    ),
+    suggestEnvVars: true,
+    name: 'settings[awsSecretAccessKey]',
+    value: settings.awsSecretAccessKey,
+    class: 's3-secret-key',
+    required: true,
+    errors: settings.getErrors('awsSecretAccessKey')
+  })
+}}
 
-{{ forms.autosuggestField({
-  label: "AWS Resource Prefix"|t('flux'),
-  instructions: "Prefix for auto generated resources. Useful if you plan to use Flux for multiple sites in the same AWS account."|t('flux'),
-  suggestEnvVars: true,
-  name: 'settings[awsResourcePrefix]',
-  value: settings.awsResourcePrefix,
-  required: true,
-  errors: settings.getErrors('awsResourcePrefix'),
-}) }}
+{{
+  forms.autosuggestField({
+    label: 'AWS Resource Prefix'|t('flux'),
+    instructions: 'Prefix for auto generated resources. Useful if you plan to use Flux for multiple sites in the same AWS account.'|t(
+      'flux'
+    ),
+    suggestEnvVars: true,
+    name: 'settings[awsResourcePrefix]',
+    value: settings.awsResourcePrefix,
+    required: true,
+    errors: settings.getErrors('awsResourcePrefix')
+  })
+}}
 
 {% set bucketInput %}
   <div class="flex fullwidth">
-    {{ forms.select({
-      name: 'settings[bucketSelectionMode]',
-      options: [
-        { label: 'Choose…'|t('flux'), value: 'choose' },
-        { label: 'Manual…'|t('flux'), value: 'manual' }
-      ],
-      value: settings.bucketSelectionMode,
-      toggle: true,
-      targetPrefix: '.bsm-'
-    }) }}
+    {{
+      forms.select({
+        name: 'settings[bucketSelectionMode]',
+        options: [
+          {
+            label: 'Choose…'|t('flux'),
+            value: 'choose'
+          },
+          {
+            label: 'Manual…'|t('flux'),
+            value: 'manual'
+          }
+        ],
+        value: settings.bucketSelectionMode,
+        toggle: true,
+        targetPrefix: '.bsm-'
+      })
+    }}
 
-    <div class="bsm-choose{% if settings.bucketSelectionMode == 'manual' %} hidden{% endif %}">
-      {{ forms.select({
-        id: 'bucket',
-        name: 'settings[awsBucket]',
-        options: { (settings.awsBucket): settings.awsBucket },
-        value: settings.bucketSelectionMode == 'manual' ? settings.awsBucket,
-        readonly: true,
-        class: 's3-bucket-select'
-      }) }}
+    <div class="bsm-choose {{
+      settings.bucketSelectionMode == 'manual'
+        ? 'hidden'
+        : ''
+      }}">
+      {{
+        forms.select({
+          id: 'bucket',
+          name: 'settings[awsBucket]',
+          options: {
+            (settings.awsBucket): settings.awsBucket
+          },
+          value: settings.bucketSelectionMode == 'manual' ? settings.awsBucket,
+          readonly: true,
+          class: 's3-bucket-select'
+        })
+      }}
     </div>
-    <div class="bsm-choose{% if settings.bucketSelectionMode == 'manual' %} hidden{% endif %}">
-      <div class="btn s3-refresh-buckets">{{ "Refresh"|t('flux') }}</div>
+    <div class="bsm-choose {{
+      settings.bucketSelectionMode == 'manual'
+        ? 'hidden'
+        : ''
+      }}">
+      <div class="btn s3-refresh-buckets">
+        {{ 'Refresh'|t('flux') }}
+      </div>
     </div>
-    <div class="bsm-choose{% if settings.bucketSelectionMode == 'manual' %} hidden{% endif %}">
+    <div class="bsm-choose {{
+      settings.bucketSelectionMode == 'manual'
+        ? 'hidden'
+        : ''
+      }}">
       <div class="spinner hidden"></div>
     </div>
 
-    <div class="bsm-manual{% if settings.bucketSelectionMode == 'choose' %} hidden{% endif %} flex-grow">
-      {{ forms.autosuggest({
-        label: "Bucket"|t('flux'),
-        class: 'ltr s3-manualBucket',
-        name: 'settings[manualBucket]',
-        suggestEnvVars: true,
-        value: settings.awsBucket,
-        placeholder: 'Bucket'|t('flux')
-      }) }}
+    <div class="bsm-manual {{
+      settings.bucketSelectionMode == 'choose'
+        ? 'hidden'
+        : ''
+      }} flex-grow">
+      {{
+        forms.autosuggest({
+          label: 'Bucket'|t('flux'),
+          class: 'ltr s3-manualBucket',
+          name: 'settings[manualBucket]',
+          suggestEnvVars: true,
+          value: settings.awsBucket,
+          placeholder: 'Bucket'|t('flux')
+        })
+      }}
     </div>
-    <div class="bsm-manual{% if settings.bucketSelectionMode == 'choose' %} hidden{% endif %} flex-grow">
-      {{ forms.autosuggest({
-        label: "Region"|t('flux'),
-        class: 'ltr s3-manualRegion',
-        name: 'settings[manualRegion]',
-        suggestEnvVars: true,
-        value: settings.awsRegion,
-        placeholder: 'Region'|t('flux')
-      }) }}
+    <div class="bsm-manual {{
+      settings.bucketSelectionMode == 'choose'
+        ? 'hidden'
+        : ''
+      }} flex-grow">
+      {{
+        forms.autosuggest({
+          label: 'Region'|t('flux'),
+          class: 'ltr s3-manualRegion',
+          name: 'settings[manualRegion]',
+          suggestEnvVars: true,
+          value: settings.awsRegion,
+          placeholder: 'Region'|t('flux')
+        })
+      }}
     </div>
   </div>
 
-  <input type="hidden" name="settings[awsRegion]" class="s3-region" value="{{ settings.awsRegion }}" />
+  <input type="hidden"
+    name="settings[awsRegion]"
+    class="s3-region"
+    value="{{ settings.awsRegion }}" />
 {% endset %}
 
-{{ forms.field({
-  label: "S3 Bucket"|t('flux'),
-  id: 'bucket',
-  required: true,
-  errors: settings.getErrors('bucket'),
-}, bucketInput) }}
+{{
+  forms.field(
+    {
+      label: 'S3 Bucket'|t('flux'),
+      id: 'bucket',
+      required: true,
+      errors: settings.getErrors('bucket')
+    },
+    bucketInput
+  )
+}}
 
-{{ forms.autosuggestField({
-  label: "S3 Root Prefix"|t('flux'),
-  instructions: "Prefix for all resources within the S3 bucket. Will not be shown publicly and is automatically assigned as an origin path on the CloudFront distribution"|t('flux'),
-  suggestEnvVars: true,
-  name: 'settings[rootPrefix]',
-  value: settings.rootPrefix,
-  required: true,
-  errors: settings.getErrors('rootPrefix'),
-}) }}
+{{
+  forms.autosuggestField({
+    label: 'S3 Root Prefix'|t('flux'),
+    instructions: 'Prefix for all resources within the S3 bucket. Will not be shown publicly and is automatically assigned as an origin path on the CloudFront distribution'|t(
+      'flux'
+    ),
+    suggestEnvVars: true,
+    name: 'settings[rootPrefix]',
+    value: settings.rootPrefix,
+    required: true,
+    errors: settings.getErrors('rootPrefix')
+  })
+}}
 
 {% set distributionInput %}
   <div class="flex fullwidth">
-    {{ forms.select({
-      name: 'settings[distributionSelectionMode]',
-      options: [
-        { label: 'Choose…'|t('flux'), value: 'choose' },
-        { label: 'Manual…'|t('flux'), value: 'manual' }
-      ],
-      value: settings.distributionSelectionMode,
-      toggle: true,
-      targetPrefix: '.cf-'
-    }) }}
+    {{
+      forms.select({
+        name: 'settings[distributionSelectionMode]',
+        options: [
+          {
+            label: 'Choose…'|t('flux'),
+            value: 'choose'
+          },
+          {
+            label: 'Manual…'|t('flux'),
+            value: 'manual'
+          }
+        ],
+        value: settings.distributionSelectionMode,
+        toggle: true,
+        targetPrefix: '.cf-'
+      })
+    }}
 
-    <div class="cf-choose{% if settings.distributionSelectionMode == 'manual' %} hidden{% endif %}">
-      {{ forms.select({
-        id: 'bucket',
-        name: 'settings[cloudFrontDistributionId]',
-        options: { (settings.cloudFrontDistributionId): settings.cloudFrontDistributionId },
-        value: settings.bucketSelectionMode == 'manual' ? settings.cloudFrontDistributionId,
-        readonly: true,
-        class: 'cf-distribution-select'
-      }) }}
+    <div class="cf-choose {{
+      settings.distributionSelectionMode == 'manual'
+        ? 'hidden'
+        : ''
+      }}">
+      {{
+        forms.select({
+          id: 'bucket',
+          name: 'settings[cloudFrontDistributionId]',
+          options: {
+            (settings.cloudFrontDistributionId): settings.cloudFrontDistributionId
+          },
+          value: settings.bucketSelectionMode == 'manual'
+            ? settings.cloudFrontDistributionId,
+          readonly: true,
+          class: 'cf-distribution-select'
+        })
+      }}
     </div>
-    <div class="cf-choose{% if settings.distributionSelectionMode == 'manual' %} hidden{% endif %}">
-      <div class="btn cf-refresh-distributions">{{ "Refresh"|t('flux') }}</div>
+    <div class="cf-choose {{
+      settings.distributionSelectionMode == 'manual'
+        ? 'hidden'
+        : ''
+      }}">
+      <div class="btn cf-refresh-distributions">
+        {{ 'Refresh'|t('flux') }}
+      </div>
     </div>
-    <div class="cf-choose{% if settings.distributionSelectionMode == 'manual' %} hidden{% endif %}">
+    <div class="cf-choose {{
+      settings.distributionSelectionMode == 'manual'
+        ? 'hidden'
+        : ''
+      }}">
       <div class="spinner hidden"></div>
     </div>
 
-    <div class="cf-manual{% if settings.distributionSelectionMode == 'choose' %} hidden{% endif %} flex-grow">
-      {{ forms.autosuggest({
-        label: "Distribution"|t('flux'),
-        class: 'ltr cf-manualDistributionId',
-        name: 'settings[manualCloudFrontDistributionId]',
-        suggestEnvVars: true,
-        value: settings.cloudFrontDistributionId,
-        placeholder: 'CloudFront Distribution Id'|t('flux')
-      }) }}
+    <div class="cf-manual {{
+      settings.distributionSelectionMode == 'choose'
+        ? 'hidden'
+        : ''
+      }} flex-grow">
+      {{
+        forms.autosuggest({
+          label: 'Distribution'|t('flux'),
+          class: 'ltr cf-manualDistributionId',
+          name: 'settings[manualCloudFrontDistributionId]',
+          suggestEnvVars: true,
+          value: settings.cloudFrontDistributionId,
+          placeholder: 'CloudFront Distribution Id'|t('flux')
+        })
+      }}
     </div>
-    <div class="cf-manual{% if settings.distributionSelectionMode == 'choose' %} hidden{% endif %} flex-grow">
-      {{ forms.autosuggest({
-        label: "Region"|t('flux'),
-        class: 'ltr cf-manualDomain',
-        name: 'settings[manualCloudfrontDomain]',
-        suggestEnvVars: true,
-        value: settings.cloudFrontDomain,
-        placeholder: 'CloudFront Domain'|t('flux')
-      }) }}
+    <div class="cf-manual {{
+      settings.distributionSelectionMode == 'choose'
+        ? 'hidden'
+        : ''
+      }} flex-grow">
+      {{
+        forms.autosuggest({
+          label: 'Region'|t('flux'),
+          class: 'ltr cf-manualDomain',
+          name: 'settings[manualCloudfrontDomain]',
+          suggestEnvVars: true,
+          value: settings.cloudFrontDomain,
+          placeholder: 'CloudFront Domain'|t('flux')
+        })
+      }}
     </div>
   </div>
 
-  <input type="hidden" name="settings[cloudFrontDomain]" class="cf-domain" value="{{ settings.cloudFrontDomain }}" />
+  <input type="hidden"
+    name="settings[cloudFrontDomain]"
+    class="cf-domain"
+    value="{{ settings.cloudFrontDomain }}" />
 {% endset %}
 
-{{ forms.field({
-  label: "CloudFront Distribution"|t('flux'),
-  id: 'distribution',
-  required: true,
-  errors: settings.getErrors('distribution'),
-}, distributionInput) }}
+{{
+  forms.field(
+    {
+      label: 'CloudFront Distribution'|t('flux'),
+      id: 'distribution',
+      required: true,
+      errors: settings.getErrors('distribution')
+    },
+    distributionInput
+  )
+}}
