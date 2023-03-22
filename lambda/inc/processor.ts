@@ -17,7 +17,7 @@ import { FluxConfig, FluxSourceType } from "./config";
 import { log } from "./logging";
 import { calculateMissingDimension } from "./helpers";
 
-const S3 = new S3Client({});
+const S3Clients: { [region: string]: S3Client } = {};
 
 //  Either file exists in S3 (perhaps because it is cached) or it needs
 //  to be fetched from an external origin. Either way this function needs
@@ -307,12 +307,13 @@ export function readFile(key: string, config: FluxConfig): Promise<Buffer> {
   return new Promise<Buffer>((resolve, reject) => {
     log(config, "Reading file from S3", key);
 
-    S3.send(
-      new GetObjectCommand({
-        Bucket: config.bucket,
-        Key: key,
-      })
-    )
+    s3Client(config.region)
+      .send(
+        new GetObjectCommand({
+          Bucket: config.bucket,
+          Key: key,
+        })
+      )
       .then((response) => {
         const stream = response.Body as Readable;
 
@@ -339,16 +340,17 @@ export function writeFile(
 
     log(config, "Writing file to S3", key);
 
-    S3.send(
-      new PutObjectCommand({
-        Body: buffer,
-        Bucket: config.bucket,
-        ContentType: contentType,
-        CacheControl: "max-age=31536000",
-        Key: key,
-        StorageClass: "STANDARD",
-      })
-    )
+    s3Client(config.region)
+      .send(
+        new PutObjectCommand({
+          Body: buffer,
+          Bucket: config.bucket,
+          ContentType: contentType,
+          CacheControl: "max-age=31536000",
+          Key: key,
+          StorageClass: "STANDARD",
+        })
+      )
       .then(() => {
         resolve(buffer);
       })
@@ -357,4 +359,22 @@ export function writeFile(
         reject(err);
       });
   });
+}
+
+export function s3Client(region?: string): S3Client {
+  let params = {};
+
+  if (region) {
+    params = {
+      region: region,
+    };
+  } else {
+    region = "default";
+  }
+
+  if (!S3Clients.hasOwnProperty(region) || !S3Clients[region]) {
+    S3Clients[region] = new S3Client(params);
+  }
+
+  return S3Clients[region];
 }

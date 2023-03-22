@@ -131,7 +131,7 @@ class SettingsModel extends Model
 
     public function configurationReinstallRequired(array $newSettings): bool
     {
-        $sensitive = ["loggingEnabled", "rootPrefix", "verifyQuery", "cacheEnabled", "awsBucket", "awsRegion", "jpegQuality", "webpQuality", "acceptWebp", "lambdaMemory", "lambdaTimeout"];
+        $sensitive = ["loggingEnabled", "rootPrefix", "verifyQuery", "cacheEnabled", "awsBucket", "cloudFrontDistributionId", "cloudFrontDomain", "awsRegion", "jpegQuality", "webpQuality", "acceptWebp", "lambdaMemory", "lambdaTimeout"];
 
         foreach ($sensitive as $key) {
             if (key_exists($key, $newSettings) && $newSettings[$key] != $this->{$key}) {
