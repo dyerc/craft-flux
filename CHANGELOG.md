@@ -1,5 +1,9 @@
 # Flux Release Notes
 
+## 4.1.3 - 2023-03-22
+
+- Fix an issue ensuring that Lambda reads and writes assets in the correct AWS region
+
 ## 4.1.2 - 2023-01-24
 
 - Fix an issue in multi-site Craft installs
