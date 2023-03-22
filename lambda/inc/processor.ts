@@ -323,7 +323,10 @@ export function readFile(key: string, config: FluxConfig): Promise<Buffer> {
         stream.once("error", reject);
       })
       .catch((err) => {
-        log(config, "Unable to read file from S3", err);
+        log(config, "Unable to read file from S3", err, {
+          region: config.region,
+          bucket: config.bucket,
+        });
         reject(err);
       });
   });
@@ -355,7 +358,10 @@ export function writeFile(
         resolve(buffer);
       })
       .catch((err) => {
-        log(config, "Exception while writing file to bucket", err);
+        log(config, "Exception while writing file to bucket", err, {
+          region: config.region,
+          bucket: config.bucket,
+        });
         reject(err);
       });
   });
