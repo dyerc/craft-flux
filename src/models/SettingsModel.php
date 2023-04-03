@@ -191,6 +191,16 @@ class SettingsModel extends Model
         return md5(json_encode($this->lambdaConfig()));
     }
 
+    public function behaviors(): array
+    {
+        return [
+            'parser' => [
+                'class' => EnvAttributeParserBehavior::class,
+                'attributes' => ['awsResourcePrefix', 'rootPrefix'],
+            ],
+        ];
+    }
+
     protected function defineRules(): array
     {
         return [
