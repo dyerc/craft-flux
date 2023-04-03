@@ -7,8 +7,8 @@ namespace dyerc\flux\models;
 
 use Craft;
 use craft\base\Model;
+use craft\behaviors\EnvAttributeParserBehavior;
 use craft\helpers\App;
-use craft\helpers\ArrayHelper;
 
 class SettingsModel extends Model
 {
@@ -196,7 +196,7 @@ class SettingsModel extends Model
         return [
             'parser' => [
                 'class' => EnvAttributeParserBehavior::class,
-                'attributes' => ['awsResourcePrefix', 'rootPrefix'],
+                'attributes' => ['awsAccessKeyId', 'awsSecretAccessKey', 'awsResourcePrefix', 'rootPrefix'],
             ],
         ];
     }
