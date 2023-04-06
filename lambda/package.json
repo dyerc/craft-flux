@@ -13,7 +13,7 @@
     "lint": "eslint ."
   },
   "author": "Chris Dyer",
-  "license": "ISC",
+  "private": true,
   "devDependencies": {
     "@types/aws-lambda": "^8.10.108",
     "@types/aws-sdk": "^2.7.0",
