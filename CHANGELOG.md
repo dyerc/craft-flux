@@ -1,5 +1,9 @@
 # Flux Release Notes
 
+## 4.1.4 - 2023-04-11
+
+- Fix settings validation when using environment variables ([#5](https://github.com/dyerc/craft-flux/issues/5))
+
 ## 4.1.3 - 2023-03-22
 
 - Fix an issue ensuring that Lambda reads and writes assets in the correct AWS region
@@ -26,9 +30,9 @@
 
 ## 4.0.1 - 2022-12-01
 
-- Added additional verification that currently installed AWS configuration matches current Craft settings.
+- Added additional verification that currently installed AWS configuration matches current Craft settings
 - Added additional logging if a Craft volume can't be determined
-- Fixed issue installing to AWS due to insufficient iam credentials ([#2](https://github.com/dyerc/craft-flux/issues/2)).
+- Fixed issue installing to AWS due to insufficient iam credentials ([#2](https://github.com/dyerc/craft-flux/issues/2))
 
 ## 4.0.0 - 2022-11-23
 
