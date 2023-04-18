@@ -194,6 +194,11 @@ class S3 extends Component
 
     public function deleteObjects(array $paths): void
     {
+        if ( count($paths) == 0 ) {
+            Craft::warning('Skipping Flux purge: no asset paths provided.', __METHOD__);
+            return;
+        }
+        
         /* @var SettingsModel */
         $settings = Flux::getInstance()->getSettings();
 
