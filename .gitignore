@@ -38,3 +38,4 @@ cpresources
 tests/_craft/storage/
 /tests/_craft/config/project
 deploy.sh
+PACKAGING.md
