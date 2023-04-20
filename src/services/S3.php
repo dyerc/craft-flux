@@ -24,7 +24,7 @@ class S3 extends Component
     public function client(): S3Client
     {
         if (!$this->_client) {
-            /* @var SettingsModel */
+            /* @var SettingsModel $settings */
             $settings = Flux::getInstance()->getSettings();
 
             $this->_client = new S3Client([
@@ -42,7 +42,7 @@ class S3 extends Component
 
     public function getStatus($roles = []): array|null
     {
-        /* @var SettingsModel */
+        /* @var SettingsModel $settings */
         $settings = Flux::getInstance()->getSettings();
         $bucket = App::parseEnv($settings->awsBucket);
 
@@ -106,7 +106,7 @@ class S3 extends Component
 
     public function checkAndFixBucketPolicy(array $functionRoles): void
     {
-        /* @var SettingsModel */
+        /* @var SettingsModel $settings */
         $settings = Flux::getInstance()->getSettings();
         $master = PolicyHelper::bucketPolicy($functionRoles);
         $bucket = App::parseEnv($settings->awsBucket);
@@ -161,7 +161,7 @@ class S3 extends Component
 
     public function listObjects(string $prefix, string|null $continue = null): array
     {
-        /* @var SettingsModel */
+        /* @var SettingsModel $settings */
         $settings = Flux::getInstance()->getSettings();
 
         $params = [
@@ -194,12 +194,11 @@ class S3 extends Component
 
     public function deleteObjects(array $paths): void
     {
-        if ( count($paths) == 0 ) {
-            Craft::warning('Skipping Flux purge: no asset paths provided.', __METHOD__);
+        if (!$paths) {
             return;
         }
         
-        /* @var SettingsModel */
+        /* @var SettingsModel $settings */
         $settings = Flux::getInstance()->getSettings();
 
         $this->client()->deleteObjects([
@@ -215,7 +214,7 @@ class S3 extends Component
 
     public function purgeTransformedVersions(Asset $asset)
     {
-        /* @var SettingsModel */
+        /* @var SettingsModel $settings */
         $settings = Flux::getInstance()->getSettings();
         $rootPrefix = App::parseEnv($settings->rootPrefix);
 
@@ -239,10 +238,10 @@ class S3 extends Component
         }
 
         /*
-            Match anything _transform/file.*
-            It would be good to use a regex, but we won't because this could potentially iterate
-            thousands of items
-        */
+         * Match anything _transform/file.*
+         * It would be good to use a regex, but we won't because this could potentially iterate
+         * thousands of items
+         */
         $fileName = pathinfo($asset->filename, PATHINFO_FILENAME);
 
         /*
@@ -263,17 +262,24 @@ class S3 extends Component
             }
         }
 
-        Craft::info(
-            "Purging transformed versions of asset [" . $asset->id . "]: " . join(", ", $deleteObjects),
-            __METHOD__
-        );
+        if (count($deleteObjects) > 0) {
+            Craft::info(
+                "Purging transformed versions of asset [" . $asset->id . "]: " . join(", ", $deleteObjects),
+                __METHOD__
+            );
 
-        $this->deleteObjects($deleteObjects);
+            $this->deleteObjects($deleteObjects);
+        } else {
+            Craft::info(
+                "Skipped purging transformed versions of asset [" . $asset->id . "]: none found",
+                __METHOD__
+            );
+        }
     }
 
     public function purgeAllTransformedVersions(Volume $volume, array $ignore = [])
     {
-        /* @var SettingsModel */
+        /* @var SettingsModel $settings */
         $settings = Flux::getInstance()->getSettings();
         $rootPrefix = App::parseEnv($settings->rootPrefix);
 
