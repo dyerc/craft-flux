@@ -1,5 +1,9 @@
 # Flux Release Notes
 
+## 4.1.5 - 2023-04-20
+
+- Fix an S3 error when attempting to purge an empty array of transformed assets ([#6](https://github.com/dyerc/craft-flux/issues/6))
+
 ## 4.1.4 - 2023-04-11
 
 - Fix settings validation when using environment variables ([#5](https://github.com/dyerc/craft-flux/issues/5))
