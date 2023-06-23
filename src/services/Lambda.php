@@ -241,7 +241,9 @@ class Lambda extends Component
     {
         /* @var SettingsModel */
         $settings = Flux::getInstance()->getSettings();
-        $prefix = App::parseEnv($settings->awsResourcePrefix);
+        $globalPrefix = App::parseEnv($settings->awsGlobalResourcePrefix) !== '' ?
+            App::parseEnv($settings->awsGlobalResourcePrefix) :
+            App::parseEnv($settings->awsResourcePrefix);
         $distributionId = App::parseEnv($settings->cloudFrontDistributionId);
 
         $functions = [
@@ -264,8 +266,8 @@ class Lambda extends Component
 
         $cloudfront = Flux::getInstance()->cloudfront->client();
 
-        $cachePolicyId = Flux::getInstance()->cloudfront->updateCachePolicy("$prefix-Cache-Policy");
-        $originRequestPolicyId = Flux::getInstance()->cloudfront->updateOriginRequestPolicy("$prefix-Origin-Request-Policy");
+        $cachePolicyId = Flux::getInstance()->cloudfront->updateCachePolicy("$globalPrefix-Cache-Policy");
+        $originRequestPolicyId = Flux::getInstance()->cloudfront->updateOriginRequestPolicy("$globalPrefix-Origin-Request-Policy");
 
         $distribution = $cloudfront->getDistribution(['Id' => $distributionId]);
 

@@ -53,6 +53,11 @@ class SettingsModel extends Model
     public string $awsResourcePrefix = "Flux";
 
     /**
+     * @var string Prefix for auto generated global AWS resources
+     */
+    public string $awsGlobalResourcePrefix = "";
+
+    /**
      * @var string Bucket selection mode ('choose' or 'manual')
      */
     public string $bucketSelectionMode = 'choose';
@@ -196,7 +201,7 @@ class SettingsModel extends Model
         return [
             'parser' => [
                 'class' => EnvAttributeParserBehavior::class,
-                'attributes' => ['awsAccessKeyId', 'awsSecretAccessKey', 'awsResourcePrefix', 'rootPrefix'],
+                'attributes' => ['awsAccessKeyId', 'awsSecretAccessKey', 'awsGlobalResourcePrefix', 'awsResourcePrefix', 'rootPrefix'],
             ],
         ];
     }
@@ -205,7 +210,7 @@ class SettingsModel extends Model
     {
         return [
             [['awsAccessKeyId', 'awsSecretAccessKey'], 'required'],
-            [['awsResourcePrefix', 'rootPrefix'], 'match', 'pattern' => '/^[a-zA-Z0-9\-]*$/i'],
+            [['awsGlobalResourcePrefix', 'awsResourcePrefix', 'rootPrefix'], 'match', 'pattern' => '/^[a-zA-Z0-9\-]*$/i'],
             [['jpegQuality', 'webpQuality'], 'number', 'min' => 1, 'integerOnly' => true, 'max' => 100],
             [['lambdaMemory'], 'number', 'min' => 128, 'integerOnly' => true, 'max' => 10240],
             [['lambdaTimeout'], 'number', 'min' => 3, 'integerOnly' => true, 'max' => 900],

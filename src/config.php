@@ -44,6 +44,9 @@ return [
         // Prefix for auto generated AWS resources
         // 'awsResourcePrefix' => 'Flux',
 
+        // Prefix for auto generated global AWS resources (optional)
+        // 'awsGlobalResourcePrefix' => '',
+
         // S3 Bucket name
         // 'awsBucket' => '',
 

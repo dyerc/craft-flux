@@ -45,6 +45,20 @@
   })
 }}
 
+{{
+  forms.autosuggestField({
+    label: 'AWS Global Resource Prefix (optional)'|t('flux'),
+    instructions: 'Prefix for auto generated resources that are reusable between multiple Flux-enabled sites that share an AWS account.'|t(
+      'flux'
+    ),
+    suggestEnvVars: true,
+    name: 'settings[awsGlobalResourcePrefix]',
+    value: settings.awsGlobalResourcePrefix,
+    required: false,
+    errors: settings.getErrors('awsGlobalResourcePrefix')
+  })
+}}
+
 {% set bucketInput %}
   <div class="flex fullwidth">
     {{
