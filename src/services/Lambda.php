@@ -107,7 +107,7 @@ class Lambda extends Component
 
     public function getFunctionStatuses(): array
     {
-        /* @var SettingsModel */
+        /* @var SettingsModel $settings */
         $settings = Flux::getInstance()->getSettings();
         $prefix = App::parseEnv($settings->awsResourcePrefix);
 
@@ -133,9 +133,14 @@ class Lambda extends Component
         });
 
         foreach (array_slice($versions, $keep) as $version) {
-            $this->client()->deleteFunction([
-                'FunctionName' => $version['FunctionArn']
-            ]);
+            try {
+                $this->client()->deleteFunction([
+                  'FunctionName' => $version['FunctionArn']
+                ]);
+            } catch (\Exception $e) {
+                Craft::warning("Unable to delete old function [ARN: " . $version['FunctionArn'] . "]: " . $e->getMessage());
+                return null;
+            }
         }
     }
 

@@ -223,7 +223,7 @@ class Cloudfront extends Component
 
     public function invalidateCache(array $paths = [])
     {
-        /* @var SettingsModel */
+        /* @var SettingsModel $settings */
         $settings = Flux::getInstance()->getSettings();
 
         if (empty($paths)) {
