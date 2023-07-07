@@ -14,12 +14,16 @@ use yii\base\Component;
 
 class Cloudfront extends Component
 {
+    public const GLOBAL_CACHE_POLICY_NAME = 'Flux-Cache-Policy';
+
+    public const GLOBAL_ORIGIN_REQUEST_POLICY_NAME = 'Flux-Origin-Request-Policy';
+
     private CloudFrontClient|null $_client = null;
 
     public function client(?string $keyId = null, ?string $secret = null): CloudFrontClient
     {
         if (!$this->_client) {
-            /* @var SettingsModel */
+            /* @var SettingsModel $settings */
             $settings = Flux::getInstance()->getSettings();
 
             $this->_client = new CloudFrontClient([
@@ -37,7 +41,7 @@ class Cloudfront extends Component
 
     public function getDistributionId(): string
     {
-        /* @var SettingsModel */
+        /* @var SettingsModel $settings */
         $settings = Flux::getInstance()->getSettings();
         return App::parseEnv($settings->cloudFrontDistributionId);
     }
@@ -118,8 +122,18 @@ class Cloudfront extends Component
         return null;
     }
 
-    public function updateCachePolicy(string $name, array $overrides = []): string
+    public function updateCachePolicy(array $overrides = []): string
     {
+        /* @var SettingsModel $settings */
+        $settings = Flux::getInstance()->getSettings();
+
+        if ($settings->awsStrictNaming) {
+            $prefix = App::parseEnv($settings->awsResourcePrefix);
+            $name = "$prefix-Cache-Policy";
+        } else {
+            $name = self::GLOBAL_CACHE_POLICY_NAME;
+        }
+
         $config = array_merge([
             'Name' => $name,
             'MinTTL' => 1,
@@ -159,8 +173,18 @@ class Cloudfront extends Component
         }
     }
 
-    public function updateOriginRequestPolicy(string $name, array $overrides = [])
+    public function updateOriginRequestPolicy(array $overrides = [])
     {
+        /* @var SettingsModel $settings */
+        $settings = Flux::getInstance()->getSettings();
+
+        if ($settings->awsStrictNaming) {
+            $prefix = App::parseEnv($settings->awsResourcePrefix);
+            $name = "$prefix-Origin-Request-Policy";
+        } else {
+            $name = self::GLOBAL_ORIGIN_REQUEST_POLICY_NAME;
+        }
+
         $config = array_merge([
             'Name' => $name,
             'CookiesConfig' => [

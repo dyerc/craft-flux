@@ -48,6 +48,11 @@ class SettingsModel extends Model
     public string $awsSecretAccessKey = "";
 
     /**
+     * @var bool Uniquely prefix all resources created by Flux, even those that could be shared between Flux instances
+     */
+    public bool $awsStrictNaming = false;
+
+    /**
      * @var string Prefix for auto generated AWS resources
      */
     public string $awsResourcePrefix = "Flux";

@@ -239,7 +239,7 @@ class Lambda extends Component
 
     public function publishNewVersion(array $viewerRequest, array $originResponse)
     {
-        /* @var SettingsModel */
+        /* @var SettingsModel $settings */
         $settings = Flux::getInstance()->getSettings();
         $prefix = App::parseEnv($settings->awsResourcePrefix);
         $distributionId = App::parseEnv($settings->cloudFrontDistributionId);
@@ -264,8 +264,8 @@ class Lambda extends Component
 
         $cloudfront = Flux::getInstance()->cloudfront->client();
 
-        $cachePolicyId = Flux::getInstance()->cloudfront->updateCachePolicy("$prefix-Cache-Policy");
-        $originRequestPolicyId = Flux::getInstance()->cloudfront->updateOriginRequestPolicy("$prefix-Origin-Request-Policy");
+        $cachePolicyId = Flux::getInstance()->cloudfront->updateCachePolicy();
+        $originRequestPolicyId = Flux::getInstance()->cloudfront->updateOriginRequestPolicy();
 
         $distribution = $cloudfront->getDistribution(['Id' => $distributionId]);
 

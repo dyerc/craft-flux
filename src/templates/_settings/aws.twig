@@ -45,6 +45,18 @@
   })
 }}
 
+{{
+  forms.lightswitchField({
+    instructions: 'Uniquely prefix all resources created by Flux, even those that could be shared between Flux instances.'|t(
+      'flux'
+    ),
+    label: 'AWS Strict Naming'|t('flux'),
+    warning: config.awsStrictNaming is defined ? configWarning('awsStrictNaming'),
+    name: 'settings[awsStrictNaming]',
+    on: settings.awsStrictNaming
+  })
+}}
+
 {% set bucketInput %}
   <div class="flex fullwidth">
     {{
