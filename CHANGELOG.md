@@ -1,5 +1,11 @@
 # Flux Release Notes
 
+## 4.2.0 - 2023-10-04
+
+- Add strict naming policy option. By default, unless enabled any AWS resources which can be shared between multiple projects in the same account, are shared ([#8](https://github.com/dyerc/craft-flux/issues/8))
+- Split large CloudFront invalidation requests into batches ([#11](https://github.com/dyerc/craft-flux/issues/11))
+- Split large S3 delete objects requests into batches ([#10](https://github.com/dyerc/craft-flux/issues/10))
+
 ## 4.1.5 - 2023-04-20
 
 - Fix an S3 error when attempting to purge an empty array of transformed assets ([#6](https://github.com/dyerc/craft-flux/issues/6))
