@@ -51,7 +51,8 @@
       'flux'
     ),
     label: 'AWS Strict Naming'|t('flux'),
-    warning: config.awsStrictNaming is defined ? configWarning('awsStrictNaming'),
+    warning: config.awsStrictNaming is defined
+      ? configWarning('awsStrictNaming'),
     name: 'settings[awsStrictNaming]',
     on: settings.awsStrictNaming
   })

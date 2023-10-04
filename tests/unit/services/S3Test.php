@@ -5,6 +5,8 @@
 
 namespace dyerc\fluxtests\unit\services;
 
+use Aws\S3\S3Client;
+use Codeception\Stub;
 use Codeception\Stub\Expected;
 
 use craft\awss3\Fs as AwsFs;
@@ -189,5 +191,39 @@ class S3Test extends TestCase
         ]));
 
         Flux::getInstance()->s3->purgeAllTransformedVersions($volume, [$asset]);
+    }
+
+    public function testBatchesUpDeleteObjectsRequests()
+    {
+        $request = 0;
+        $test = $this;
+
+        $mockClient = $this->getMockBuilder(S3Client::class)
+          ->disableOriginalConstructor()
+          ->addMethods(['deleteObjects'])
+          ->getMock();
+
+        $mockClient->expects($this->exactly(2))
+            ->method('deleteObjects')
+            ->will($this->returnCallback(
+                function ($params) use ($test, &$request) {
+                    $request += 1;
+                    $objects = $params['Delete']['Objects'];
+
+                    if ($request == 1) {
+                        $test->assertSame([[ 'Key' => "1.jpg" ], [ 'Key' => "2.jpg" ]], $objects);
+                    } elseif ($request == 2) {
+                        $test->assertSame([[ 'Key' => "3.jpg" ], [ 'Key' => "4.jpg" ]], $objects);
+                    }
+                }
+            ));
+
+        Flux::getInstance()->set('s3', $this->make(S3::class, [
+            'client' => function() use ($mockClient) {
+                return $mockClient;
+            }
+        ]));
+
+        Flux::getInstance()->s3->deleteObjects(["1.jpg", "2.jpg", "3.jpg", "4.jpg"], 2);
     }
 }

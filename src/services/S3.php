@@ -5,7 +5,6 @@
 
 namespace dyerc\flux\services;
 
-use Aws\Lambda\Exception\LambdaException;
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use Craft;
@@ -192,7 +191,7 @@ class S3 extends Component
         }
     }
 
-    public function deleteObjects(array $paths): void
+    public function deleteObjects(array $paths, int $chunkSize = 1000): void
     {
         if (!$paths) {
             return;
@@ -201,15 +200,23 @@ class S3 extends Component
         /* @var SettingsModel $settings */
         $settings = Flux::getInstance()->getSettings();
 
-        $this->client()->deleteObjects([
-            'Bucket' => App::parseEnv($settings->awsBucket),
-            'Delete' => [
+        $batches = array_chunk($paths, $chunkSize);
+
+        foreach ($batches as $batch) {
+            $this->client()->deleteObjects([
+              'Bucket' => App::parseEnv($settings->awsBucket),
+              'Delete' => [
                 'Objects' => array_map(function ($key) {
                     return [ 'Key' => $key ];
-                }, $paths),
+                }, $batch),
                 'Quiet' => true
-            ]
-        ]);
+              ]
+            ]);
+
+            if (count($batches) > 1) {
+                sleep(1);
+            }
+        }
     }
 
     public function purgeTransformedVersions(Asset $asset)

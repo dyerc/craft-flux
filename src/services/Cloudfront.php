@@ -221,7 +221,7 @@ class Cloudfront extends Component
         }
     }
 
-    public function invalidateCache(array $paths = [])
+    public function invalidateCache(array $paths = [], int $chunkSize = 3000)
     {
         /* @var SettingsModel $settings */
         $settings = Flux::getInstance()->getSettings();
@@ -230,15 +230,23 @@ class Cloudfront extends Component
             $paths = [ "/*" ];
         }
 
-        $this->client()->createInvalidation([
-            'DistributionId' => App::parseEnv($settings->cloudFrontDistributionId),
-            'InvalidationBatch' => [
-                'CallerReference' => App::parseEnv($settings->awsResourcePrefix) . "-" . time(),
-                'Paths' => [
-                    'Items' => $paths,
-                    'Quantity' => count($paths)
+        $batches = array_chunk($paths, $chunkSize);
+
+        foreach ($batches as $batch) {
+            $this->client()->createInvalidation([
+                'DistributionId' => App::parseEnv($settings->cloudFrontDistributionId),
+                'InvalidationBatch' => [
+                    'CallerReference' => App::parseEnv($settings->awsResourcePrefix) . "-" . time(),
+                    'Paths' => [
+                        'Items' => $batch,
+                        'Quantity' => count($batch)
+                    ]
                 ]
-            ]
-        ]);
+            ]);
+
+            if (count($batches) > 1) {
+                sleep(1);
+            }
+        }
     }
 }
