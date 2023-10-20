@@ -240,7 +240,7 @@ class S3 extends Component
          */
         $originalPath = (!empty($asset->fs->subfolder) ? rtrim($asset->fs->subfolder, '/') . '/' : '') . $asset->getPath();
 
-        if (!is_a($asset->volume->fs, "craft\\awss3\\Fs") && $originalPath != $path) {
+        if ($originalPath != $path) {
             $deleteObjects[] = $path;
         }
 
