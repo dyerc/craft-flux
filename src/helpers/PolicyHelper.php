@@ -113,6 +113,8 @@ class PolicyHelper
             $rootPrefix = "";
         }
 
+        $distributionArn = Flux::getInstance()->cloudfront->getDistributionArn();
+
         $actions = ["s3:GetObject", "s3:PutObject"];
 
         $policy = [
@@ -120,9 +122,16 @@ class PolicyHelper
             "Statement" => [
                 [
                     "Effect" => "Allow",
-                    "Principal" => "*",
+                    "Principal" => [
+                        "Service" => "cloudfront.amazonaws.com",
+                    ],
                     "Action" => "s3:GetObject",
-                    "Resource" => empty($rootPrefix) ? "arn:aws:s3:::$bucket/*" : "arn:aws:s3:::$bucket/$rootPrefix/*"
+                    "Resource" => empty($rootPrefix) ? "arn:aws:s3:::$bucket/*" : "arn:aws:s3:::$bucket/$rootPrefix/*",
+                    "Condition" => [
+                        "StringEquals" => [
+                            "AWS:SourceArn" => $distributionArn
+                        ]
+                    ]
                 ]
             ]
         ];

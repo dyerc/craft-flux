@@ -229,46 +229,40 @@
 <div id="tabs">
   <div id="iam-user-policy">
     <div class="pane" tabindex="0">
-      <pre>
-        <code>
-          {{
-            iamUserPolicy|json_encode(
-              constant('JSON_PRETTY_PRINT')
-                b-or constant('JSON_UNESCAPED_SLASHES')
-            )
-          }}
-        </code>
-      </pre>
+      <!-- prettier-ignore-start -->
+<pre><code>{{
+    iamUserPolicy|json_encode(
+    constant('JSON_PRETTY_PRINT')
+    b-or constant('JSON_UNESCAPED_SLASHES')
+  )
+}}</code></pre>
+      <!-- prettier-ignore-end -->
     </div>
   </div>
 
   <div id="bucket-policy" class="hidden">
     <div class="pane" tabindex="0">
-      <pre>
-        <code>
-          {{
-            bucketPolicy|json_encode(
-              constant('JSON_PRETTY_PRINT')
-                b-or constant('JSON_UNESCAPED_SLASHES')
-            )
-          }}
-        </code>
-      </pre>
+      <!-- prettier-ignore-start -->
+<pre><code>{{
+  bucketPolicy|json_encode(
+    constant('JSON_PRETTY_PRINT')
+      b-or constant('JSON_UNESCAPED_SLASHES')
+  )
+}}</code></pre>
+      <!-- prettier-ignore-end -->
     </div>
   </div>
 
   <div id="lambda-role-policy" class="hidden">
     <div class="pane" tabindex="0">
-      <pre>
-        <code>
-          {{
-            lambdaRolePolicy|json_encode(
-              constant('JSON_PRETTY_PRINT')
-                b-or constant('JSON_UNESCAPED_SLASHES')
-            )
-          }}
-        </code>
-      </pre>
+      <!-- prettier-ignore-start -->
+<pre><code>{{
+    lambdaRolePolicy|json_encode(
+    constant('JSON_PRETTY_PRINT')
+    b-or constant('JSON_UNESCAPED_SLASHES')
+  )
+}}</code></pre>
+      <!-- prettier-ignore-end -->
     </div>
   </div>
 </div>

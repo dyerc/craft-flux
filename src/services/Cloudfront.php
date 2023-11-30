@@ -46,6 +46,19 @@ class Cloudfront extends Component
         return App::parseEnv($settings->cloudFrontDistributionId);
     }
 
+    public function getDistributionArn(): string
+    {
+        try {
+            $distribution = $this->client()->getDistribution([
+              'Id' => $this->getDistributionId()
+            ]);
+
+            return $distribution['Distribution']['ARN'];
+        } catch (CloudFrontException $e) {
+            return "";
+        }
+    }
+
     public function getDistributions(): array
     {
         $objects = $this->client()->listDistributions();
