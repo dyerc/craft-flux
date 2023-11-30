@@ -3,7 +3,6 @@
  * Copyright(c) Chris Dyer
  */
 
-import { parse as parseQueryString } from "querystring";
 import {
   CloudFrontResponseHandler,
   CloudFrontResponseResult,
@@ -34,7 +33,8 @@ const handler: CloudFrontResponseHandler = (event, _, callback) => {
 
   // Only handle cache misses
   if (response.status === "403" || response.status === "404") {
-    const params = parseQueryString(request.querystring);
+    const urlParams = new URLSearchParams(request.querystring);
+    const params = Object.fromEntries(urlParams);
     const transform = parseRequest(request, params, config);
 
     if (transform) {

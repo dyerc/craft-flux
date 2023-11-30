@@ -3,13 +3,11 @@ import { CloudFrontResultResponse } from "aws-lambda";
 import {
   createCloudfrontContext,
   createCloudFrontResponseEvent,
-  createOriginServer,
+  OriginServer,
 } from "./utils";
-import * as crypto from "crypto";
 import { DefaultConfig, FluxConfig } from "../inc/config";
 import { mockClient } from "aws-sdk-client-mock";
 import "aws-sdk-client-mock-jest";
-import AWS from "aws-sdk";
 import {
   GetObjectCommand,
   PutObjectCommand,
@@ -18,8 +16,6 @@ import {
 import * as fs from "fs";
 import path from "path";
 const FileType = require("file-type");
-
-AWS.config.update({ region: "us-east-1" });
 
 const handler = require("../response.ts").handler;
 
@@ -62,7 +58,18 @@ async function handle(
   });
 }
 
+let originServer: OriginServer;
+
 describe("response", () => {
+  beforeAll(() => {
+    originServer = new OriginServer();
+    originServer.listen();
+  });
+
+  afterAll(() => {
+    originServer.close();
+  });
+
   test("forwards on 200 response", async () => {
     const result = await handle(
       "/testAssets/_1920x1080_fit_center-center_80/image.jpg?mode=fit&w=1920&h=1080",
@@ -75,7 +82,7 @@ describe("response", () => {
   });
 
   test("processes 403 response from origin and stores cached copy", async () => {
-    const s = createOriginServer({
+    originServer.map({
       "/uploads/data/folder/image.jpg": "image.jpg",
     });
 
@@ -93,7 +100,6 @@ describe("response", () => {
     expect(result.status).toEqual("200");
     expect(result.body?.length).toBeLessThan(50000);
     // fs.writeFileSync("test.jpg", result.body, 'base64');
-    s.close();
 
     // @ts-ignore
     expect(mockS3Client).toHaveReceivedCommandWith(GetObjectCommand, {
@@ -110,7 +116,7 @@ describe("response", () => {
   });
 
   test("uses source filename header if provided", async () => {
-    const s = createOriginServer({
+    originServer.map({
       "/uploads/data/folder/image.jpg": "image.jpg",
     });
 
@@ -138,7 +144,6 @@ describe("response", () => {
     expect(result.status).toEqual("200");
     expect(result.body?.length).toBeLessThan(50000);
     // fs.writeFileSync("test.jpg", result.body, 'base64');
-    s.close();
 
     // @ts-ignore
     expect(mockS3Client).toHaveReceivedCommandWith(GetObjectCommand, {
@@ -272,7 +277,7 @@ describe("response", () => {
   });
 
   test("responds with png image", async () => {
-    const s = createOriginServer({
+    originServer.map({
       "/uploads/image.jpg": "image.jpg",
     });
 
@@ -302,11 +307,10 @@ describe("response", () => {
       Buffer.from(result.body as string, "base64")
     );
     expect(t?.ext).toEqual("png");
-    s.close();
   });
 
   test("crops around focal point", async () => {
-    const s = createOriginServer({
+    originServer.map({
       "/uploads/image.jpg": "image.jpg",
     });
 
@@ -324,6 +328,5 @@ describe("response", () => {
     expect(result.status).toEqual("200");
     // @ts-ignore
     fs.writeFileSync("test.jpg", result.body, "base64");
-    s.close();
   });
 });

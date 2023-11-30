@@ -3,7 +3,6 @@
  * Copyright(c) Chris Dyer
  */
 
-import { parse as parseQueryString } from "querystring";
 import { CloudFrontRequestHandler } from "aws-lambda";
 
 import { parseRequest, transformPath, validHmacToken } from "./inc/parser";
@@ -28,7 +27,8 @@ const handler: CloudFrontRequestHandler = (event, _, callback) => {
 
   log(config, "Parsing request", request.uri, request.querystring);
 
-  const params = parseQueryString(request.querystring);
+  const urlParams = new URLSearchParams(request.querystring);
+  const params = Object.fromEntries(urlParams);
 
   if (config.verifyQuery && !validHmacToken(request, params, config)) {
     log(config, "Forwarding request, query verification failed");

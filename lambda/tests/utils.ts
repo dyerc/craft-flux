@@ -146,13 +146,18 @@ export const createCloudfrontContext = (): Context => {
   };
 };
 
-export const createOriginServer = (paths = {}) => {
-  return http
-    .createServer((req, res) => {
+export class OriginServer {
+  private paths: { [p: string]: string };
+  private server: http.Server;
+
+  constructor() {
+    this.paths = {};
+
+    this.server = http.createServer((req, res) => {
       if (req.url != null) {
         const parsedUrl = url.parse(req.url);
         // @ts-ignore
-        let pathname = paths[parsedUrl.pathname];
+        let pathname = this.paths[parsedUrl.pathname];
 
         if (pathname) {
           const ext = path.extname(pathname);
@@ -189,6 +194,18 @@ export const createOriginServer = (paths = {}) => {
       } else {
         res.end();
       }
-    })
-    .listen(4000);
-};
+    });
+  }
+
+  listen() {
+    this.server.listen(4000);
+  }
+
+  close() {
+    this.server.close();
+  }
+
+  map(newPaths: { [p: string]: string }) {
+    this.paths = newPaths;
+  }
+}

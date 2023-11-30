@@ -1,10 +1,9 @@
 import { createHmac } from "crypto";
 
-import { ParsedUrlQuery } from "querystring";
 import { FluxConfig, FluxSource } from "./config";
 import { CloudFrontRequest } from "aws-lambda";
 import { log } from "./logging";
-import { isNumeric } from "./helpers";
+import { isNumeric, URLParams } from "./helpers";
 
 const WEBP_EXT = "webp";
 
@@ -77,7 +76,7 @@ export function parseTransformPathSegment(uri: string): string | undefined {
 
 export function validHmacToken(
   request: CloudFrontRequest,
-  params: ParsedUrlQuery,
+  params: URLParams,
   config: FluxConfig
 ): boolean {
   if (!params.v) {
@@ -102,7 +101,7 @@ export function validHmacToken(
 
 export function parseRequest(
   request: CloudFrontRequest,
-  params: ParsedUrlQuery,
+  params: URLParams,
   config: FluxConfig
 ): TransformRequest | null {
   const uri = request.uri;
@@ -188,7 +187,7 @@ export function parseRequest(
 }
 
 export function parseManipulations(
-  params: ParsedUrlQuery,
+  params: URLParams,
   extension: string,
   config: FluxConfig
 ): Manipulations | null {
@@ -216,11 +215,11 @@ export function parseManipulations(
     if (CropPositions.includes(params.pos as string)) {
       transform.position = params.pos as string;
     } else if (!Array.isArray(params.pos) && params.pos.indexOf("-") !== -1) {
-      // Check if pos param is a number-number format eg. 0.9987-0.4365
+      // Check if pos param is a number-number format e.g. 0.9987-0.4365
       const coords = params.pos.split("-");
 
       // If all coords are valid numbers, round to 3dp and assign to position
-      if (coords.length === 2 && coords.every((x) => isNumeric(x))) {
+      if (coords.length === 2 && coords.every((x: any) => isNumeric(x))) {
         transform.position = {
           x: parseFloat(coords[0]),
           y: parseFloat(coords[1]),
