@@ -36,7 +36,7 @@ class FluxUtility extends Utility
     /**
      * @inheritdoc
      */
-    public static function iconPath(): ?string
+    public static function icon(): ?string
     {
         $iconPath = Craft::getAlias('@vendor/dyerc/craft-flux/src/icon-mask.svg');
 

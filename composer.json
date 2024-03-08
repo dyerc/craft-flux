@@ -2,7 +2,7 @@
   "name": "dyerc/craft-flux",
   "description": "Transform and cache your images through AWS Lambda & CloudFront",
   "type": "craft-plugin",
-  "version": "4.3.0",
+  "version": "5.0.0-beta.1",
   "keywords": [
     "craft",
     "cms",
@@ -25,8 +25,8 @@
     }
   ],
   "require": {
-    "craftcms/cms": "^4.0.0",
-    "php": "^8.0.2",
+    "php": "^8.2",
+    "craftcms/cms": "^5.0.0-beta.1",
     "aws/aws-sdk-php": "^3.240",
     "ext-zip": "*"
   },
@@ -54,11 +54,11 @@
   "prefer-stable": true,
   "require-dev": {
     "craftcms/phpstan": "dev-main",
-    "phpstan/phpstan": "^1.9",
-    "codeception/codeception": "^4.1.29",
-    "codeception/module-asserts": "^1.3.1",
-    "codeception/module-yii2": "^1.1.5",
+    "phpstan/phpstan": "^1.10.56",
+    "codeception/codeception": "^5.0.11",
+    "codeception/module-asserts": "^3.0.0",
+    "codeception/module-yii2": "^1.1.10",
     "vlucas/phpdotenv": "^5.5",
-    "craftcms/aws-s3": "^2.0"
+    "craftcms/aws-s3": "v3.x-dev"
   }
 }
