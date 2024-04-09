@@ -156,7 +156,7 @@ class Lambda extends Component
         $functionVersion = Flux::getInstance()->version;
 
         $config = array_merge([
-            'Architectures' => ['x86-64'],
+            'Architectures' => ['x86_64'],
             'FunctionName' => $name,
             'Description' => "Deployed by Flux v$functionVersion $configHash",
             'Runtime' => 'nodejs20.x'
