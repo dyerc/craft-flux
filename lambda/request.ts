@@ -38,9 +38,6 @@ const handler: CloudFrontRequestHandler = (event, _, callback) => {
   const transform = parseRequest(request, params, config);
 
   if (transform) {
-    request.uri = "/" + transformPath(transform);
-    log(config, "Modifying path to", request.uri);
-
     if (request.headers.host && request.headers.host.length > 0) {
       request.headers["x-flux-original-request"] = [
         {
@@ -58,6 +55,9 @@ const handler: CloudFrontRequestHandler = (event, _, callback) => {
         },
       ];
     }
+
+    request.uri = "/" + transformPath(transform);
+    log(config, "Modifying path to", request.uri);
 
     return callback(null, request);
   } else {
