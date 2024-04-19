@@ -1,6 +1,6 @@
 # Flux Release Notes
 
-## 4.3.0 - 2023-11-30
+## 4.3.0 - 2024-04-19
 
 - Use Node.js 20.x for Lambda functions 
 - Upgrade sharp to 0.32.6
