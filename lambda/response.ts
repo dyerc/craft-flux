@@ -66,6 +66,10 @@ const handler: CloudFrontResponseHandler = (event, _, callback) => {
               const cloudfrontHost =
                 request.headers["x-flux-original-request"][0].value;
               repeatRequest = `https://${cloudfrontHost}?${request.querystring}`;
+
+              response.headers["cache-control"] = [
+                { key: "Cache-Control", value: "no-cache" },
+              ];
             }
 
             log(
