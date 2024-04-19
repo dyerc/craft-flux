@@ -244,7 +244,7 @@ describe("response", () => {
       {
         key: "Location",
         value:
-          "https://cloudfront.example.com/testAssets/data/folder/image.jpg?mode=stretch&w=2000&h=2000&q=100",
+          "https://cloudfront.example.com/testAssets/data/folder/image.jpg?mode=stretch&w=2000&h=2000&q=100&redir=1",
       },
     ]);
   });
