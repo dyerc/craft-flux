@@ -1,5 +1,11 @@
 # Flux Release Notes
 
+## 4.3.0 - 2023-11-30
+
+- Use Node.js 20.x for Lambda functions 
+- Upgrade sharp to 0.32.6
+- Merge in backwards compatible fixes from Craft 5 branch
+
 ## 4.2.1 - 2023-11-30
 
 - Fix purging transformed files on S3 ([#12](https://github.com/dyerc/craft-flux/issues/12))
