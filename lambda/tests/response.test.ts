@@ -224,7 +224,17 @@ describe("response", () => {
 
     const result = await handle(
       "/testAssets/data/folder/_2000x2000_stretch_center-center_100/image.jpg?mode=stretch&w=2000&h=2000&q=100",
-      { status: "403" },
+      {
+        status: "403",
+        requestHeaders: {
+          "x-flux-original-request": [
+            {
+              key: "X-Flux-Original-Request",
+              value: "cloudfront.example.com/testAssets/data/folder/image.jpg",
+            },
+          ],
+        },
+      },
       { verifyQuery: false }
     );
 
@@ -234,7 +244,7 @@ describe("response", () => {
       {
         key: "Location",
         value:
-          "/testAssets/data/folder/_2000x2000_stretch_center-center_100/image.jpg",
+          "https://cloudfront.example.com/testAssets/data/folder/image.jpg?mode=stretch&w=2000&h=2000&q=100",
       },
     ]);
   });

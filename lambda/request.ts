@@ -41,6 +41,15 @@ const handler: CloudFrontRequestHandler = (event, _, callback) => {
     request.uri = "/" + transformPath(transform);
     log(config, "Modifying path to", request.uri);
 
+    if (request.headers.host && request.headers.host.length > 0) {
+      request.headers["x-flux-original-request"] = [
+        {
+          key: "X-Flux-Original-Request",
+          value: request.headers.host[0].value + request.uri,
+        },
+      ];
+    }
+
     if (transform.sourceFilename) {
       request.headers["x-flux-source-filename"] = [
         {

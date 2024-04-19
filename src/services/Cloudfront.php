@@ -206,8 +206,8 @@ class Cloudfront extends Component
             'HeadersConfig' => [
                 'HeaderBehavior' => 'whitelist',
                 'Headers' => [
-                    'Items' => ['X-Flux-Source-Filename'],
-                    'Quantity' => 1
+                    'Items' => ['X-Flux-Source-Filename', 'X-Flux-Original-Request'],
+                    'Quantity' => 2
                 ]
             ],
             'QueryStringsConfig' => [
