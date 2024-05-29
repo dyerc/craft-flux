@@ -1,12 +1,9 @@
 # Flux Release Notes
 
-## 5.0.0-beta.2 - 2024-04-19
+## 5.0.0 - 2024-05-29
 
+- Update wording within setup wizard to mention changing origin access setting for non-public S3 buckets
 - Fix issue with AWS validating architecture parameter
-
-## 5.0.0-beta.1 - 2024-03-08
-
 - Add compatibility with Craft 5
 - Use Node.js 20.x for Lambda functions
 - Upgrade sharp to 0.32.6
-
