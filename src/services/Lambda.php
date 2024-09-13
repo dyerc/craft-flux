@@ -296,7 +296,7 @@ class Lambda extends Component
         $cloudfront->updateDistribution($updatedConfig);
     }
 
-    private function waitForLambdaToProcess(string $name)
+    private function waitForLambdaToProcess(string $name): void
     {
         $updated = false;
         $i = 0;
@@ -304,7 +304,7 @@ class Lambda extends Component
         while (!$updated && $i < 60) {
             sleep(3);
 
-            $response = $this->client()->getFunction(['FunctionName' => $name]);
+            $response = $this->client()->getFunctionConfiguration(['FunctionName' => $name]);
 
             if ($response['LastUpdateStatus'] != 'InProgress') {
                 $updated = true;
