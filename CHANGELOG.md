@@ -1,5 +1,9 @@
 # Flux Release Notes
 
+## 5.0.2 - 2024-09-30
+
+- Wait for Lambda to process changes after deploying a new function version
+
 ## 5.0.1 - 2024-09-13
 
 - Fix issue checking function status whilst deploying Lambda update

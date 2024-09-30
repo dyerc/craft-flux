@@ -2,7 +2,7 @@
   "name": "dyerc/craft-flux",
   "description": "Transform and cache your images through AWS Lambda & CloudFront",
   "type": "craft-plugin",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "keywords": [
     "craft",
     "cms",
