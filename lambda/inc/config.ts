@@ -24,7 +24,7 @@ export interface FluxConfig {
   verifyQuery: boolean;
   verifySecret: string;
 
-  cachedEnabled: boolean;
+  cacheEnabled: boolean;
 
   bucket: string;
   region: string;
@@ -43,7 +43,7 @@ export const DefaultConfig: FluxConfig = {
   verifyQuery: true,
   verifySecret: "",
 
-  cachedEnabled: true,
+  cacheEnabled: true,
 
   bucket: "",
   region: "",
