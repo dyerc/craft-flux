@@ -1,5 +1,10 @@
 # Flux Release Notes
 
+## 5.0.3 - 2024-10-08
+
+- Parse environment variables in S3 bucket filesystem settings sent to Lambda
+- Fix typo in settings JSON object sent to Lambda
+
 ## 5.0.2 - 2024-09-30
 
 - Wait for Lambda to process changes after deploying a new function version
