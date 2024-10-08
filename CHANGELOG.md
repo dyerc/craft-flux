@@ -1,8 +1,16 @@
 # Flux Release Notes
 
+## 4.4.0 - 2024-10-08
+
+- Merge in upstream changes from Craft 5 branch
+- Fix issue checking function status whilst deploying Lambda update
+- Wait for Lambda to process changes after deploying a new function version
+- Parse environment variables in S3 bucket filesystem settings sent to Lambda
+- Fix typo in settings JSON object sent to Lambda
+
 ## 4.3.0 - 2024-04-19
 
-- Use Node.js 20.x for Lambda functions 
+- Use Node.js 20.x for Lambda functions
 - Upgrade sharp to 0.32.6
 - Merge in backwards compatible fixes from Craft 5 branch
 

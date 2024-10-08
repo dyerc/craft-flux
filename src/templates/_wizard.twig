@@ -232,8 +232,17 @@
               create a CloudFront distribution
             </a> which will serve your files. Select your S3 bucket in the <b>
               Origin domain
-            </b> option, otherwise, everything can be left as the default value and
-            will be automatically configured by Flux.
+            </b> option.
+          </p>
+          <p>
+            If your S3 bucket has <b>all public access blocked</b>, under origin
+            access, be sure to select <b>
+              Origin access control settings (recommended)
+            </b>.
+          </p>
+          <p>
+            All other settings can be left as the default value and will be
+            automatically configured by Flux.
           </p>
 
           {{

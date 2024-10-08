@@ -152,15 +152,15 @@ class SettingsModel extends Model
         $volumes = Craft::$app->getVolumes()->getAllVolumes();
 
         $sources = array_map(function ($volume) {
-            if (is_a($volume->fs, "craft\\awss3\\Fs") && $volume->fs->settings['bucket'] == App::parseEnv($this->awsBucket)) {
+            if (is_a($volume->fs, "craft\\awss3\\Fs") && App::parseEnv($volume->fs->settings['bucket']) == App::parseEnv($this->awsBucket)) {
                 $fs = $volume->fs;
 
                 return [
                     'type' => 'local',
                     'handle' => $volume->handle,
-                    'region' => $fs->settings['region'],
-                    'bucket' => $fs->settings['bucket'],
-                    'subFolder' => $fs->settings['subfolder']
+                    'region' => App::parseEnv($fs->settings['region']),
+                    'bucket' => App::parseEnv($fs->settings['bucket']),
+                    'subFolder' => App::parseEnv($fs->settings['subfolder'])
                 ];
             } else {
                 return [

@@ -64,7 +64,7 @@ export function fetchSource(
 
           if (originFile) {
             fetchExternalSource(originFile, config).then((buffer) => {
-              if (config.cachedEnabled) {
+              if (config.cacheEnabled) {
                 writeFile(localCachedFile, buffer, config);
               }
 

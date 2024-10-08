@@ -191,6 +191,8 @@ class Lambda extends Component
         // Publish new version
         $version = $this->client()->publishVersion(['FunctionName' => $name]);
 
+        $this->waitForLambdaToProcess($name);
+
         if ($version['LastUpdateStatus'] != "Successful") {
             Craft::error("Lambda upload unsuccessful. Status is " . $version['LastUpdateStatus']);
         }
@@ -304,7 +306,7 @@ class Lambda extends Component
         while (!$updated && $i < 60) {
             sleep(3);
 
-            $response = $this->client()->getFunction(['FunctionName' => $name]);
+            $response = $this->client()->getFunctionConfiguration(['FunctionName' => $name]);
 
             if ($response['LastUpdateStatus'] != 'InProgress') {
                 $updated = true;
