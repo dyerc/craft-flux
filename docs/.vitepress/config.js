@@ -1,7 +1,7 @@
 const fathom = [
   "script",
   {
-    src: "https://hoverfly.cdengine.co.uk/script.js",
+    src: "https://cdn.usefathom.com/script.js",
     "data-spa": "auto",
     "data-site": "GMDYKVSM",
     defer: true,
