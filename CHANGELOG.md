@@ -1,5 +1,9 @@
 # Flux Release Notes
 
+## 5.0.4 - 2025-06-03
+
+- Enable overriding default AWS cache policy and origin request policy naming through `config/flux.php` 
+
 ## 5.0.3 - 2024-10-08
 
 - Parse environment variables in S3 bucket filesystem settings sent to Lambda
