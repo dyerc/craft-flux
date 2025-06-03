@@ -9,6 +9,7 @@ use Craft;
 use craft\base\Model;
 use craft\behaviors\EnvAttributeParserBehavior;
 use craft\helpers\App;
+use dyerc\flux\services\Cloudfront;
 
 class SettingsModel extends Model
 {
@@ -121,6 +122,16 @@ class SettingsModel extends Model
      * @var int Maximum time origin response function can run
      */
     public int $lambdaTimeout = 15;
+
+    /**
+     * @var string Name of the AWS cache policy, by default shared between all Flux installations within the AWS account. Customize if you reach the AWS limit of 100
+     */
+    public string $cachePolicyName = 'Flux-Cache-Policy';
+
+    /**
+     * @var string Name of the AWS origin request policy, by default shared between all Flux installations within the AWS account. Customize if you reach the AWS limit of 100
+     */
+    public string $originRequestPolicyName = 'Flux-Origin-Request-Policy';
 
 
     public function isAwsConfigured(): bool

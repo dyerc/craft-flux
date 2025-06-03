@@ -80,5 +80,11 @@ return [
 
         // Maximum time origin response function can run
         // 'lambdaTimeout' => 15,
+
+        // Name of the AWS cache policy, by default shared between all Flux installations within the AWS account. Customize if you reach the AWS limit of 100
+        // 'cachePolicyName' => "Flux-Cache-Policy",
+
+        // Name of the AWS origin request policy, by default shared between all Flux installations within the AWS account. Customize if you reach the AWS limit of 100
+        // 'originRequestPolicyName' => "Flux-Origin-Request-Policy",
     ]
 ];
