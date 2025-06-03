@@ -1,5 +1,9 @@
 # Flux Release Notes
 
+## 4.4.1 - 2025-06-03
+
+- Enable overriding default AWS cache policy and origin request policy naming through `config/flux.php`
+
 ## 4.4.0 - 2024-10-08
 
 - Merge in upstream changes from Craft 5 branch

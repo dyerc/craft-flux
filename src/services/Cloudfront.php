@@ -14,10 +14,6 @@ use yii\base\Component;
 
 class Cloudfront extends Component
 {
-    public const GLOBAL_CACHE_POLICY_NAME = 'Flux-Cache-Policy';
-
-    public const GLOBAL_ORIGIN_REQUEST_POLICY_NAME = 'Flux-Origin-Request-Policy';
-
     private CloudFrontClient|null $_client = null;
 
     public function client(?string $keyId = null, ?string $secret = null): CloudFrontClient
@@ -144,7 +140,7 @@ class Cloudfront extends Component
             $prefix = App::parseEnv($settings->awsResourcePrefix);
             $name = "$prefix-Cache-Policy";
         } else {
-            $name = self::GLOBAL_CACHE_POLICY_NAME;
+            $name = $settings->cachePolicyName;
         }
 
         $config = array_merge([
@@ -195,7 +191,7 @@ class Cloudfront extends Component
             $prefix = App::parseEnv($settings->awsResourcePrefix);
             $name = "$prefix-Origin-Request-Policy";
         } else {
-            $name = self::GLOBAL_ORIGIN_REQUEST_POLICY_NAME;
+            $name = $settings->originRequestPolicyName;
         }
 
         $config = array_merge([
