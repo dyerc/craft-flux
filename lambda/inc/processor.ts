@@ -91,12 +91,14 @@ export function scaleToFit(
   proc: sharp.Sharp,
   width: number,
   height: number,
-  metadata: sharp.Metadata
+  metadata: sharp.Metadata,
+  scaleIfSmaller: boolean
 ): sharp.Sharp {
   return proc.resize({
     fit: "inside",
     width: width,
     height: height,
+    withoutEnlargement: !scaleIfSmaller,
   });
 }
 
@@ -118,7 +120,8 @@ export function scaleAndCrop(
   targetWidth: number,
   targetHeight: number,
   position: FocalPoint | string,
-  metadata: sharp.Metadata
+  metadata: sharp.Metadata,
+  scaleIfSmaller: boolean
 ): sharp.Sharp {
   const sharpPositions: Record<string, string> = {
     "top-left": "left top",
@@ -131,9 +134,6 @@ export function scaleAndCrop(
     "bottom-center": "bottom",
     "bottom-right": "right bottom",
   };
-
-  // Maybe allow enabling/disabling upscaling if future?
-  const scaleIfSmaller = true;
 
   if (!metadata.width || !metadata.height) {
     return proc;
@@ -278,13 +278,21 @@ export function transformSource(
 
     width = dimensions[0];
     height = dimensions[1];
+    const scaleIfSmaller = !transform.disableUpscale;
 
     if (transform.mode === TransformMode.FIT) {
-      proc = scaleToFit(proc, width, height, metadata);
+      proc = scaleToFit(proc, width, height, metadata, scaleIfSmaller);
     } else if (transform.mode === TransformMode.STRETCH) {
       proc = stretchToFit(proc, width, height, metadata);
     } else {
-      proc = scaleAndCrop(proc, width, height, transform.position, metadata);
+      proc = scaleAndCrop(
+        proc,
+        width,
+        height,
+        transform.position,
+        metadata,
+        scaleIfSmaller
+      );
     }
 
     if (request.extension === "webp") {

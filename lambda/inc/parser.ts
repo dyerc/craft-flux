@@ -50,6 +50,7 @@ export interface Manipulations {
   height: number | string;
   position: string | FocalPoint;
   quality?: number;
+  disableUpscale?: boolean;
 }
 
 export function coerceInt(
@@ -69,7 +70,7 @@ export function requestAccepts(request: CloudFrontRequest) {
 
 export function parseTransformPathSegment(uri: string): string | undefined {
   const matches = uri.match(
-    /_(\d+|AUTO)x(\d+|AUTO)_(fit|crop|stretch)_([a-z\d\\.]+-[a-z\d\\.]+)_?(\d+)?/
+    /_(\d+|AUTO)x(\d+|AUTO)_(fit|crop|stretch)_([a-z\d\\.]+-[a-z\d\\.]+)_?(\d+)?_?(ns)?/
   );
   return matches ? matches[0] : undefined;
 }
@@ -241,6 +242,12 @@ export function parseManipulations(
     }
   }
 
+  if (params.upscale === "0") {
+    transform.disableUpscale = true;
+  } else {
+    transform.disableUpscale = false;
+  }
+
   return transform;
 }
 
@@ -259,29 +266,17 @@ export function transformPath(request: TransformRequest): string {
     transform += `_${m.quality}`;
   }
 
+  if (m.disableUpscale) {
+    transform += `_ns`;
+  }
+
   return compilePath(
     request.prefix,
     transform,
     `${request.fileName}.${request.extension}`
   );
 }
-/*
-export function parsePath(uri: string): Manipulations|null {
-  const matches = uri.match(/_(\d+|AUTO)x(\d+|AUTO)_(fit|crop|stretch)_([a-z]+-[a-z]+)_(\d+)/);
 
-  if (matches && matches.length === 5) {
-    return {
-      width: coerceInt(matches[0], "AUTO"),
-      height: coerceInt(matches[1], "AUTO"),
-      mode: matches[2] as TransformMode,
-      position: matches[3],
-      quality: parseInt(matches[4])
-    }
-  } else {
-    return null;
-  }
-}
-*/
 export function compilePath(...elements: string[]): string {
   return elements.filter((e) => e && e.length > 0).join("/");
 }

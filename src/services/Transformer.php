@@ -63,6 +63,10 @@ class Transformer extends Component
             $transformKeys['f'] = $transform->format;
         }
 
+        if ($transform->upscale === false) {
+            $transformKeys['upscale'] = "0";
+        }
+
         $transformKeys['c'] = $this->getCacheKey($asset);
 
         $path .= '?' . http_build_query($transformKeys);

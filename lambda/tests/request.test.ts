@@ -97,6 +97,17 @@ describe("request", () => {
     );
   });
 
+  test("allows disabling upscaling", async () => {
+    const result = await handle(
+      "/images/image.jpg?mode=fit&h=920&q=70&upscale=0",
+      {},
+      { verifyQuery: false }
+    );
+    expect(result.uri).toEqual(
+      "/images/_AUTOx920_fit_center-center_70_ns/image.jpg"
+    );
+  });
+
   test("processes deeply nested file", async () => {
     const result = await handle(
       "/images/1/2/3/4/5/6/image.jpg?mode=fit&h=920&q=70",

@@ -1,8 +1,12 @@
 # Flux Release Notes
 
+## 5.0.5 - 2025-08-18
+
+- Fix support for disabled upscaling of images in `crop` and `fit` modes
+
 ## 5.0.4 - 2025-06-03
 
-- Enable overriding default AWS cache policy and origin request policy naming through `config/flux.php` 
+- Enable overriding default AWS cache policy and origin request policy naming through `config/flux.php`
 
 ## 5.0.3 - 2024-10-08
 

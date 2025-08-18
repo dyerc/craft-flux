@@ -88,6 +88,21 @@ class TransformerTest extends TestCase
         );
     }
 
+    public function testGeneratesUrlForAssetWithoutUpscaling(): void
+    {
+        Flux::$plugin->settings->verifyQuery = false;
+
+        $this->assertSame(
+          "https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080&upscale=0",
+          $this->_removeCacheKeys($this->asset->getUrl([
+            'mode' => 'fit',
+            'width' => 1920,
+            'height' => 1080,
+            'upscale' => false
+          ]))
+        );
+    }
+
     public function testDoesntGenerateUrlWhenDisabled(): void
     {
         Flux::$plugin->settings->enabled = false;
