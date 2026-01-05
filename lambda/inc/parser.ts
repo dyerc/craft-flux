@@ -231,7 +231,7 @@ export function parseManipulations(
 
   if (params.q) {
     const q = coerceInt(params.q as string, 0);
-    if (q > 0) {
+    if (typeof q === "number" && q > 0) {
       transform.quality = q as number;
     }
   } else {

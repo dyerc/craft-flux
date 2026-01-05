@@ -1,5 +1,13 @@
 # Flux Release Notes
 
+## 5.1.0 - 2026-01-05
+
+> [!NOTE]  
+> Future installation will now create/update Lambda functions to run on Node.js 24. Previously Node.js 20 was used which will stop receiving security patches from April 30, 2026.
+
+- Update runtime and Lambda installation for Node.js 24
+- Upgrade sharp to 0.34.5
+
 ## 5.0.5 - 2025-08-18
 
 - Fix support for disabled upscaling of images in `crop` and `fit` modes

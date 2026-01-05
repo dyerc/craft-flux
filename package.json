@@ -15,7 +15,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:all": "npm run build && cd lambda && npm run build && cd .. && npm run docs:build",
+    "build:all": "yarn build && cd lambda && yarn build && cd .. && yarn docs:build",
     "format": "prettier --write .",
     "watch": "vite build --watch",
     "preview": "vite preview",
@@ -23,10 +23,10 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:serve": "vitepress serve docs",
-    "docs:deploy": "npm run docs:build && ./deploy.sh",
-    "compile": "npm run phpstan && npm run build && cd lambda && npm run build && cd ..",
-    "test": "npm run test:lambda && npm run test:php",
-    "test:lambda": "cd lambda && npm test && cd ..",
+    "docs:deploy": "yarn docs:build && ./deploy.sh",
+    "compile": "yarn phpstan && yarn build && cd lambda && yarn build && cd ..",
+    "test": "yarn test:lambda && yarn test:php",
+    "test:lambda": "cd lambda && yarn test && cd ..",
     "test:php": "vendor/bin/codecept run unit"
   },
   "devDependencies": {

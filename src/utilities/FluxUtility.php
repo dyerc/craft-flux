@@ -78,6 +78,10 @@ class FluxUtility extends Utility
                     'label' => 'Lambda Function Version',
                     'value' => $lambda['version']
                 ];
+                $info[] = [
+                    'label' => 'Lambda Function Runtime',
+                    'value' => $lambda['functions']['viewerRequest']['runtime']
+                ];
             }
 
             if ($cloudfront) {

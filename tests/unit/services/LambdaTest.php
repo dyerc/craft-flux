@@ -51,7 +51,8 @@ class LambdaTest extends TestCase
                         'Role' => 'role',
                         'FunctionArn' => 'arn',
                         'MemorySize' => '512',
-                        'LastModified' => 'ff'
+                        'LastModified' => 'ff',
+                        'Runtime' => 'nodejs24.x'
                     ]
                 ]);
             })
@@ -73,7 +74,8 @@ class LambdaTest extends TestCase
                         'Role' => 'role',
                         'FunctionArn' => 'arn',
                         'MemorySize' => '512',
-                        'LastModified' => 'ff'
+                        'LastModified' => 'ff',
+                        'Runtime' => 'nodejs24.x'
                     ]
                 ]);
             })

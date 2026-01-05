@@ -1,8 +1,6 @@
-import type { Config } from "@jest/types";
+import type { Config } from "jest";
+import { createDefaultPreset } from "ts-jest";
 
 export default {
-  verbose: true,
-  transform: {
-    "^.+\\.tsx?$": "ts-jest",
-  },
-} as Config.InitialOptions;
+  ...createDefaultPreset(),
+} satisfies Config;

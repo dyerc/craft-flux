@@ -19,6 +19,7 @@
 .idea
 .project
 .settings
+mise.toml
 *.esproj
 *.sublime-workspace
 *.sublime-project

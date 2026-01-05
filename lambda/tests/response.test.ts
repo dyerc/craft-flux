@@ -15,9 +15,10 @@ import {
 } from "@aws-sdk/client-s3";
 import * as fs from "fs";
 import path from "path";
-const FileType = require("file-type");
 
 const handler = require("../response.ts").handler;
+
+import { handler } from "../response";
 
 const sampleConfig: FluxConfig = Object.assign({}, DefaultConfig, {
   loggingEnabled: false,
@@ -303,10 +304,14 @@ describe("response", () => {
     );
 
     expect(result.status).toEqual("200");
-    const t = await FileType.fromBuffer(
-      Buffer.from(result.body as string, "base64")
-    );
-    expect(t?.ext).toEqual("png");
+    // Assert we start with the PNG standard bytes
+    const buffer = Buffer.from(result.body as string, "base64");
+    const isPNG =
+      buffer[0] === 0x89 &&
+      buffer[1] === 0x50 &&
+      buffer[2] === 0x4e &&
+      buffer[3] === 0x47;
+    expect(isPNG).toBe(true);
   });
 
   test("crops around focal point", async () => {

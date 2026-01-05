@@ -72,6 +72,7 @@ class Lambda extends Component
                 'version' => $version,
                 'config' => $configHash,
                 'memory' => $function['Configuration']['MemorySize'],
+                'runtime' => $function['Configuration']['Runtime'],
                 'lastModified' => DateTime::createFromFormat(DateTimeInterface::RFC3339_EXTENDED, $function['Configuration']['LastModified'])
             ];
         } catch (LambdaException $e) {
@@ -159,7 +160,7 @@ class Lambda extends Component
             'Architectures' => ['x86_64'],
             'FunctionName' => $name,
             'Description' => "Deployed by Flux v$functionVersion $configHash",
-            'Runtime' => 'nodejs20.x'
+            'Runtime' => 'nodejs24.x'
         ], $overrides);
 
         $existingStatus = $this->getStatus($name);

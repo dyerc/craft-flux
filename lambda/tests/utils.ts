@@ -155,7 +155,7 @@ export class OriginServer {
 
     this.server = http.createServer((req, res) => {
       if (req.url != null) {
-        const parsedUrl = url.parse(req.url);
+        const parsedUrl = new URL(req.url, "https://aws.amazon.com");
         // @ts-ignore
         let pathname = this.paths[parsedUrl.pathname];
 
