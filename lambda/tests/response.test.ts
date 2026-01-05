@@ -16,8 +16,6 @@ import {
 import * as fs from "fs";
 import path from "path";
 
-const handler = require("../response.ts").handler;
-
 import { handler } from "../response";
 
 const sampleConfig: FluxConfig = Object.assign({}, DefaultConfig, {

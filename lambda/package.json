@@ -15,7 +15,6 @@
   "author": "Chris Dyer",
   "private": true,
   "devDependencies": {
-    "@tsconfig/node20": "^20.1.8",
     "@types/aws-lambda": "^8.10.159",
     "@types/jest": "^30.0.0",
     "@types/sharp": "^0.31.1",
