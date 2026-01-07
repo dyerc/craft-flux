@@ -3,17 +3,16 @@
  * Copyright(c) Chris Dyer
  */
 
-import {
-  CloudFrontResponseEvent,
-  CloudFrontResponseResult,
-} from "aws-lambda";
+import { CloudFrontResponseEvent, CloudFrontResponseResult } from "aws-lambda";
 
 import { DefaultConfig } from "./inc/config";
 import { compilePath, parseRequest, removeRootPrefix } from "./inc/parser";
 import { fetchSource, transformSource, writeFile } from "./inc/processor";
 import { log } from "./inc/logging";
 
-export const handler = async (event: CloudFrontResponseEvent): Promise<CloudFrontResponseResult> => {
+export const handler = async (
+  event: CloudFrontResponseEvent
+): Promise<CloudFrontResponseResult> => {
   const { request, response } = event.Records[0].cf;
   let config = DefaultConfig;
 
@@ -64,9 +63,9 @@ export const handler = async (event: CloudFrontResponseEvent): Promise<CloudFron
             ];
 
             return Object.assign({}, response as CloudFrontResponseResult, {
-                status: "302",
-                statusDescription: "Moved Temporarily",
-              });
+              status: "302",
+              statusDescription: "Moved Temporarily",
+            });
           } else {
             response.headers["content-type"] = [
               { key: "Content-Type", value: "image/" + transform.extension },
@@ -77,7 +76,7 @@ export const handler = async (event: CloudFrontResponseEvent): Promise<CloudFron
               status: "200",
               body: buffer.toString("base64"),
               bodyEncoding: "base64",
-            })
+            });
           }
         })
         .catch((error) => {
