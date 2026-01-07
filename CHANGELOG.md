@@ -1,5 +1,9 @@
 # Flux Release Notes
 
+## 5.1.1 - 2026-01-07
+
+- Fix a critical issue with edge functions loading on Node.js 24
+
 ## 5.1.0 - 2026-01-05
 
 > [!NOTE]  
