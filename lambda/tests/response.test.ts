@@ -1,5 +1,5 @@
-import { describe, expect, test } from "@jest/globals";
-import { CloudFrontResponseResult } from "aws-lambda";
+import { afterAll, beforeAll, describe, expect, test } from "@jest/globals";
+import { CloudFrontResultResponse } from "aws-lambda";
 import {
   createCloudfrontContext,
   createCloudFrontResponseEvent,
@@ -33,7 +33,7 @@ async function handle(
   url: string,
   options = {},
   config = {}
-): Promise<CloudFrontResponseResult> {
+): Promise<CloudFrontResultResponse> {
   const context = createCloudfrontContext();
 
   let parts = url.split("?");
@@ -50,7 +50,10 @@ async function handle(
 
   // @ts-ignore
   global.fluxConfig = Object.assign({}, sampleConfig, config);
-  return await handler(event);
+  const result = await handler(event);
+
+  // Ignore the possibility of it being null | undefined
+  return result as CloudFrontResultResponse;
 }
 
 let originServer: OriginServer;

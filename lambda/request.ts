@@ -9,7 +9,7 @@ import { parseRequest, transformPath, validHmacToken } from "./inc/parser";
 import { DefaultConfig } from "./inc/config";
 import { log } from "./inc/logging";
 
-export const handler = async(event: CloudFrontRequestEvent) => {
+export const handler = async (event: CloudFrontRequestEvent) => {
   const request = event.Records[0].cf.request;
   let config = DefaultConfig;
 
