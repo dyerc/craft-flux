@@ -4,7 +4,7 @@ import { createCloudfrontContext, createCloudFrontRequestEvent } from "./utils";
 import * as crypto from "crypto";
 import { DefaultConfig, FluxConfig } from "../inc/config";
 
-const handler = require("../request.ts").handler;
+import { handler } from "../request";
 
 const sampleConfig: FluxConfig = Object.assign({}, DefaultConfig, {
   loggingEnabled: false,
@@ -36,13 +36,9 @@ async function handle(
     )
   );
 
-  return new Promise((resolve) => {
-    // @ts-ignore
-    global.fluxConfig = Object.assign({}, sampleConfig, config);
-    handler(event, context, (error: null, request: CloudFrontRequest) => {
-      resolve(request);
-    });
-  });
+  // @ts-ignore
+  global.fluxConfig = Object.assign({}, sampleConfig, config);
+  return await handler(event);
 }
 
 describe("request", () => {

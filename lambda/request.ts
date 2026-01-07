@@ -3,13 +3,13 @@
  * Copyright(c) Chris Dyer
  */
 
-import { CloudFrontRequestHandler } from "aws-lambda";
+import { CloudFrontRequestEvent } from "aws-lambda";
 
 import { parseRequest, transformPath, validHmacToken } from "./inc/parser";
 import { DefaultConfig } from "./inc/config";
 import { log } from "./inc/logging";
 
-const handler: CloudFrontRequestHandler = (event, _, callback) => {
+export const handler = async(event: CloudFrontRequestEvent) => {
   const request = event.Records[0].cf.request;
   let config = DefaultConfig;
 
@@ -22,7 +22,7 @@ const handler: CloudFrontRequestHandler = (event, _, callback) => {
     config = Object.assign({}, config, global.fluxConfig);
   } else {
     log(config, "Forwarding request, no config accessible");
-    return callback(null, request);
+    return request;
   }
 
   log(config, "Parsing request", request.uri, request.querystring);
@@ -32,7 +32,7 @@ const handler: CloudFrontRequestHandler = (event, _, callback) => {
 
   if (config.verifyQuery && !validHmacToken(request, params, config)) {
     log(config, "Forwarding request, query verification failed");
-    return callback(null, request);
+    return request;
   }
 
   const transform = parseRequest(request, params, config);
@@ -50,11 +50,9 @@ const handler: CloudFrontRequestHandler = (event, _, callback) => {
       ];
     }
 
-    return callback(null, request);
+    return request;
   } else {
     log(config, "Forwarding request, unable to parse");
-    return callback(null, request);
+    return request;
   }
 };
-
-exports.handler = handler;

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "@jest/globals";
-import { CloudFrontResultResponse } from "aws-lambda";
+import { CloudFrontResponseResult } from "aws-lambda";
 import {
   createCloudfrontContext,
   createCloudFrontResponseEvent,
@@ -33,7 +33,7 @@ async function handle(
   url: string,
   options = {},
   config = {}
-): Promise<CloudFrontResultResponse> {
+): Promise<CloudFrontResponseResult> {
   const context = createCloudfrontContext();
 
   let parts = url.split("?");
@@ -48,13 +48,9 @@ async function handle(
     )
   );
 
-  return new Promise((resolve) => {
-    // @ts-ignore
-    global.fluxConfig = Object.assign({}, sampleConfig, config);
-    handler(event, context, (error: null, result: CloudFrontResultResponse) => {
-      resolve(result);
-    });
-  });
+  // @ts-ignore
+  global.fluxConfig = Object.assign({}, sampleConfig, config);
+  return await handler(event);
 }
 
 let originServer: OriginServer;
