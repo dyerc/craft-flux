@@ -9,6 +9,7 @@ import type { Readable } from "stream";
 
 import {
   compilePath,
+  Filters,
   FocalPoint,
   TransformMode,
   TransformRequest,
@@ -295,6 +296,10 @@ export function transformSource(
       );
     }
 
+    if (transform.filters) {
+      proc = processFilters(proc, transform.filters);
+    }
+
     if (request.extension === "webp") {
       proc = proc.webp({
         quality: transform.quality,
@@ -309,6 +314,26 @@ export function transformSource(
 
     return proc.toBuffer();
   });
+}
+
+function processFilters(proc: sharp.Sharp, filters: Filters) {
+  if (filters.blur) {
+    if (filters.blur === true) {
+      proc = proc.blur(true);
+    } else if (filters.blur > 0) {
+      proc = proc.blur(filters.blur);
+    }
+  }
+
+  if (filters.greyscale) {
+    proc = proc.greyscale();
+  }
+
+  if (filters.tint) {
+    proc = proc.tint(filters.tint);
+  }
+
+  return proc;
 }
 
 export function readFile(key: string, config: FluxConfig): Promise<Buffer> {

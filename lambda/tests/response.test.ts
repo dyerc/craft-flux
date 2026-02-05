@@ -328,7 +328,26 @@ describe("response", () => {
     );
 
     expect(result.status).toEqual("200");
-    // @ts-ignore
-    fs.writeFileSync("test.jpg", result.body, "base64");
+  });
+
+  test("gaussian blurs", async () => {
+    originServer.map({
+      "/uploads/image.jpg": "image.jpg",
+    });
+
+    const mockS3Client = mockClient(S3Client);
+    mockS3Client.on(GetObjectCommand).rejects();
+    mockS3Client.on(PutObjectCommand).resolves({});
+    mockS3Client.on(PutObjectCommand).resolves({});
+
+    const result = await handle(
+      "/testAssets/_600xAUTO_fit_center-center_f!gaRibHVyww/image.jpg?mode=fit&w=600&blur=25",
+      {
+        status: "403",
+      },
+      { verifyQuery: false }
+    );
+
+    expect(result.status).toEqual("200");
   });
 });

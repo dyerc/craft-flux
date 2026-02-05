@@ -8,6 +8,7 @@ namespace dyerc\flux\services;
 use craft\elements\Asset;
 use craft\models\ImageTransform;
 use dyerc\flux\Flux;
+use dyerc\flux\models\ImageFilters;
 use dyerc\flux\models\SettingsModel;
 use yii\base\Component;
 
@@ -25,7 +26,7 @@ class Transformer extends Component
         }));
     }
 
-    public function getUrl(Asset $asset, ImageTransform $transform): string
+    public function getUrl(Asset $asset, ImageTransform $transform, ?ImageFilters $filters = null): string
     {
         /* @var SettingsModel */
         $settings = Flux::getInstance()->getSettings();
@@ -68,6 +69,16 @@ class Transformer extends Component
         }
 
         $transformKeys['c'] = $this->getCacheKey($asset);
+
+        if ($filters) {
+            if ($filters->blur) {
+                $transformKeys['blur'] = $filters->blur;
+            }
+
+            if ($filters->tint && is_array($filters->tint)) {
+                $transformKeys['tint'] = join(",", $filters->tint);
+            }
+        }
 
         $path .= '?' . http_build_query($transformKeys);
 

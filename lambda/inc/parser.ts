@@ -1,4 +1,5 @@
 import { createHmac } from "crypto";
+import { encode } from "@msgpack/msgpack";
 
 import { FluxConfig, FluxSource } from "./config";
 import { CloudFrontRequest } from "aws-lambda";
@@ -44,6 +45,16 @@ export interface FocalPoint {
   y: number;
 }
 
+export interface Filters {
+  blur?: boolean | number;
+  greyscale?: boolean;
+  tint?: {
+    r: number;
+    g: number;
+    b: number;
+  };
+}
+
 export interface Manipulations {
   mode: TransformMode;
   width: number | string;
@@ -51,6 +62,7 @@ export interface Manipulations {
   position: string | FocalPoint;
   quality?: number;
   disableUpscale?: boolean;
+  filters?: Filters;
 }
 
 export function coerceInt(
@@ -64,13 +76,26 @@ export function coerceInt(
   }
 }
 
+export function coerceBoolean(
+  input: string,
+  fallback: boolean | undefined = undefined
+) {
+  if (["true", "t", "1"].includes(input)) {
+    return true;
+  } else if (["false", "f", "0"].includes(input)) {
+    return false;
+  } else {
+    return fallback;
+  }
+}
+
 export function requestAccepts(request: CloudFrontRequest) {
   return request.headers["accept"] ? request.headers["accept"][0].value : "";
 }
 
 export function parseTransformPathSegment(uri: string): string | undefined {
   const matches = uri.match(
-    /_(\d+|AUTO)x(\d+|AUTO)_(fit|crop|stretch)_([a-z\d\\.]+-[a-z\d\\.]+)_?(\d+)?_?(ns)?/
+    /_(\d+|AUTO)x(\d+|AUTO)_(fit|crop|stretch)_([a-z\d\\.]+-[a-z\d\\.]+)_?(\d+)?_?(ns)?_?(f![a-zA-Z\d()]+)?/
   );
   return matches ? matches[0] : undefined;
 }
@@ -248,7 +273,48 @@ export function parseManipulations(
     transform.disableUpscale = false;
   }
 
+  let filters = parseFilters(params, extension, config);
+  if (Object.keys(filters).length) {
+    transform.filters = filters;
+  }
+
   return transform;
+}
+
+export function parseFilters(
+  params: URLParams,
+  extension: string,
+  config: FluxConfig
+): Filters {
+  const filters: Filters = {};
+
+  if (params.blur) {
+    if (params.blur === "true") {
+      filters.blur = true;
+    } else {
+      const blur = coerceInt(params.blur as string, 0);
+      if (typeof blur === "number" && blur > 0) {
+        filters.blur = blur as number;
+      }
+    }
+  }
+
+  if (params.greyscale) {
+    filters.greyscale = coerceBoolean(params.greyscale);
+  }
+
+  if (params.tint) {
+    const c = params.tint.split(",");
+    if (c.length === 3) {
+      filters.tint = {
+        r: c[0],
+        g: c[1],
+        b: c[2],
+      };
+    }
+  }
+
+  return filters;
 }
 
 export function transformPath(request: TransformRequest): string {
@@ -270,6 +336,11 @@ export function transformPath(request: TransformRequest): string {
     transform += `_ns`;
   }
 
+  if (m.filters) {
+    const encoded = encodeFilters(m.filters);
+    transform += `_f!${encoded}`;
+  }
+
   return compilePath(
     request.prefix,
     transform,
@@ -279,6 +350,19 @@ export function transformPath(request: TransformRequest): string {
 
 export function compilePath(...elements: string[]): string {
   return elements.filter((e) => e && e.length > 0).join("/");
+}
+
+export function encodeFilters(filters: Filters): string {
+  const encoded = encode(filters, { sortKeys: true });
+  const buffer: Buffer = Buffer.from(
+    encoded.buffer,
+    encoded.byteOffset,
+    encoded.byteLength
+  );
+  const key = buffer.toString("base64");
+
+  // Make special characters S3 compliant and remove padding
+  return key.replace(/\+/g, "(").replace(/\//g, ")").replace(/=/g, "");
 }
 
 export function removeRootPrefix(input: string, config: FluxConfig): string {

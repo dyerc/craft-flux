@@ -254,4 +254,26 @@ describe("request", () => {
       },
     ]);
   });
+
+  test("parses blur filter", async () => {
+    const result = await handle(
+      "/images/image.jpg?mode=fit&h=920&q=70&pos=bottom-center&blur=30",
+      {},
+      { verifyQuery: false }
+    );
+    expect(result.uri).toEqual(
+      `/images/_AUTOx920_fit_bottom-center_70_f!gaRibHVyHg/image.jpg`
+    );
+  });
+
+  test("parses tint filter", async () => {
+    const result = await handle(
+      "/images/image.jpg?mode=fit&h=920&q=70&pos=bottom-center&tint=255,128,0",
+      {},
+      { verifyQuery: false }
+    );
+    expect(result.uri).toEqual(
+      `/images/_AUTOx920_fit_bottom-center_70_f!gaR0aW50g6FioTChZ6MxMjihcqMyNTU/image.jpg`
+    );
+  });
 });
