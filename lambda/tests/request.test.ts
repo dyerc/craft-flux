@@ -20,7 +20,7 @@ const sampleConfig: FluxConfig = Object.assign({}, DefaultConfig, {
 async function handle(
   url: string,
   options = {},
-  config = {}
+  config = {},
 ): Promise<CloudFrontRequest> {
   const context = createCloudfrontContext();
 
@@ -32,8 +32,8 @@ async function handle(
         uri: parts[0],
         querystring: parts[1],
       },
-      options
-    )
+      options,
+    ),
   );
 
   // @ts-ignore
@@ -46,10 +46,10 @@ describe("request", () => {
     const result = await handle(
       "/images/image.jpg?mode=fit&w=1920&h=1080",
       {},
-      { verifyQuery: false }
+      { verifyQuery: false },
     );
     expect(result.uri).toEqual(
-      "/images/_1920x1080_fit_center-center_80/image.jpg"
+      "/images/_1920x1080_fit_center-center_80/image.jpg",
     );
   });
 
@@ -57,10 +57,10 @@ describe("request", () => {
     const result = await handle(
       "/images/image.jpg?mode=crop&pos=center-center&w=2208&h=1242&q=90",
       {},
-      { verifyQuery: false }
+      { verifyQuery: false },
     );
     expect(result.uri).toEqual(
-      "/images/_2208x1242_crop_center-center_90/image.jpg"
+      "/images/_2208x1242_crop_center-center_90/image.jpg",
     );
   });
 
@@ -68,7 +68,7 @@ describe("request", () => {
     const result = await handle(
       "/images/image.jpg?w=1920&h=1080&q=70",
       {},
-      { verifyQuery: false }
+      { verifyQuery: false },
     );
     expect(result.uri).toEqual("/images/image.jpg");
   });
@@ -77,7 +77,7 @@ describe("request", () => {
     const result = await handle(
       "/images/image.jpg?mode=fit&q=70",
       {},
-      { verifyQuery: false }
+      { verifyQuery: false },
     );
     expect(result.uri).toEqual("/images/image.jpg");
   });
@@ -86,10 +86,10 @@ describe("request", () => {
     const result = await handle(
       "/images/image.jpg?mode=fit&h=920&q=70",
       {},
-      { verifyQuery: false }
+      { verifyQuery: false },
     );
     expect(result.uri).toEqual(
-      "/images/_AUTOx920_fit_center-center_70/image.jpg"
+      "/images/_AUTOx920_fit_center-center_70/image.jpg",
     );
   });
 
@@ -97,10 +97,10 @@ describe("request", () => {
     const result = await handle(
       "/images/image.jpg?mode=fit&h=920&q=70&upscale=0",
       {},
-      { verifyQuery: false }
+      { verifyQuery: false },
     );
     expect(result.uri).toEqual(
-      "/images/_AUTOx920_fit_center-center_70_ns/image.jpg"
+      "/images/_AUTOx920_fit_center-center_70_ns/image.jpg",
     );
   });
 
@@ -108,10 +108,10 @@ describe("request", () => {
     const result = await handle(
       "/images/1/2/3/4/5/6/image.jpg?mode=fit&h=920&q=70",
       {},
-      { verifyQuery: false }
+      { verifyQuery: false },
     );
     expect(result.uri).toEqual(
-      "/images/1/2/3/4/5/6/_AUTOx920_fit_center-center_70/image.jpg"
+      "/images/1/2/3/4/5/6/_AUTOx920_fit_center-center_70/image.jpg",
     );
   });
 
@@ -119,10 +119,10 @@ describe("request", () => {
     const result = await handle(
       "/images/image.jpg?mode=fit&h=920&q=70&pos=bottom-center",
       {},
-      { verifyQuery: false }
+      { verifyQuery: false },
     );
     expect(result.uri).toEqual(
-      "/images/_AUTOx920_fit_bottom-center_70/image.jpg"
+      "/images/_AUTOx920_fit_bottom-center_70/image.jpg",
     );
   });
 
@@ -130,10 +130,10 @@ describe("request", () => {
     const result = await handle(
       "/images/image.jpg?mode=fit&h=920&pos=0.7259-0.1642&q=70",
       {},
-      { verifyQuery: false }
+      { verifyQuery: false },
     );
     expect(result.uri).toEqual(
-      "/images/_AUTOx920_fit_0.726-0.164_70/image.jpg"
+      "/images/_AUTOx920_fit_0.726-0.164_70/image.jpg",
     );
   });
 
@@ -150,10 +150,10 @@ describe("request", () => {
           ],
         },
       },
-      { verifyQuery: false }
+      { verifyQuery: false },
     );
     expect(result.uri).toEqual(
-      "/images/_1920x1080_fit_center-center_80/image.jpg"
+      "/images/_1920x1080_fit_center-center_80/image.jpg",
     );
   });
 
@@ -161,10 +161,10 @@ describe("request", () => {
     const result = await handle(
       "/images/image.jpg?mode=fit&w=1920&h=1080&f=webp",
       {},
-      { verifyQuery: false }
+      { verifyQuery: false },
     );
     expect(result.uri).toEqual(
-      "/images/_1920x1080_fit_center-center_80/image.webp"
+      "/images/_1920x1080_fit_center-center_80/image.webp",
     );
     expect(result.headers["x-flux-source-filename"]).toEqual([
       {
@@ -187,7 +187,7 @@ describe("request", () => {
           ],
         },
       },
-      { verifyQuery: false }
+      { verifyQuery: false },
     );
     expect(result.uri).toEqual("/images/_600xAUTO_fit_center-center/image.png");
     expect(result.headers["x-flux-source-filename"]).toEqual([
@@ -208,10 +208,10 @@ describe("request", () => {
     const result = await handle(
       "/" + url + "&v=" + hmac,
       {},
-      { verifyQuery: true, verifySecret: "secret" }
+      { verifyQuery: true, verifySecret: "secret" },
     );
     expect(result.uri).toEqual(
-      "/images/_1920x1080_crop_center-center_80/image.jpg"
+      "/images/_1920x1080_crop_center-center_80/image.jpg",
     );
   });
 
@@ -224,7 +224,7 @@ describe("request", () => {
     const result = await handle(
       url + "&v=" + hmac,
       {},
-      { verifyQuery: true, verifySecret: "secre" }
+      { verifyQuery: true, verifySecret: "secre" },
     );
     expect(result.uri).toEqual("/images/image.jpg");
   });
@@ -242,10 +242,10 @@ describe("request", () => {
           ],
         },
       },
-      { verifyQuery: false }
+      { verifyQuery: false },
     );
     expect(result.uri).toEqual(
-      "/images/_1920x1080_fit_center-center_80/image.webp"
+      "/images/_1920x1080_fit_center-center_80/image.webp",
     );
     expect(result.headers["x-flux-source-filename"]).toEqual([
       {
@@ -257,12 +257,34 @@ describe("request", () => {
 
   test("parses blur filter", async () => {
     const result = await handle(
-      "/images/image.jpg?mode=fit&h=920&q=70&pos=bottom-center&blur=30",
+      "/images/image.jpg?mode=fit&h=920&q=70&pos=bottom-center&blur=true",
       {},
-      { verifyQuery: false }
+      { verifyQuery: false },
     );
     expect(result.uri).toEqual(
-      `/images/_AUTOx920_fit_bottom-center_70_f!gaRibHVyHg/image.jpg`
+      `/images/_AUTOx920_fit_bottom-center_70_f!gaRibHVyww/image.jpg`,
+    );
+  });
+
+  test("parses gaussian blur filter", async () => {
+    const result = await handle(
+      "/images/image.jpg?mode=fit&h=920&q=70&pos=bottom-center&blur=31.2",
+      {},
+      { verifyQuery: false },
+    );
+    expect(result.uri).toEqual(
+      `/images/_AUTOx920_fit_bottom-center_70_f!gaRibHVyy0A)MzMzMzMz/image.jpg`,
+    );
+  });
+
+  test("ignores invalid gaussian blur factor", async () => {
+    const result = await handle(
+      "/images/image.jpg?mode=fit&h=920&q=70&pos=bottom-center&blur=0.002",
+      {},
+      { verifyQuery: false },
+    );
+    expect(result.uri).toEqual(
+      `/images/_AUTOx920_fit_bottom-center_70/image.jpg`,
     );
   });
 
@@ -270,10 +292,10 @@ describe("request", () => {
     const result = await handle(
       "/images/image.jpg?mode=fit&h=920&q=70&pos=bottom-center&tint=255,128,0",
       {},
-      { verifyQuery: false }
+      { verifyQuery: false },
     );
     expect(result.uri).toEqual(
-      `/images/_AUTOx920_fit_bottom-center_70_f!gaR0aW50g6FioTChZ6MxMjihcqMyNTU/image.jpg`
+      `/images/_AUTOx920_fit_bottom-center_70_f!gaR0aW50g6FioTChZ6MxMjihcqMyNTU/image.jpg`,
     );
   });
 });

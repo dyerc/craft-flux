@@ -25,7 +25,7 @@ const S3Clients: { [region: string]: S3Client } = {};
 //  to return a buffer containing something to transform
 export function fetchSource(
   request: TransformRequest,
-  config: FluxConfig
+  config: FluxConfig,
 ): Promise<Buffer> {
   let fileName = `${request.fileName}.${request.extension}`;
   if (request.sourceFilename) {
@@ -38,7 +38,7 @@ export function fetchSource(
       const sourceFile = compilePath(
         request.source.subFolder || "",
         request.sourcePath,
-        fileName
+        fileName,
       );
 
       readFile(sourceFile, config)
@@ -51,7 +51,7 @@ export function fetchSource(
     const localCachedFile = compilePath(
       config.rootPrefix,
       request.prefix.replace(`/${request.transformPathSegment}`, ""),
-      fileName
+      fileName,
     );
 
     return new Promise((resolve, reject) => {
@@ -60,7 +60,7 @@ export function fetchSource(
         .catch((error) => {
           const originFile = new URL(
             compilePath(request.sourcePath, fileName),
-            request.source.url
+            request.source.url,
           );
 
           if (originFile) {
@@ -93,7 +93,7 @@ export function scaleToFit(
   width: number,
   height: number,
   metadata: sharp.Metadata,
-  scaleIfSmaller: boolean
+  scaleIfSmaller: boolean,
 ): sharp.Sharp {
   return proc.resize({
     fit: "inside",
@@ -107,7 +107,7 @@ export function stretchToFit(
   proc: sharp.Sharp,
   width: number,
   height: number,
-  metadata: sharp.Metadata
+  metadata: sharp.Metadata,
 ): sharp.Sharp {
   return proc.resize({
     fit: "fill",
@@ -122,7 +122,7 @@ export function scaleAndCrop(
   targetHeight: number,
   position: FocalPoint | string,
   metadata: sharp.Metadata,
-  scaleIfSmaller: boolean
+  scaleIfSmaller: boolean,
 ): sharp.Sharp {
   const sharpPositions: Record<string, string> = {
     "top-left": "left top",
@@ -150,7 +150,7 @@ export function scaleAndCrop(
   ) {
     const factor = Math.min(
       metadata.width / targetWidth,
-      metadata.height / targetHeight
+      metadata.height / targetHeight,
     );
     newHeight = Math.round(metadata.height / factor);
     newWidth = Math.round(metadata.width / factor);
@@ -162,7 +162,7 @@ export function scaleAndCrop(
   ) {
     const factor = Math.max(
       targetWidth / metadata.width,
-      targetHeight / metadata.height
+      targetHeight / metadata.height,
     );
     targetHeight = Math.round(targetHeight / factor);
     targetWidth = Math.round(targetWidth / factor);
@@ -254,7 +254,7 @@ export function scaleAndCrop(
 
 export function transformSource(
   input: Buffer,
-  request: TransformRequest
+  request: TransformRequest,
 ): Promise<Buffer> {
   const transform = request.manipulations;
   let proc = sharp(input);
@@ -274,7 +274,7 @@ export function transformSource(
       width,
       height,
       metadata.width || 0,
-      metadata.height || 0
+      metadata.height || 0,
     );
 
     width = dimensions[0];
@@ -292,7 +292,7 @@ export function transformSource(
         height,
         transform.position,
         metadata,
-        scaleIfSmaller
+        scaleIfSmaller,
       );
     }
 
@@ -319,7 +319,7 @@ export function transformSource(
 function processFilters(proc: sharp.Sharp, filters: Filters) {
   if (filters.blur) {
     if (filters.blur === true) {
-      proc = proc.blur(true);
+      proc = proc.blur();
     } else if (filters.blur > 0) {
       proc = proc.blur(filters.blur);
     }
@@ -345,7 +345,7 @@ export function readFile(key: string, config: FluxConfig): Promise<Buffer> {
         new GetObjectCommand({
           Bucket: config.bucket,
           Key: key,
-        })
+        }),
       )
       .then((response) => {
         const stream = response.Body as Readable;
@@ -368,7 +368,7 @@ export function readFile(key: string, config: FluxConfig): Promise<Buffer> {
 export function writeFile(
   key: string,
   buffer: Buffer,
-  config: FluxConfig
+  config: FluxConfig,
 ): Promise<Buffer> {
   return new Promise((resolve, reject) => {
     const extension = key.split(".").pop();
@@ -385,7 +385,7 @@ export function writeFile(
           CacheControl: "max-age=31536000",
           Key: key,
           StorageClass: "STANDARD",
-        })
+        }),
       )
       .then(() => {
         resolve(buffer);

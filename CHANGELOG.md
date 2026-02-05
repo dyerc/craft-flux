@@ -1,5 +1,12 @@
 # Flux Release Notes
 
+## 5.2.0 - Unreleased
+
+- Add `blur` filter support for a fast 3x3 box blur or Gaussian blur with a sigma factor
+- Add `greyscale` filter for converting to 8-bit greyscale
+- Add `tint` filter for tinting with a provided colour
+- Add `lqip` helper for generating a low quality image placeholder. Thanks for the suggestion [@lukew-cogapp](https://github.com/dyerc/craft-flux/issues/19)
+
 ## 5.1.1 - 2026-01-07
 
 - Fix a critical issue with edge functions loading on Node.js 24

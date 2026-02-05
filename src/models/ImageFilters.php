@@ -8,7 +8,7 @@ use craft\helpers\ArrayHelper;
 
 class ImageFilters extends Model
 {
-    public ?int $blur = null;
+    public float|bool|null $blur = null;
 
     public ?bool $greyscale = null;
 
@@ -40,10 +40,12 @@ class ImageFilters extends Model
 
         if (is_array($filters)) {
             if (isset($filters['blur'])) {
-                if (is_bool($filters['blur']) && $filters['blur']) {
+                $blur = $filters['blur'];
+
+                if (is_bool($blur) && $blur) {
                     $filters['blur'] = true;
-                } elseif (is_numeric($filters['blur'])) {
-                    $filters['blur'] = (int) $filters['blur'];
+                } elseif (is_numeric($blur) && $blur >= 0.3 && $blur <= 1000) {
+                    $filters['blur'] = (float)$blur;
                 } else {
                     $filters['blur'] = null;
                 }

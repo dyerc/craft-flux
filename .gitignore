@@ -35,6 +35,7 @@ prepros-6.config
 *.js.map
 lambda/test.jpg
 docs/.vitepress/dist/
+docs/.vitepress/cache/
 cpresources
 tests/_craft/storage/
 /tests/_craft/config/project

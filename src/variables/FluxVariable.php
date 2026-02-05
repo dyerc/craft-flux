@@ -9,6 +9,7 @@ use craft\elements\Asset;
 use craft\helpers\ImageTransforms;
 use dyerc\flux\Flux;
 use dyerc\flux\models\ImageFilters;
+use dyerc\flux\models\SettingsModel;
 
 class FluxVariable
 {
@@ -34,9 +35,15 @@ class FluxVariable
 
     public function lqip(Asset $asset): string
     {
+        /* @var SettingsModel $settings */
+        $settings = Flux::getInstance()->getSettings();
+
+        $lqipWidth = $asset->width * $settings->lqipSizeRatio;
+        $lqipHeight = $asset->height * $settings->lqipSizeRatio;
+
         return $this->transform($asset, [
-            'width' => max($asset->width / 4, self::MIN_LQIP_WIDTH),
-            'height' => max($asset->height / 4, self::MIN_LQIP_HEIGHT),
+            'width' => max($lqipWidth, self::MIN_LQIP_WIDTH),
+            'height' => max($lqipHeight, self::MIN_LQIP_HEIGHT),
         ], [
             'blur' => 25
         ]);

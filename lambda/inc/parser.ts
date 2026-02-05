@@ -4,7 +4,7 @@ import { encode } from "@msgpack/msgpack";
 import { FluxConfig, FluxSource } from "./config";
 import { CloudFrontRequest } from "aws-lambda";
 import { log } from "./logging";
-import { isNumeric, URLParams } from "./helpers";
+import { isNumeric, URLParams, coerceBoolean, coerceInt } from "./helpers";
 
 const WEBP_EXT = "webp";
 
@@ -65,37 +65,13 @@ export interface Manipulations {
   filters?: Filters;
 }
 
-export function coerceInt(
-  input: string,
-  fallback: string | number
-): string | number {
-  if (Number.isInteger(parseInt(input))) {
-    return parseInt(input);
-  } else {
-    return fallback;
-  }
-}
-
-export function coerceBoolean(
-  input: string,
-  fallback: boolean | undefined = undefined
-) {
-  if (["true", "t", "1"].includes(input)) {
-    return true;
-  } else if (["false", "f", "0"].includes(input)) {
-    return false;
-  } else {
-    return fallback;
-  }
-}
-
 export function requestAccepts(request: CloudFrontRequest) {
   return request.headers["accept"] ? request.headers["accept"][0].value : "";
 }
 
 export function parseTransformPathSegment(uri: string): string | undefined {
   const matches = uri.match(
-    /_(\d+|AUTO)x(\d+|AUTO)_(fit|crop|stretch)_([a-z\d\\.]+-[a-z\d\\.]+)_?(\d+)?_?(ns)?_?(f![a-zA-Z\d()]+)?/
+    /_(\d+|AUTO)x(\d+|AUTO)_(fit|crop|stretch)_([a-z\d\\.]+-[a-z\d\\.]+)_?(\d+)?_?(ns)?_?(f![a-zA-Z\d()]+)?/,
   );
   return matches ? matches[0] : undefined;
 }
@@ -103,7 +79,7 @@ export function parseTransformPathSegment(uri: string): string | undefined {
 export function validHmacToken(
   request: CloudFrontRequest,
   params: URLParams,
-  config: FluxConfig
+  config: FluxConfig,
 ): boolean {
   if (!params.v) {
     return false;
@@ -128,7 +104,7 @@ export function validHmacToken(
 export function parseRequest(
   request: CloudFrontRequest,
   params: URLParams,
-  config: FluxConfig
+  config: FluxConfig,
 ): TransformRequest | null {
   const uri = request.uri;
   const accepts = requestAccepts(request);
@@ -149,7 +125,6 @@ export function parseRequest(
   let outputExtension = extension;
 
   // Parse source
-
   if (request.headers["x-flux-source-filename"]) {
     sourceFilename = request.headers["x-flux-source-filename"][0].value;
   }
@@ -157,7 +132,7 @@ export function parseRequest(
   const transformPathSegment = parseTransformPathSegment(prefix);
   const sourcePrefix = removeRootPrefix(
     prefix.replace(`/${transformPathSegment}`, ""),
-    config
+    config,
   );
   const sourceComponents = sourcePrefix.split("/").filter((s) => s);
   const source: FluxSource | undefined = config.sources.find((s) => {
@@ -173,7 +148,7 @@ export function parseRequest(
     log(
       config,
       "Available sources",
-      config.sources.map((s) => s.handle)
+      config.sources.map((s) => s.handle),
     );
     return null;
   }
@@ -215,7 +190,7 @@ export function parseRequest(
 export function parseManipulations(
   params: URLParams,
   extension: string,
-  config: FluxConfig
+  config: FluxConfig,
 ): Manipulations | null {
   // ?mode=... must be set as well as dimension, otherwise forward on request unmodified
   if (!params.mode || (!params.w && !params.h)) {
@@ -225,7 +200,7 @@ export function parseManipulations(
 
   const transform: Manipulations = {
     mode: (Object.values(TransformMode) as string[]).includes(
-      params.mode as string
+      params.mode as string,
     )
       ? (params.mode as TransformMode)
       : TransformMode.FIT,
@@ -284,7 +259,7 @@ export function parseManipulations(
 export function parseFilters(
   params: URLParams,
   extension: string,
-  config: FluxConfig
+  config: FluxConfig,
 ): Filters {
   const filters: Filters = {};
 
@@ -292,9 +267,11 @@ export function parseFilters(
     if (params.blur === "true") {
       filters.blur = true;
     } else {
-      const blur = coerceInt(params.blur as string, 0);
-      if (typeof blur === "number" && blur > 0) {
-        filters.blur = blur as number;
+      const blur = parseFloat(params.blur);
+
+      // Sharp expects a value between 0.3 and 1000 representing the sigma of the Gaussian mask
+      if (!isNaN(blur) && blur >= 0.3 && blur <= 1000) {
+        filters.blur = blur;
       }
     }
   }
@@ -344,7 +321,7 @@ export function transformPath(request: TransformRequest): string {
   return compilePath(
     request.prefix,
     transform,
-    `${request.fileName}.${request.extension}`
+    `${request.fileName}.${request.extension}`,
   );
 }
 
@@ -357,7 +334,7 @@ export function encodeFilters(filters: Filters): string {
   const buffer: Buffer = Buffer.from(
     encoded.buffer,
     encoded.byteOffset,
-    encoded.byteLength
+    encoded.byteLength,
   );
   const key = buffer.toString("base64");
 

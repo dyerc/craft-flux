@@ -86,5 +86,15 @@ return [
 
         // Name of the AWS origin request policy, by default shared between all Flux installations within the AWS account. Customize if you reach the AWS limit of 100
         // 'originRequestPolicyName' => "Flux-Origin-Request-Policy",
+
+        /*
+         * Internal Defaults
+        */
+
+        // Size of the image created by the lqip function
+        // 'lqipSizeRatio' => 0.25,
+
+        // Blur sigma value of images created by the lqip function
+        // 'lqipBlurFactor' => 25,
     ]
 ];

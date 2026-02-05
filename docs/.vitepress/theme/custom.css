@@ -9,8 +9,7 @@
   margin-right: 12px !important;
 }
 
-a[href^="https://packagist.org"]
-{
+a[href^="https://packagist.org"] {
   display: inline-block;
   margin-right: 0.5rem;
 }

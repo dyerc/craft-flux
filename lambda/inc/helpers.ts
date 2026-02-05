@@ -16,7 +16,7 @@ export function calculateMissingDimension(
   targetWidth: number | undefined,
   targetHeight: number | undefined,
   sourceWidth: number,
-  sourceHeight: number
+  sourceHeight: number,
 ) {
   if (targetWidth && targetHeight) {
     return [targetWidth, targetHeight];
@@ -26,10 +26,35 @@ export function calculateMissingDimension(
     targetWidth
       ? targetWidth
       : Math.round(
-          (targetHeight || sourceHeight) * (sourceWidth / sourceHeight)
+          (targetHeight || sourceHeight) * (sourceWidth / sourceHeight),
         ),
     targetHeight
       ? targetHeight
       : Math.round((targetWidth || sourceWidth) * (sourceHeight / sourceWidth)),
   ];
+}
+
+export function coerceInt(
+  input: string,
+  fallback: string | number,
+): string | number {
+  const parsed = parseInt(input);
+  if (Number.isInteger(parsed)) {
+    return parsed;
+  } else {
+    return fallback;
+  }
+}
+
+export function coerceBoolean(
+  input: string,
+  fallback: boolean | undefined = undefined,
+) {
+  if (["true", "t", "1"].includes(input)) {
+    return true;
+  } else if (["false", "f", "0"].includes(input)) {
+    return false;
+  } else {
+    return fallback;
+  }
 }

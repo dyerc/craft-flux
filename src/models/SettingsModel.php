@@ -133,6 +133,16 @@ class SettingsModel extends Model
      */
     public string $originRequestPolicyName = 'Flux-Origin-Request-Policy';
 
+    /**
+     * @var float Size of the image created by the lqip function
+     */
+    public float $lqipSizeRatio = 0.25;
+
+    /**
+     * @var int Blur sigma value of images created by the lqip function
+     */
+    public int $lqipBlurFactor = 25; 
+
 
     public function isAwsConfigured(): bool
     {

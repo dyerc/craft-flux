@@ -72,7 +72,7 @@ class Transformer extends Component
 
         if ($filters) {
             if ($filters->blur) {
-                $transformKeys['blur'] = $filters->blur;
+                $transformKeys['blur'] = $filters->blur === true ? "true" : $filters->blur;
             }
 
             if ($filters->greyscale) {

@@ -51,7 +51,7 @@ type CloudFrontEventResponseOptions = {
 
 export type OriginRequestEvent = {
   Records: [
-    { cf: { request: CloudFrontRequest; config: CloudFrontEvent["config"] } }
+    { cf: { request: CloudFrontRequest; config: CloudFrontEvent["config"] } },
   ];
 };
 
@@ -185,7 +185,7 @@ export class OriginServer {
                 res.setHeader("Content-type", map[ext] || "text/plain");
                 res.end(data);
               }
-            }
+            },
           );
         } else {
           res.statusCode = 404;
