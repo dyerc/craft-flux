@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright (c) Chris Dyer
  */
@@ -12,92 +13,92 @@ use dyerc\flux\models\SettingsModel;
 
 class PolicyHelper
 {
-    public static function iamUserPolicy(string|null $bucket = null, string|null $rootPrefix = null): array
+    public static function iamUserPolicy(?string $bucket = null, ?string $rootPrefix = null): array
     {
         /* @var SettingsModel */
         $settings = Flux::getInstance()->getSettings();
 
-        if (!$bucket) {
+        if (! $bucket) {
             $bucket = App::parseEnv($settings->awsBucket);
         }
 
-        if (!$rootPrefix) {
+        if (! $rootPrefix) {
             $rootPrefix = App::parseEnv($settings->rootPrefix);
         }
 
         return [
-            "Version" => "2012-10-17",
-            "Statement" => [
+            'Version' => '2012-10-17',
+            'Statement' => [
                 [
-                    "Effect" => "Allow",
-                    "Action" => "iam:PassRole",
-                    "Resource" => "*",
-                    "Condition" => [
-                        "StringEquals" => [
-                            "iam:PassedToService" => "lambda.amazonaws.com"
-                        ]
-                    ]
+                    'Effect' => 'Allow',
+                    'Action' => 'iam:PassRole',
+                    'Resource' => '*',
+                    'Condition' => [
+                        'StringEquals' => [
+                            'iam:PassedToService' => 'lambda.amazonaws.com',
+                        ],
+                    ],
                 ],
                 // List all buckets
                 [
-                    "Effect" => "Allow",
-                    "Action" => [
-                        "s3:ListAllMyBuckets"
+                    'Effect' => 'Allow',
+                    'Action' => [
+                        's3:ListAllMyBuckets',
                     ],
-                    "Resource" => "*"
+                    'Resource' => '*',
                 ],
                 // S3 operations on entire bucket
                 [
-                    "Effect" => "Allow",
-                    "Action" => [
-                        "s3:GetBucketPolicy",
-                        "s3:PutBucketPolicy",
-                        "s3:List*",
+                    'Effect' => 'Allow',
+                    'Action' => [
+                        's3:GetBucketPolicy',
+                        's3:PutBucketPolicy',
+                        's3:List*',
                     ],
-                    "Resource" => "arn:aws:s3:::$bucket"
+                    'Resource' => "arn:aws:s3:::$bucket",
                 ],
                 // S3 operations on bucket scope in use
                 [
-                    "Effect" => "Allow",
-                    "Action" => [
-                        "s3:Get*",
-                        "s3:Put*",
-                        "s3:DeleteObject",
-                        "s3-object-lambda:Get*",
-                        "s3-object-lambda:List*"
+                    'Effect' => 'Allow',
+                    'Action' => [
+                        's3:Get*',
+                        's3:Put*',
+                        's3:DeleteObject',
+                        's3-object-lambda:Get*',
+                        's3-object-lambda:List*',
                     ],
-                    "Resource" => empty($rootPrefix) ? "arn:aws:s3:::$bucket/*" : "arn:aws:s3:::$bucket/$rootPrefix/*"
+                    'Resource' => empty($rootPrefix) ? "arn:aws:s3:::$bucket/*" : "arn:aws:s3:::$bucket/$rootPrefix/*",
                 ],
                 // CloudFront & Lambda
                 [
-                    "Effect" => "Allow",
-                    "Action" => [
-                        "cloudfront:*",
-                        "iam:GetPolicy",
-                        "iam:GetPolicyVersion",
-                        "iam:GetRole",
-                        "iam:GetRolePolicy",
-                        "iam:PutRolePolicy",
-                        "iam:CreateRole",
-                        "iam:CreateServiceLinkedRole",
-                        "iam:ListAttachedRolePolicies",
-                        "iam:ListRolePolicies",
-                        "iam:ListRoles",
-                        "lambda:*",
-                        "logs:DescribeLogGroups"
+                    'Effect' => 'Allow',
+                    'Action' => [
+                        'cloudfront:*',
+                        'iam:GetPolicy',
+                        'iam:GetPolicyVersion',
+                        'iam:GetRole',
+                        'iam:GetRolePolicy',
+                        'iam:PutRolePolicy',
+                        'iam:CreateRole',
+                        'iam:CreateServiceLinkedRole',
+                        'iam:ListAttachedRolePolicies',
+                        'iam:ListRolePolicies',
+                        'iam:ListRoles',
+                        'lambda:*',
+                        'logs:DescribeLogGroups',
                     ],
-                    "Resource" => "*"
+                    'Resource' => '*',
                 ],
                 [
-                    "Effect" => "Allow",
-                    "Action" => [
-                        "logs:DescribeLogStreams",
-                        "logs:GetLogEvents",
-                        "logs:FilterLogEvents"
+                    'Effect' => 'Allow',
+                    'Action' => [
+                        'logs:DescribeLogStreams',
+                        'logs:GetLogEvents',
+                        'logs:FilterLogEvents',
                     ],
-                    "Resource" => "arn:aws:logs:*:*:log-group:/aws/lambda/*"
-                ]
-            ]
+                    'Resource' => 'arn:aws:logs:*:*:log-group:/aws/lambda/*',
+                ],
+            ],
         ];
     }
 
@@ -110,40 +111,40 @@ class PolicyHelper
 
         // If we are using S3, grant access to the entire bucket
         if (self::getHasS3Filesystems()) {
-            $rootPrefix = "";
+            $rootPrefix = '';
         }
 
         $distributionArn = Flux::getInstance()->cloudfront->getDistributionArn();
 
-        $actions = ["s3:GetObject", "s3:PutObject"];
+        $actions = ['s3:GetObject', 's3:PutObject'];
 
         $policy = [
-            "Version" => "2012-10-17",
-            "Statement" => [
+            'Version' => '2012-10-17',
+            'Statement' => [
                 [
-                    "Effect" => "Allow",
-                    "Principal" => [
-                        "Service" => "cloudfront.amazonaws.com",
+                    'Effect' => 'Allow',
+                    'Principal' => [
+                        'Service' => 'cloudfront.amazonaws.com',
                     ],
-                    "Action" => "s3:GetObject",
-                    "Resource" => empty($rootPrefix) ? "arn:aws:s3:::$bucket/*" : "arn:aws:s3:::$bucket/$rootPrefix/*",
-                    "Condition" => [
-                        "StringEquals" => [
-                            "AWS:SourceArn" => $distributionArn
-                        ]
-                    ]
-                ]
-            ]
+                    'Action' => 's3:GetObject',
+                    'Resource' => empty($rootPrefix) ? "arn:aws:s3:::$bucket/*" : "arn:aws:s3:::$bucket/$rootPrefix/*",
+                    'Condition' => [
+                        'StringEquals' => [
+                            'AWS:SourceArn' => $distributionArn,
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         foreach ($functionArns as $arn) {
             $policy['Statement'][] = [
-                "Effect" => "Allow",
-                "Principal" => [
-                    "AWS" => $arn
+                'Effect' => 'Allow',
+                'Principal' => [
+                    'AWS' => $arn,
                 ],
-                "Action" => $actions,
-                "Resource" => empty($rootPrefix) ? "arn:aws:s3:::$bucket/*" : "arn:aws:s3:::$bucket/$rootPrefix/*"
+                'Action' => $actions,
+                'Resource' => empty($rootPrefix) ? "arn:aws:s3:::$bucket/*" : "arn:aws:s3:::$bucket/$rootPrefix/*",
             ];
         }
 
@@ -159,11 +160,11 @@ class PolicyHelper
                 'Principal' => [
                     'Service' => [
                         'edgelambda.amazonaws.com',
-                        'lambda.amazonaws.com'
-                    ]
+                        'lambda.amazonaws.com',
+                    ],
                 ],
                 'Action' => 'sts:AssumeRole',
-            ]
+            ],
         ];
     }
 
@@ -178,21 +179,21 @@ class PolicyHelper
                 [
                     'Effect' => $settings->loggingEnabled ? 'Allow' : 'Deny',
                     'Action' => [
-                        "logs:CreateLogGroup",
-                        "logs:CreateLogStream",
-                        "logs:PutLogEvents"
+                        'logs:CreateLogGroup',
+                        'logs:CreateLogStream',
+                        'logs:PutLogEvents',
                     ],
                     'Resource' => [
-                        "arn:aws:logs:*:*:*"
-                    ]
-                ]
-            ]
+                        'arn:aws:logs:*:*:*',
+                    ],
+                ],
+            ],
         ];
     }
 
     public static function prettyPrint(mixed $data): string
     {
-        return json_encode($data, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);
+        return json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
 
     private static function getHasS3Filesystems(): bool
@@ -200,7 +201,7 @@ class PolicyHelper
         $filesystems = Craft::$app->fs->getAllFilesystems();
 
         foreach ($filesystems as $fs) {
-            if (is_a($fs, "craft\\awss3\\Fs")) {
+            if (is_a($fs, 'craft\\awss3\\Fs')) {
                 return true;
             }
         }

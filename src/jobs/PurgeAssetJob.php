@@ -1,22 +1,22 @@
 <?php
+
 /**
  * @copyright Copyright (c) Chris Dyer
  */
 
 namespace dyerc\flux\jobs;
 
-use Craft;
 use craft\elements\Asset;
 use craft\queue\BaseJob;
 use dyerc\flux\Flux;
 
 class PurgeAssetJob extends BaseJob
 {
-    public int|null $assetId;
+    public ?int $assetId;
 
     protected function defaultDescription(): ?string
     {
-        return "Purging asset from AWS";
+        return 'Purging asset from AWS';
     }
 
     public function execute($queue): void

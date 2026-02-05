@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright (c) Chris Dyer
  */
@@ -27,7 +28,7 @@ class LambdaTest extends TestCase
         /* @var SettingsModel */
         $settings = Flux::getInstance()->getSettings();
 
-        $mock = new MockHandler();
+        $mock = new MockHandler;
         $mock->append(new Result($response));
 
         return new LambdaClient([
@@ -35,9 +36,9 @@ class LambdaTest extends TestCase
             'version' => 'latest',
             'credentials' => [
                 'key' => App::parseEnv($settings->awsAccessKeyId),
-                'secret' => App::parseEnv($settings->awsSecretAccessKey)
+                'secret' => App::parseEnv($settings->awsSecretAccessKey),
             ],
-            'handler' => $mock
+            'handler' => $mock,
         ]);
     }
 
@@ -47,21 +48,21 @@ class LambdaTest extends TestCase
             'client' => Expected::atLeastOnce(function () {
                 return $this->mockClient([
                     'Configuration' => [
-                        'Description' => "Deployed by Flux v4.0.0 7e696161f558ab98fc2e43202516934c",
+                        'Description' => 'Deployed by Flux v4.0.0 7e696161f558ab98fc2e43202516934c',
                         'Role' => 'role',
                         'FunctionArn' => 'arn',
                         'MemorySize' => '512',
                         'LastModified' => 'ff',
-                        'Runtime' => 'nodejs24.x'
-                    ]
+                        'Runtime' => 'nodejs24.x',
+                    ],
                 ]);
-            })
+            }),
         ]));
 
-        $status = Flux::getInstance()->lambda->getStatus("function");
+        $status = Flux::getInstance()->lambda->getStatus('function');
 
-        $this->assertSame($status['version'], "4.0.0");
-        $this->assertSame($status['config'], "7e696161f558ab98fc2e43202516934c");
+        $this->assertSame($status['version'], '4.0.0');
+        $this->assertSame($status['config'], '7e696161f558ab98fc2e43202516934c');
     }
 
     public function testParsesBetaFunctionStatus()
@@ -70,20 +71,20 @@ class LambdaTest extends TestCase
             'client' => Expected::atLeastOnce(function () {
                 return $this->mockClient([
                     'Configuration' => [
-                        'Description' => "Deployed by Flux v4.0.0-beta.1 7e696161f558ab98fc2e43202516934",
+                        'Description' => 'Deployed by Flux v4.0.0-beta.1 7e696161f558ab98fc2e43202516934',
                         'Role' => 'role',
                         'FunctionArn' => 'arn',
                         'MemorySize' => '512',
                         'LastModified' => 'ff',
-                        'Runtime' => 'nodejs24.x'
-                    ]
+                        'Runtime' => 'nodejs24.x',
+                    ],
                 ]);
-            })
+            }),
         ]));
 
-        $status = Flux::getInstance()->lambda->getStatus("function");
+        $status = Flux::getInstance()->lambda->getStatus('function');
 
-        $this->assertSame($status['version'], "4.0.0-beta.1");
-        $this->assertSame($status['config'], "7e696161f558ab98fc2e43202516934");
+        $this->assertSame($status['version'], '4.0.0-beta.1');
+        $this->assertSame($status['config'], '7e696161f558ab98fc2e43202516934');
     }
 }

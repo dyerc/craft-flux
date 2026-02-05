@@ -102,5 +102,5 @@ return [
 
         // Blur sigma value of images created by the lqip function
         // 'lqipBlurFactor' => 25,
-    ]
+    ],
 ];

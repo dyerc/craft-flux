@@ -1,11 +1,11 @@
 <?php
+
 /**
  * @copyright Copyright (c) Chris Dyer
  */
 
 namespace dyerc\fluxtests\unit\variables;
 
-use Craft;
 use craft\base\Fs;
 use craft\elements\Asset;
 use craft\models\Volume;
@@ -21,6 +21,7 @@ class FluxVariableTest extends TestCase
     protected $tester;
 
     private Asset|\PHPUnit\Framework\MockObject\MockObject $asset;
+
     private FluxVariable $flux;
 
     protected function _before()
@@ -28,8 +29,8 @@ class FluxVariableTest extends TestCase
         parent::_before();
 
         Flux::$plugin->settings->enabled = true;
-        Flux::$plugin->settings->cloudFrontDomain = "cloudfront";
-        Flux::$plugin->settings->verifySecret = "secret";
+        Flux::$plugin->settings->cloudFrontDomain = 'cloudfront';
+        Flux::$plugin->settings->verifySecret = 'secret';
 
         $this->asset = $this->make(Asset::class, [
             'getVolume' => $this->make(Volume::class, [
@@ -48,13 +49,14 @@ class FluxVariableTest extends TestCase
             'filename' => 'foo.jpg',
         ]);
 
-        $this->flux = new FluxVariable();
+        $this->flux = new FluxVariable;
     }
 
     protected function _removeCacheKeys($str): string
     {
-        $str = preg_replace("/&c=\w+/", "", $str);
-        $str = preg_replace("/&amp;c=\w+/", "", $str);
+        $str = preg_replace("/&c=\w+/", '', $str);
+        $str = preg_replace("/&amp;c=\w+/", '', $str);
+
         return $str;
     }
 
@@ -64,11 +66,11 @@ class FluxVariableTest extends TestCase
         Flux::$plugin->settings->verifyQuery = false;
 
         $this->assertSame(
-            "https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080",
+            'https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080',
             $this->_removeCacheKeys($this->flux->transform($this->asset, [
                 'mode' => 'fit',
                 'width' => 1920,
-                'height' => 1080
+                'height' => 1080,
             ]))
         );
     }
@@ -78,13 +80,15 @@ class FluxVariableTest extends TestCase
         Flux::$plugin->settings->verifyQuery = false;
 
         $this->assertSame(
-          "https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080&blur=true",
-          $this->_removeCacheKeys($this->flux->transform($this->asset, [
-            'mode' => 'fit',
-            'width' => 1920,
-            'height' => 1080,
-          ], [ 'blur' => true ])
-        ));
+            'https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080&blur=true',
+            $this->_removeCacheKeys($this->flux->transform($this->asset, [
+                'mode' => 'fit',
+                'width' => 1920,
+                'height' => 1080,
+            ], [
+                'blur' => true,
+            ]))
+        );
     }
 
     public function testGeneratesUrlWithGaussianBlurFilter(): void
@@ -92,13 +96,15 @@ class FluxVariableTest extends TestCase
         Flux::$plugin->settings->verifyQuery = false;
 
         $this->assertSame(
-            "https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080&blur=0.3",
+            'https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080&blur=0.3',
             $this->_removeCacheKeys($this->flux->transform($this->asset, [
-              'mode' => 'fit',
-              'width' => 1920,
-              'height' => 1080,
-            ], [ 'blur' => 0.3 ])
-        ));
+                'mode' => 'fit',
+                'width' => 1920,
+                'height' => 1080,
+            ], [
+                'blur' => 0.3,
+            ]))
+        );
     }
 
     public function testIgnoresOutOfBoundsBlurFactor(): void
@@ -106,31 +112,37 @@ class FluxVariableTest extends TestCase
         Flux::$plugin->settings->verifyQuery = false;
 
         $this->assertSame(
-          "https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080",
-          $this->_removeCacheKeys($this->flux->transform($this->asset, [
-            'mode' => 'fit',
-            'width' => 1920,
-            'height' => 1080,
-          ], [ 'blur' => 0.1 ])
-        ));
+            'https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080',
+            $this->_removeCacheKeys($this->flux->transform($this->asset, [
+                'mode' => 'fit',
+                'width' => 1920,
+                'height' => 1080,
+            ], [
+                'blur' => 0.1,
+            ]))
+        );
 
         $this->assertSame(
-          "https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080",
-          $this->_removeCacheKeys($this->flux->transform($this->asset, [
-            'mode' => 'fit',
-            'width' => 1920,
-            'height' => 1080,
-          ], [ 'blur' => -10.1 ])
-          ));
+            'https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080',
+            $this->_removeCacheKeys($this->flux->transform($this->asset, [
+                'mode' => 'fit',
+                'width' => 1920,
+                'height' => 1080,
+            ], [
+                'blur' => -10.1,
+            ]))
+        );
 
         $this->assertSame(
-          "https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080",
-          $this->_removeCacheKeys($this->flux->transform($this->asset, [
-            'mode' => 'fit',
-            'width' => 1920,
-            'height' => 1080,
-          ], [ 'blur' => 2000 ])
-          ));
+            'https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080',
+            $this->_removeCacheKeys($this->flux->transform($this->asset, [
+                'mode' => 'fit',
+                'width' => 1920,
+                'height' => 1080,
+            ], [
+                'blur' => 2000,
+            ]))
+        );
     }
 
     public function testGeneratesUrlWithGreyscaleFilter(): void
@@ -138,13 +150,15 @@ class FluxVariableTest extends TestCase
         Flux::$plugin->settings->verifyQuery = false;
 
         $this->assertSame(
-          "https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080&greyscale=1",
-          $this->_removeCacheKeys($this->flux->transform($this->asset, [
-            'mode' => 'fit',
-            'width' => 1920,
-            'height' => 1080,
-          ], [ 'greyscale' => true ])
-          ));
+            'https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080&greyscale=1',
+            $this->_removeCacheKeys($this->flux->transform($this->asset, [
+                'mode' => 'fit',
+                'width' => 1920,
+                'height' => 1080,
+            ], [
+                'greyscale' => true,
+            ]))
+        );
     }
 
     public function testGeneratesUrlWithTintFilter(): void
@@ -152,13 +166,15 @@ class FluxVariableTest extends TestCase
         Flux::$plugin->settings->verifyQuery = false;
 
         $this->assertSame(
-          "https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080&tint=255%2C255%2C255",
-          $this->_removeCacheKeys($this->flux->transform($this->asset, [
-            'mode' => 'fit',
-            'width' => 1920,
-            'height' => 1080,
-          ], [ 'tint' => [ 'r' => 255, 'g' => 255, 'b' => 255 ] ])
-          ));
+            'https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080&tint=255%2C255%2C255',
+            $this->_removeCacheKeys($this->flux->transform($this->asset, [
+                'mode' => 'fit',
+                'width' => 1920,
+                'height' => 1080,
+            ], [
+                'tint' => ['r' => 255, 'g' => 255, 'b' => 255],
+            ]))
+        );
     }
 
     public function testGeneratesUrlWithTintFilterAsHex(): void
@@ -166,13 +182,15 @@ class FluxVariableTest extends TestCase
         Flux::$plugin->settings->verifyQuery = false;
 
         $this->assertSame(
-          "https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080&tint=255%2C102%2C0",
-          $this->_removeCacheKeys($this->flux->transform($this->asset, [
-            'mode' => 'fit',
-            'width' => 1920,
-            'height' => 1080,
-          ], [ 'tint' => "#FF6600" ])
-          ));
+            'https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080&tint=255%2C102%2C0',
+            $this->_removeCacheKeys($this->flux->transform($this->asset, [
+                'mode' => 'fit',
+                'width' => 1920,
+                'height' => 1080,
+            ], [
+                'tint' => '#FF6600',
+            ]))
+        );
     }
 
     public function testGeneratesLqipUrl(): void
@@ -180,8 +198,8 @@ class FluxVariableTest extends TestCase
         Flux::$plugin->settings->verifyQuery = false;
 
         $this->assertSame(
-          "https://cloudfront/volume/foo.jpg?mode=crop&pos=center-center&w=200&h=150&blur=25",
-          $this->_removeCacheKeys($this->flux->lqip($this->asset))
+            'https://cloudfront/volume/foo.jpg?mode=crop&pos=center-center&w=200&h=150&blur=25',
+            $this->_removeCacheKeys($this->flux->lqip($this->asset))
         );
     }
 }

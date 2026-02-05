@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright (c) Chris Dyer
  */
@@ -30,8 +31,8 @@ class TransformerTest extends TestCase
         parent::_before();
 
         Flux::$plugin->settings->enabled = true;
-        Flux::$plugin->settings->cloudFrontDomain = "cloudfront";
-        Flux::$plugin->settings->verifySecret = "secret";
+        Flux::$plugin->settings->cloudFrontDomain = 'cloudfront';
+        Flux::$plugin->settings->verifySecret = 'secret';
 
         $this->asset = $this->make(Asset::class, [
             'getVolume' => $this->make(Volume::class, [
@@ -53,15 +54,16 @@ class TransformerTest extends TestCase
 
     protected function _removeCacheKeys($str): string
     {
-        $str = preg_replace("/&c=\w+/", "", $str);
-        $str = preg_replace("/&amp;c=\w+/", "", $str);
+        $str = preg_replace("/&c=\w+/", '', $str);
+        $str = preg_replace("/&amp;c=\w+/", '', $str);
+
         return $str;
     }
 
     public function testGeneratesUrlForAssetWithVerification(): void
     {
         $cacheKey = Flux::getInstance()->transformer->getCacheKey($this->asset);
-        $expected = "volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080&c=" . $cacheKey;
+        $expected = 'volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080&c='.$cacheKey;
         $v = hash_hmac('sha256', $expected, Flux::$plugin->settings->verifySecret);
 
         $this->assertSame(
@@ -69,7 +71,7 @@ class TransformerTest extends TestCase
             $this->asset->getUrl([
                 'mode' => 'fit',
                 'width' => 1920,
-                'height' => 1080
+                'height' => 1080,
             ])
         );
     }
@@ -79,11 +81,11 @@ class TransformerTest extends TestCase
         Flux::$plugin->settings->verifyQuery = false;
 
         $this->assertSame(
-            "https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080",
+            'https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080',
             $this->_removeCacheKeys($this->asset->getUrl([
                 'mode' => 'fit',
                 'width' => 1920,
-                'height' => 1080
+                'height' => 1080,
             ]))
         );
     }
@@ -93,13 +95,13 @@ class TransformerTest extends TestCase
         Flux::$plugin->settings->verifyQuery = false;
 
         $this->assertSame(
-          "https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080&upscale=0",
-          $this->_removeCacheKeys($this->asset->getUrl([
-            'mode' => 'fit',
-            'width' => 1920,
-            'height' => 1080,
-            'upscale' => false
-          ]))
+            'https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080&upscale=0',
+            $this->_removeCacheKeys($this->asset->getUrl([
+                'mode' => 'fit',
+                'width' => 1920,
+                'height' => 1080,
+                'upscale' => false,
+            ]))
         );
     }
 
@@ -113,15 +115,15 @@ class TransformerTest extends TestCase
                 'width' => 400,
                 'height' => 200,
                 'getImageTransformer' => $this->make(ImageTransformer::class, [
-                    'getTransformUrl' => fn(Asset $asset, ImageTransform $transform) => 'w=' . $transform->width . '&h=' . $transform->height,
+                    'getTransformUrl' => fn (Asset $asset, ImageTransform $transform) => 'w='.$transform->width.'&h='.$transform->height,
                 ]),
-            ])
+            ]),
         ]));
 
         $this->assertSame(
-            "w=400&h=200",
+            'w=400&h=200',
             $this->_removeCacheKeys(
-                $this->asset->getUrl([ 'transform' => 'mockedTransform' ])
+                $this->asset->getUrl(['transform' => 'mockedTransform'])
             )
         );
     }
@@ -135,16 +137,16 @@ class TransformerTest extends TestCase
                 'width' => 400,
                 'height' => 200,
                 'getImageTransformer' => $this->make(ImageTransformer::class, [
-                    'getTransformUrl' => fn(Asset $asset, ImageTransform $transform) => 'w=' . $transform->width . '&h=' . $transform->height,
+                    'getTransformUrl' => fn (Asset $asset, ImageTransform $transform) => 'w='.$transform->width.'&h='.$transform->height,
                 ]),
-            ])
+            ]),
         ]));
 
         $this->assertSame(
-            "https://cloudfront/volume/foo.jpg?mode=crop&pos=center-center&w=400&h=200",
+            'https://cloudfront/volume/foo.jpg?mode=crop&pos=center-center&w=400&h=200',
             $this->_removeCacheKeys(
                 $this->asset->getUrl([
-                    'transform' => 'mockedTransform'
+                    'transform' => 'mockedTransform',
                 ])
             )
         );
@@ -155,9 +157,9 @@ class TransformerTest extends TestCase
         Flux::$plugin->settings->verifyQuery = false;
 
         $this->assertSame(
-            "<img src=\"https://cloudfront/volume/foo.jpg?mode=crop&amp;pos=center-center&amp;w=800\" width=\"800\" height=\"600\">",
+            '<img src="https://cloudfront/volume/foo.jpg?mode=crop&amp;pos=center-center&amp;w=800" width="800" height="600">',
             $this->_removeCacheKeys(
-                (string)$this->asset->getImg([ 'width' => 800 ])
+                (string) $this->asset->getImg(['width' => 800])
             )
         );
     }
@@ -167,7 +169,7 @@ class TransformerTest extends TestCase
         Flux::$plugin->settings->verifyQuery = false;
 
         $this->assertSame(
-            "https://cloudfront/volume/foo.jpg?mode=crop&pos=center-center&w=800, https://cloudfront/volume/foo.jpg?mode=crop&pos=center-center&w=1600 2x",
+            'https://cloudfront/volume/foo.jpg?mode=crop&pos=center-center&w=800, https://cloudfront/volume/foo.jpg?mode=crop&pos=center-center&w=1600 2x',
             $this->_removeCacheKeys(
                 $this->asset->getSrcset(['1x', '2x'], ['width' => 800])
             )

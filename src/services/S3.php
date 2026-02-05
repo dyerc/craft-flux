@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright (c) Chris Dyer
  */
@@ -18,11 +19,11 @@ use yii\base\Component;
 
 class S3 extends Component
 {
-    private S3Client|null $_client = null;
+    private ?S3Client $_client = null;
 
     public function client(): S3Client
     {
-        if (!$this->_client) {
+        if (! $this->_client) {
             /* @var SettingsModel $settings */
             $settings = Flux::getInstance()->getSettings();
 
@@ -31,15 +32,15 @@ class S3 extends Component
                 'region' => App::parseEnv($settings->awsRegion),
                 'credentials' => [
                     'key' => App::parseEnv($settings->awsAccessKeyId),
-                    'secret' => App::parseEnv($settings->awsSecretAccessKey)
-                ]
+                    'secret' => App::parseEnv($settings->awsSecretAccessKey),
+                ],
             ]);
         }
 
         return $this->_client;
     }
 
-    public function getStatus($roles = []): array|null
+    public function getStatus($roles = []): ?array
     {
         /* @var SettingsModel $settings */
         $settings = Flux::getInstance()->getSettings();
@@ -47,17 +48,17 @@ class S3 extends Component
 
         try {
             $response = $this->client()->getBucketPolicy([
-                'Bucket' => $bucket
+                'Bucket' => $bucket,
             ]);
 
             $policy = $response['Policy']->getContents();
 
             // Very basic naive check first
-            $permissions = !empty($roles) && str_contains($policy, "s3:PutObject") && str_contains($policy, "s3:GetObject");
+            $permissions = ! empty($roles) && str_contains($policy, 's3:PutObject') && str_contains($policy, 's3:GetObject');
 
             // Ensure all roles are mentioned by the bucket policy
             foreach ($roles as $role) {
-                if ($permissions && !str_contains($policy, $role)) {
+                if ($permissions && ! str_contains($policy, $role)) {
                     $permissions = false;
                 }
             }
@@ -65,10 +66,11 @@ class S3 extends Component
             return [
                 'available' => true,
                 'permission' => $permissions,
-                'bucket' => $bucket
+                'bucket' => $bucket,
             ];
         } catch (\Exception $e) {
             Craft::error($e->getMessage());
+
             return null;
         }
     }
@@ -112,7 +114,7 @@ class S3 extends Component
 
         try {
             $response = $this->client()->getBucketPolicy([
-                'Bucket' => $bucket
+                'Bucket' => $bucket,
             ]);
 
             $policy = json_decode($response['Policy']->getContents(), true);
@@ -138,9 +140,9 @@ class S3 extends Component
                 }
             }
 
-            if (!empty($additions)) {
+            if (! empty($additions)) {
                 $policy['Statement'] = array_merge($policy['Statement'], $additions);
-                Craft::info("Adding new items to bucket policy.");
+                Craft::info('Adding new items to bucket policy.');
                 $updateRequired = true;
             }
         } else {
@@ -153,12 +155,12 @@ class S3 extends Component
 
             $this->client()->putBucketPolicy([
                 'Bucket' => $bucket,
-                'Policy' => $encoded
+                'Policy' => $encoded,
             ]);
         }
     }
 
-    public function listObjects(string $prefix, string|null $continue = null): array
+    public function listObjects(string $prefix, ?string $continue = null): array
     {
         /* @var SettingsModel $settings */
         $settings = Flux::getInstance()->getSettings();
@@ -176,7 +178,7 @@ class S3 extends Component
         $objects = Flux::getInstance()->s3->client()->listObjectsV2($params);
 
         if ($objects['Contents']) {
-            $output = array_map(function ($item) use ($prefix) {
+            $output = array_map(function ($item) {
                 return $item['Key'];
             }, $objects['Contents']);
 
@@ -193,10 +195,10 @@ class S3 extends Component
 
     public function deleteObjects(array $paths, int $chunkSize = 1000): void
     {
-        if (!$paths) {
+        if (! $paths) {
             return;
         }
-        
+
         /* @var SettingsModel $settings */
         $settings = Flux::getInstance()->getSettings();
 
@@ -204,13 +206,13 @@ class S3 extends Component
 
         foreach ($batches as $batch) {
             $this->client()->deleteObjects([
-              'Bucket' => App::parseEnv($settings->awsBucket),
-              'Delete' => [
-                'Objects' => array_map(function ($key) {
-                    return [ 'Key' => $key ];
-                }, $batch),
-                'Quiet' => true
-              ]
+                'Bucket' => App::parseEnv($settings->awsBucket),
+                'Delete' => [
+                    'Objects' => array_map(function ($key) {
+                        return ['Key' => $key];
+                    }, $batch),
+                    'Quiet' => true,
+                ],
             ]);
 
             if (count($batches) > 1) {
@@ -227,7 +229,7 @@ class S3 extends Component
 
         $path = Flux::getInstance()->transformer->getPath($asset);
         if (strlen($rootPrefix) > 0) {
-            $path = $rootPrefix . "/" . $path;
+            $path = $rootPrefix.'/'.$path;
         }
 
         $prefix = pathinfo($path, PATHINFO_DIRNAME);
@@ -238,7 +240,7 @@ class S3 extends Component
         /*
          * Remove the file itself if it is a cached object and not the actual asset itself. Double check for S3 based filesystems
          */
-        $originalPath = (!empty($asset->fs->subfolder) ? rtrim($asset->fs->subfolder, '/') . '/' : '') . $asset->getPath();
+        $originalPath = (! empty($asset->fs->subfolder) ? rtrim($asset->fs->subfolder, '/').'/' : '').$asset->getPath();
 
         if ($originalPath != $path) {
             $deleteObjects[] = $path;
@@ -271,14 +273,14 @@ class S3 extends Component
 
         if (count($deleteObjects) > 0) {
             Craft::info(
-                "Purging transformed versions of asset [" . $asset->id . "]: " . join(", ", $deleteObjects),
+                'Purging transformed versions of asset ['.$asset->id.']: '.implode(', ', $deleteObjects),
                 __METHOD__
             );
 
             $this->deleteObjects($deleteObjects);
         } else {
             Craft::info(
-                "Skipped purging transformed versions of asset [" . $asset->id . "]: none found",
+                'Skipped purging transformed versions of asset ['.$asset->id.']: none found',
                 __METHOD__
             );
         }
@@ -293,7 +295,7 @@ class S3 extends Component
         $prefix = $volume->handle;
 
         if (strlen($rootPrefix) > 0) {
-            $prefix = $rootPrefix . "/" . $prefix;
+            $prefix = $rootPrefix.'/'.$prefix;
         }
 
         $items = $this->listObjects($prefix);
@@ -304,7 +306,7 @@ class S3 extends Component
          *  within the volume prefix. Otherwise only delete files that match our transform
          *  related pattern
          */
-        if (is_a($volume->fs, "craft\\awss3\\Fs")) {
+        if (is_a($volume->fs, 'craft\\awss3\\Fs')) {
             $deleteObjects = [];
 
             // Remove all live assets from the list, just to be doubly sure nothing live can be deleted
@@ -330,19 +332,17 @@ class S3 extends Component
     }
 
     /**
-     * @param string[] $paths
-     * @param Asset[] $needles
-     * @param string $prefix
-     * @return array
+     * @param  string[]  $paths
+     * @param  Asset[]  $needles
      */
     private function filterAssetPaths(array $paths, array $needles, string $prefix): array
     {
         $prefixedNeedles = array_map(function ($asset) use ($prefix) {
-            return $prefix . $asset->path;
+            return $prefix.$asset->path;
         }, $needles);
 
         return array_filter($paths, function ($item) use ($prefixedNeedles) {
-            return !in_array($item, $prefixedNeedles);
+            return ! in_array($item, $prefixedNeedles);
         });
     }
 }

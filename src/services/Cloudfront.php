@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright (c) Chris Dyer
  */
@@ -14,11 +15,11 @@ use yii\base\Component;
 
 class Cloudfront extends Component
 {
-    private CloudFrontClient|null $_client = null;
+    private ?CloudFrontClient $_client = null;
 
     public function client(?string $keyId = null, ?string $secret = null): CloudFrontClient
     {
-        if (!$this->_client) {
+        if (! $this->_client) {
             /* @var SettingsModel $settings */
             $settings = Flux::getInstance()->getSettings();
 
@@ -27,8 +28,8 @@ class Cloudfront extends Component
                 'region' => App::parseEnv($settings->awsRegion),
                 'credentials' => [
                     'key' => App::parseEnv($settings->awsAccessKeyId),
-                    'secret' => App::parseEnv($settings->awsSecretAccessKey)
-                ]
+                    'secret' => App::parseEnv($settings->awsSecretAccessKey),
+                ],
             ]);
         }
 
@@ -39,6 +40,7 @@ class Cloudfront extends Component
     {
         /* @var SettingsModel $settings */
         $settings = Flux::getInstance()->getSettings();
+
         return App::parseEnv($settings->cloudFrontDistributionId);
     }
 
@@ -46,12 +48,12 @@ class Cloudfront extends Component
     {
         try {
             $distribution = $this->client()->getDistribution([
-              'Id' => $this->getDistributionId()
+                'Id' => $this->getDistributionId(),
             ]);
 
             return $distribution['Distribution']['ARN'];
         } catch (CloudFrontException $e) {
-            return "";
+            return '';
         }
     }
 
@@ -69,24 +71,24 @@ class Cloudfront extends Component
         foreach ($distributions as $distribution) {
             $distributionList[] = [
                 'id' => $distribution['Id'],
-                'domain' => $distribution['DomainName']
+                'domain' => $distribution['DomainName'],
             ];
         }
 
         return $distributionList;
     }
 
-    public function getStatus(): array|null
+    public function getStatus(): ?array
     {
         try {
             $distribution = $this->client()->getDistribution([
-                'Id' => $this->getDistributionId()
+                'Id' => $this->getDistributionId(),
             ]);
 
             return [
                 'id' => $distribution['Distribution']['Id'],
                 'installed' => $distribution['Distribution']['DistributionConfig']['DefaultCacheBehavior']['LambdaFunctionAssociations']['Quantity'] == 2,
-                'domain' => $distribution['Distribution']['DomainName']
+                'domain' => $distribution['Distribution']['DomainName'],
             ];
         } catch (CloudFrontException $e) {
             return null;
@@ -94,7 +96,7 @@ class Cloudfront extends Component
     }
 
     // Load a cache policy from its name
-    public function getCachePolicy(string $name): \Aws\Result|null
+    public function getCachePolicy(string $name): ?\Aws\Result
     {
         $results = $this->client()->listCachePolicies([]);
 
@@ -103,7 +105,7 @@ class Cloudfront extends Component
                 if ($item['CachePolicy']['CachePolicyConfig']['Name'] == $name) {
                     // We've found the ID, now query the actual item
                     return $this->client()->getCachePolicy([
-                        'Id' => $item['CachePolicy']['Id']
+                        'Id' => $item['CachePolicy']['Id'],
                     ]);
                 }
             }
@@ -113,7 +115,7 @@ class Cloudfront extends Component
     }
 
     // Load an origin request policy from its name
-    public function getOriginRequestPolicy(string $name): \Aws\Result|null
+    public function getOriginRequestPolicy(string $name): ?\Aws\Result
     {
         $results = $this->client()->listOriginRequestPolicies([]);
 
@@ -122,7 +124,7 @@ class Cloudfront extends Component
                 if ($item['OriginRequestPolicy']['OriginRequestPolicyConfig']['Name'] == $name) {
                     // We've found the ID, now query the actual item
                     return $this->client()->getOriginRequestPolicy([
-                        'Id' => $item['OriginRequestPolicy']['Id']
+                        'Id' => $item['OriginRequestPolicy']['Id'],
                     ]);
                 }
             }
@@ -160,7 +162,7 @@ class Cloudfront extends Component
                 'QueryStringsConfig' => [
                     'QueryStringBehavior' => 'all',
                 ],
-            ]
+            ],
         ], $overrides);
 
         $policy = $this->getCachePolicy($name);
@@ -169,13 +171,13 @@ class Cloudfront extends Component
             $updated = $this->client()->updateCachePolicy([
                 'CachePolicyConfig' => $config,
                 'Id' => $policy['CachePolicy']['Id'],
-                'IfMatch' => $policy['ETag']
+                'IfMatch' => $policy['ETag'],
             ]);
 
             return $updated['CachePolicy']['Id'];
         } else {
             $created = $this->client()->createCachePolicy([
-                'CachePolicyConfig' => $config
+                'CachePolicyConfig' => $config,
             ]);
 
             return $created['CachePolicy']['Id'];
@@ -203,8 +205,8 @@ class Cloudfront extends Component
                 'HeaderBehavior' => 'whitelist',
                 'Headers' => [
                     'Items' => ['X-Flux-Source-Filename'],
-                    'Quantity' => 1
-                ]
+                    'Quantity' => 1,
+                ],
             ],
             'QueryStringsConfig' => [
                 'QueryStringBehavior' => 'all',
@@ -217,13 +219,13 @@ class Cloudfront extends Component
             $updated = $this->client()->updateOriginRequestPolicy([
                 'OriginRequestPolicyConfig' => $config,
                 'Id' => $policy['OriginRequestPolicy']['Id'],
-                'IfMatch' => $policy['ETag']
+                'IfMatch' => $policy['ETag'],
             ]);
 
             return $updated['OriginRequestPolicy']['Id'];
         } else {
             $created = $this->client()->createOriginRequestPolicy([
-                'OriginRequestPolicyConfig' => $config
+                'OriginRequestPolicyConfig' => $config,
             ]);
 
             return $created['OriginRequestPolicy']['Id'];
@@ -236,7 +238,7 @@ class Cloudfront extends Component
         $settings = Flux::getInstance()->getSettings();
 
         if (empty($paths)) {
-            $paths = [ "/*" ];
+            $paths = ['/*'];
         }
 
         $batches = array_chunk($paths, $chunkSize);
@@ -245,12 +247,12 @@ class Cloudfront extends Component
             $this->client()->createInvalidation([
                 'DistributionId' => App::parseEnv($settings->cloudFrontDistributionId),
                 'InvalidationBatch' => [
-                    'CallerReference' => App::parseEnv($settings->awsResourcePrefix) . "-" . time(),
+                    'CallerReference' => App::parseEnv($settings->awsResourcePrefix).'-'.time(),
                     'Paths' => [
                         'Items' => $batch,
-                        'Quantity' => count($batch)
-                    ]
-                ]
+                        'Quantity' => count($batch),
+                    ],
+                ],
             ]);
 
             if (count($batches) > 1) {

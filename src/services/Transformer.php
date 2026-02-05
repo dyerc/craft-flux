@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright (c) Chris Dyer
  */
@@ -18,10 +19,10 @@ class Transformer extends Component
     {
         $pathComponents = [
             $asset->volume->handle,
-            $asset->path
+            $asset->path,
         ];
 
-        return join("/", array_filter($pathComponents, function ($p) {
+        return implode('/', array_filter($pathComponents, function ($p) {
             return $p && strlen($p) > 0;
         }));
     }
@@ -36,13 +37,13 @@ class Transformer extends Component
 
         $transformKeys = [
             'mode' => $transform->mode,
-            'pos' => $transform->position
+            'pos' => $transform->position,
         ];
 
         if ($asset->getHasFocalPoint()) {
             $focal = $asset->getFocalPoint();
-            $transformKeys['pos'] = $focal['x'] . '-' . $focal['y'];
-        } elseif (!preg_match('/(top|center|bottom)-(left|center|right)/', $transform->position)) {
+            $transformKeys['pos'] = $focal['x'].'-'.$focal['y'];
+        } elseif (! preg_match('/(top|center|bottom)-(left|center|right)/', $transform->position)) {
             $transformKeys['pos'] = 'center-center';
         } else {
             $transformKeys['pos'] = $transform->position;
@@ -65,14 +66,14 @@ class Transformer extends Component
         }
 
         if ($transform->upscale === false) {
-            $transformKeys['upscale'] = "0";
+            $transformKeys['upscale'] = '0';
         }
 
         $transformKeys['c'] = $this->getCacheKey($asset);
 
         if ($filters) {
             if ($filters->blur) {
-                $transformKeys['blur'] = $filters->blur === true ? "true" : $filters->blur;
+                $transformKeys['blur'] = $filters->blur === true ? 'true' : $filters->blur;
             }
 
             if ($filters->greyscale) {
@@ -80,29 +81,29 @@ class Transformer extends Component
             }
 
             if ($filters->tint && is_array($filters->tint)) {
-                $transformKeys['tint'] = join(",", $filters->tint);
+                $transformKeys['tint'] = implode(',', $filters->tint);
             }
         }
 
-        $path .= '?' . http_build_query($transformKeys);
+        $path .= '?'.http_build_query($transformKeys);
 
         // Must be handled last so that only the hmac is appended after hashing
         if ($settings->verifyQuery) {
             $verify = hash_hmac('sha256', $path, $settings->verifySecret);
-            $path .= "&v=" . $verify;
+            $path .= '&v='.$verify;
         }
 
-        return $root . $path;
+        return $root.$path;
     }
 
     public function getCacheKey(Asset $asset): string
     {
-        $key = join("", [
-            $asset->dateCreated ? $asset->dateCreated->getTimestamp() : "0",
-            $asset->dateModified ? $asset->dateModified->getTimestamp() : "0",
-            $asset->dateUpdated ? $asset->dateUpdated->getTimestamp() : "0"
+        $key = implode('', [
+            $asset->dateCreated ? $asset->dateCreated->getTimestamp() : '0',
+            $asset->dateModified ? $asset->dateModified->getTimestamp() : '0',
+            $asset->dateUpdated ? $asset->dateUpdated->getTimestamp() : '0',
         ]);
 
-        return hash("crc32b", $key);
+        return hash('crc32b', $key);
     }
 }

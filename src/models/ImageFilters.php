@@ -12,7 +12,6 @@ class ImageFilters extends Model
 
     public ?bool $greyscale = null;
 
-
     public ?array $tint = null;
 
     public function getConfig(): array
@@ -26,7 +25,7 @@ class ImageFilters extends Model
 
     public static function normalize(mixed $filters): ?ImageFilters
     {
-        if (!$filters) {
+        if (! $filters) {
             return null;
         }
 
@@ -45,14 +44,14 @@ class ImageFilters extends Model
                 if (is_bool($blur) && $blur) {
                     $filters['blur'] = true;
                 } elseif (is_numeric($blur) && $blur >= 0.3 && $blur <= 1000) {
-                    $filters['blur'] = (float)$blur;
+                    $filters['blur'] = (float) $blur;
                 } else {
                     $filters['blur'] = null;
                 }
             }
 
             if (isset($filters['greyscale'])) {
-                if (!is_bool($filters['greyscale'])) {
+                if (! is_bool($filters['greyscale'])) {
                     $filters['greyscale'] = null;
                 }
             }
@@ -60,22 +59,22 @@ class ImageFilters extends Model
             // Normalize tint: must be array with r, g, b keys
             if (isset($filters['tint'])) {
                 if (is_string($filters['tint'])) {
-                    list($r, $g, $b) = sscanf($filters['tint'], "#%02x%02x%02x");
+                    [$r, $g, $b] = sscanf($filters['tint'], '#%02x%02x%02x');
                     $filters['tint'] = [
                         'r' => $r,
                         'g' => $g,
                         'b' => $b,
                     ];
-                } else if (!is_array($filters['tint']) ||
-                    !isset($filters['tint']['r'], $filters['tint']['g'], $filters['tint']['b'])) {
+                } elseif (! is_array($filters['tint']) ||
+                    ! isset($filters['tint']['r'], $filters['tint']['g'], $filters['tint']['b'])) {
                     $filters['tint'] = null;
                 }
             }
 
             /** @var ImageFilters */
             return Craft::createObject([
-              'class' => ImageFilters::class,
-              ...$filters,
+                'class' => ImageFilters::class,
+                ...$filters,
             ]);
         }
 

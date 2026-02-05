@@ -16,7 +16,7 @@
     "dev": "vite",
     "build": "vite build",
     "build:all": "yarn build && cd lambda && yarn build && cd .. && yarn docs:build",
-    "format": "prettier --write .",
+    "format": "prettier --write . && ./vendor/bin/pint",
     "watch": "vite build --watch",
     "preview": "vite preview",
     "phpstan": "vendor/bin/phpstan analyse",
@@ -30,10 +30,8 @@
     "test:php": "vendor/bin/codecept run unit"
   },
   "devDependencies": {
-    "@prettier/plugin-php": "^0.24.0",
     "@vitejs/plugin-vue": "^3.2.0",
     "prettier": "^3.8.1",
-    "prettier-plugin-twig-melody": "^0.4.6",
     "vite": "^3.2.4",
     "vitepress": "^1.0.0-alpha.29",
     "vue": "^3.2.45"

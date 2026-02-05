@@ -1,12 +1,13 @@
 <?php
+
 /**
  * @copyright Copyright (c) Chris Dyer
  */
 
 namespace dyerc\flux\services;
 
-use Craft;
 use Aws\Iam\IamClient;
+use Craft;
 use craft\helpers\App;
 use dyerc\flux\Flux;
 use dyerc\flux\helpers\PolicyHelper;
@@ -16,10 +17,10 @@ use yii\base\Component;
 class Aws extends Component
 {
     /* @var string */
-    public const ROLE_SUFFIX = "-Role";
+    public const ROLE_SUFFIX = '-Role';
 
     /* @var string */
-    public const ROLE_INLINE_POLICY_SUFFIX = "-Policy";
+    public const ROLE_INLINE_POLICY_SUFFIX = '-Policy';
 
     public function iamClient()
     {
@@ -31,8 +32,8 @@ class Aws extends Component
             'region' => 'us-east-1', // Lambda@Edge must always be in us-east-1
             'credentials' => [
                 'key' => App::parseEnv($settings->awsAccessKeyId),
-                'secret' => App::parseEnv($settings->awsSecretAccessKey)
-            ]
+                'secret' => App::parseEnv($settings->awsSecretAccessKey),
+            ],
         ]);
     }
 
@@ -42,14 +43,14 @@ class Aws extends Component
 
         try {
             $existing = $this->iamClient()->getRole([
-                'RoleName' => $name
+                'RoleName' => $name,
             ]);
 
             $roleArn = $existing['Role']['Arn'];
         } catch (\Exception $e) {
             $response = $this->iamClient()->createRole([
                 'RoleName' => $name,
-                'AssumeRolePolicyDocument' => json_encode(PolicyHelper::lambdaAssumeRolePolicy())
+                'AssumeRolePolicyDocument' => json_encode(PolicyHelper::lambdaAssumeRolePolicy()),
             ]);
 
             // Allow everything to settle before proceeding
@@ -62,7 +63,7 @@ class Aws extends Component
         // Check or update the inline role policy
         $rolePolicyParams = [
             'RoleName' => $name,
-            'PolicyName' => $name . self::ROLE_INLINE_POLICY_SUFFIX
+            'PolicyName' => $name.self::ROLE_INLINE_POLICY_SUFFIX,
         ];
 
         try {
@@ -73,11 +74,11 @@ class Aws extends Component
             }
         } catch (\Exception $e) {
             // Most likely the policy doesn't exist
-            Craft::info("Creating inline policy");
+            Craft::info('Creating inline policy');
         }
 
         $this->iamClient()->putRolePolicy(array_merge($rolePolicyParams, [
-            'PolicyDocument' => $inlinePolicy
+            'PolicyDocument' => $inlinePolicy,
         ]));
 
         return $roleArn;

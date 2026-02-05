@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright (c) Chris Dyer
  */
@@ -12,7 +13,7 @@ class InvalidateCloudFrontJob extends BaseJob
 {
     protected function defaultDescription(): ?string
     {
-        return "Invalidating CloudFront";
+        return 'Invalidating CloudFront';
     }
 
     public function execute($queue): void

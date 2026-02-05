@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright (c) Chris Dyer
  */
@@ -14,24 +15,24 @@ use DateTimeInterface;
 use dyerc\flux\Flux;
 use dyerc\flux\models\SettingsModel;
 use yii\base\Component;
-use ZipArchive as ZipArchive;
+use ZipArchive;
 
 class Lambda extends Component
 {
-    private LambdaClient|null $_client = null;
+    private ?LambdaClient $_client = null;
 
     /* @var string */
-    public const VIEWER_REQUEST_FUNCTION_SUFFIX = "-Viewer-Request";
+    public const VIEWER_REQUEST_FUNCTION_SUFFIX = '-Viewer-Request';
 
     /* @var string */
-    public const ORIGIN_RESPONSE_FUNCTION_SUFFIX = "-Origin-Response";
+    public const ORIGIN_RESPONSE_FUNCTION_SUFFIX = '-Origin-Response';
 
     /* @var int */
     public const POLL_FREQUENCY = 3;
 
     public function client(): LambdaClient
     {
-        if (!$this->_client) {
+        if (! $this->_client) {
             /* @var SettingsModel */
             $settings = Flux::getInstance()->getSettings();
 
@@ -40,22 +41,22 @@ class Lambda extends Component
                 'region' => 'us-east-1', // Lambda@Edge must always be in us-east-1
                 'credentials' => [
                     'key' => App::parseEnv($settings->awsAccessKeyId),
-                    'secret' => App::parseEnv($settings->awsSecretAccessKey)
-                ]
+                    'secret' => App::parseEnv($settings->awsSecretAccessKey),
+                ],
             ]);
         }
 
         return $this->_client;
     }
 
-    public function getStatus(string $name): array|null
+    public function getStatus(string $name): ?array
     {
         try {
             $function = $this->client()->getFunction([
-                'FunctionName' => $name
+                'FunctionName' => $name,
             ]);
 
-            $version = $configHash = "Unknown";
+            $version = $configHash = 'Unknown';
 
             preg_match("/(\d\.\d\.\d(-\S*)*)\s([a-z\d]+)/", $function['Configuration']['Description'], $m);
 
@@ -73,16 +74,16 @@ class Lambda extends Component
                 'config' => $configHash,
                 'memory' => $function['Configuration']['MemorySize'],
                 'runtime' => $function['Configuration']['Runtime'],
-                'lastModified' => DateTime::createFromFormat(DateTimeInterface::RFC3339_EXTENDED, $function['Configuration']['LastModified'])
+                'lastModified' => DateTime::createFromFormat(DateTimeInterface::RFC3339_EXTENDED, $function['Configuration']['LastModified']),
             ];
         } catch (LambdaException $e) {
             return null;
         }
     }
 
-    public function getInstalledVersion(array|null $status = null): string|null
+    public function getInstalledVersion(?array $status = null): ?string
     {
-        if (!$status) {
+        if (! $status) {
             $status = $this->getFunctionStatuses();
         }
 
@@ -93,9 +94,9 @@ class Lambda extends Component
         }
     }
 
-    public function getConfigVersion(array|null $status = null): string|null
+    public function getConfigVersion(?array $status = null): ?string
     {
-        if (!$status) {
+        if (! $status) {
             $status = $this->getFunctionStatuses();
         }
 
@@ -113,15 +114,15 @@ class Lambda extends Component
         $prefix = App::parseEnv($settings->awsResourcePrefix);
 
         return [
-            'viewerRequest' => $this->getStatus($prefix . self::VIEWER_REQUEST_FUNCTION_SUFFIX),
-            'originResponse' => $this->getStatus($prefix . self::ORIGIN_RESPONSE_FUNCTION_SUFFIX)
+            'viewerRequest' => $this->getStatus($prefix.self::VIEWER_REQUEST_FUNCTION_SUFFIX),
+            'originResponse' => $this->getStatus($prefix.self::ORIGIN_RESPONSE_FUNCTION_SUFFIX),
         ];
     }
 
     public function purgeOldVersions(string $name, int $keep = 5)
     {
         $results = $this->client()->listVersionsByFunction([
-            'FunctionName' => $name
+            'FunctionName' => $name,
         ]);
 
         // Only target numeric versions, ignoring anything named or $LATEST
@@ -136,10 +137,11 @@ class Lambda extends Component
         foreach (array_slice($versions, $keep) as $version) {
             try {
                 $this->client()->deleteFunction([
-                  'FunctionName' => $version['FunctionArn']
+                    'FunctionName' => $version['FunctionArn'],
                 ]);
             } catch (\Exception $e) {
-                Craft::warning("Unable to delete old function [ARN: " . $version['FunctionArn'] . "]: " . $e->getMessage());
+                Craft::warning('Unable to delete old function [ARN: '.$version['FunctionArn'].']: '.$e->getMessage());
+
                 return null;
             }
         }
@@ -160,12 +162,12 @@ class Lambda extends Component
             'Architectures' => ['x86_64'],
             'FunctionName' => $name,
             'Description' => "Deployed by Flux v$functionVersion $configHash",
-            'Runtime' => 'nodejs24.x'
+            'Runtime' => 'nodejs24.x',
         ], $overrides);
 
         $existingStatus = $this->getStatus($name);
 
-        $roleArn = Flux::getInstance()->aws->updateOrCreateLambdaRole($name . Aws::ROLE_SUFFIX);
+        $roleArn = Flux::getInstance()->aws->updateOrCreateLambdaRole($name.Aws::ROLE_SUFFIX);
 
         // Update or create function if it doesn't yet exist
         if ($existingStatus) {
@@ -175,15 +177,15 @@ class Lambda extends Component
 
             $this->client()->updateFunctionCode([
                 'FunctionName' => $name,
-                'ZipFile' => file_get_contents($zipBundle)
+                'ZipFile' => file_get_contents($zipBundle),
             ]);
         } else {
             $this->client()->createFunction(array_merge($config, [
                 'Code' => [
-                    'ZipFile' => file_get_contents($zipBundle)
+                    'ZipFile' => file_get_contents($zipBundle),
                 ],
-                'Handler' => "index.handler",
-                'Role' => $roleArn
+                'Handler' => 'index.handler',
+                'Role' => $roleArn,
             ]));
         }
 
@@ -194,8 +196,8 @@ class Lambda extends Component
 
         $this->waitForLambdaToProcess($name);
 
-        if ($version['LastUpdateStatus'] != "Successful") {
-            Craft::error("Lambda upload unsuccessful. Status is " . $version['LastUpdateStatus']);
+        if ($version['LastUpdateStatus'] != 'Successful') {
+            Craft::error('Lambda upload unsuccessful. Status is '.$version['LastUpdateStatus']);
         }
 
         $this->purgeOldVersions($name);
@@ -215,12 +217,13 @@ class Lambda extends Component
             Craft::getAlias('@dyerc/flux/lambda/request/index.js')
         );
         $func = $this->deployFunction(
-            App::parseEnv($settings->awsResourcePrefix) . self::VIEWER_REQUEST_FUNCTION_SUFFIX,
+            App::parseEnv($settings->awsResourcePrefix).self::VIEWER_REQUEST_FUNCTION_SUFFIX,
             $bundle,
-            [ 'MemorySize' => 128 ]
+            ['MemorySize' => 128]
         );
 
         unlink($bundle);
+
         return $func;
     }
 
@@ -234,15 +237,16 @@ class Lambda extends Component
             Craft::getAlias('@dyerc/flux/lambda/response/node_modules.zip')
         );
         $func = $this->deployFunction(
-            App::parseEnv($settings->awsResourcePrefix) . self::ORIGIN_RESPONSE_FUNCTION_SUFFIX,
+            App::parseEnv($settings->awsResourcePrefix).self::ORIGIN_RESPONSE_FUNCTION_SUFFIX,
             $bundle,
             [
                 'MemorySize' => $settings->lambdaMemory,
-                'Timeout' => $settings->lambdaTimeout
+                'Timeout' => $settings->lambdaTimeout,
             ]
         );
 
         unlink($bundle);
+
         return $func;
     }
 
@@ -257,18 +261,18 @@ class Lambda extends Component
             [
                 'EventType' => 'viewer-request',
                 'IncludeBody' => false,
-                'LambdaFunctionARN' => $viewerRequest['arn']
+                'LambdaFunctionARN' => $viewerRequest['arn'],
             ],
             [
                 'EventType' => 'origin-response',
                 'IncludeBody' => false,
-                'LambdaFunctionARN' => $originResponse['arn']
-            ]
+                'LambdaFunctionARN' => $originResponse['arn'],
+            ],
         ];
 
         Flux::getInstance()->s3->checkAndFixBucketPolicy([
             $viewerRequest['role'],
-            $originResponse['role']
+            $originResponse['role'],
         ]);
 
         $cloudfront = Flux::getInstance()->cloudfront->client();
@@ -287,12 +291,13 @@ class Lambda extends Component
         $updatedConfig['Id'] = $distributionId;
         $updatedConfig['IfMatch'] = $distribution['ETag'];
 
-        $updatedConfig['DistributionConfig']['Origins']['Items'] = array_map(function($item) use ($settings) {
+        $updatedConfig['DistributionConfig']['Origins']['Items'] = array_map(function ($item) use ($settings) {
             if (strlen($settings->rootPrefix) > 0) {
-                $item['OriginPath'] = "/" . App::parseEnv($settings->rootPrefix);
+                $item['OriginPath'] = '/'.App::parseEnv($settings->rootPrefix);
             } else {
-                $item['OriginPath'] = "";
+                $item['OriginPath'] = '';
             }
+
             return $item;
         }, $updatedConfig['DistributionConfig']['Origins']['Items']);
 
@@ -304,7 +309,7 @@ class Lambda extends Component
         $updated = false;
         $i = 0;
 
-        while (!$updated && $i < 60) {
+        while (! $updated && $i < 60) {
             sleep(3);
 
             $response = $this->client()->getFunctionConfiguration(['FunctionName' => $name]);
@@ -322,17 +327,17 @@ class Lambda extends Component
         /* @var SettingsModel */
         $settings = Flux::getInstance()->getSettings();
 
-        $compiledDate = date("F j, Y, g:i a");
+        $compiledDate = date('F j, Y, g:i a');
         $config = json_encode($settings->lambdaConfig());
 
         return "// Compiled by Flux on $compiledDate\n\nglobal.fluxConfig=$config;\n\n";
     }
 
     // Return zip file of bundle
-    private function packageFunctionBundle(string $script, string|null $nodeModules = null): string
+    private function packageFunctionBundle(string $script, ?string $nodeModules = null): string
     {
-        $zip = new ZipArchive();
-        $zipFile = Craft::$app->getPath()->getTempPath() . DIRECTORY_SEPARATOR . "function.zip";
+        $zip = new ZipArchive;
+        $zipFile = Craft::$app->getPath()->getTempPath().DIRECTORY_SEPARATOR.'function.zip';
 
         // Duplicate an existing template zip file if we're using one
         if ($nodeModules) {
@@ -340,11 +345,11 @@ class Lambda extends Component
         }
 
         if ($zip->open($zipFile, \ZipArchive::CREATE) !== true) {
-            Craft::error("Unable to create zip file: " . $zipFile);
+            Craft::error('Unable to create zip file: '.$zipFile);
         }
 
-        $scriptContents = $this->buildInjectedConfig() . file_get_contents($script);
-        $zip->addFromString("index.js", $scriptContents);
+        $scriptContents = $this->buildInjectedConfig().file_get_contents($script);
+        $zip->addFromString('index.js', $scriptContents);
 
         $zip->close();
 

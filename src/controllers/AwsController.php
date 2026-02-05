@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright (c) Chris Dyer
  */
@@ -21,7 +22,7 @@ use yii\web\Response;
 class AwsController extends Controller
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function init(): void
     {
@@ -48,7 +49,7 @@ class AwsController extends Controller
     {
         $this->requirePostRequest();
 
-        Queue::push(new LambdaDeployJob());
+        Queue::push(new LambdaDeployJob);
 
         $notice = Craft::t('flux', 'Installing / updating AWS configuration');
         Craft::$app->getSession()->setNotice($notice);
@@ -60,7 +61,7 @@ class AwsController extends Controller
     {
         $this->requirePostRequest();
 
-        Queue::push(new InvalidateCloudFrontJob());
+        Queue::push(new InvalidateCloudFrontJob);
 
         $notice = Craft::t('flux', 'Invalidating CloudFront');
         Craft::$app->getSession()->setNotice($notice);
@@ -72,7 +73,7 @@ class AwsController extends Controller
     {
         $this->requirePostRequest();
 
-        Queue::push(new PurgeCloudFrontJob());
+        Queue::push(new PurgeCloudFrontJob);
 
         $notice = Craft::t('flux', 'Purging CloudFront');
         Craft::$app->getSession()->setNotice($notice);
@@ -82,8 +83,6 @@ class AwsController extends Controller
 
     /**
      * Load bucket data for specified credentials.
-     *
-     * @return Response
      */
     public function actionLoadBucketData(): Response
     {
@@ -99,7 +98,7 @@ class AwsController extends Controller
             $buckets = $this->loadBucketList($keyId, $secret);
 
             return $this->asJson([
-                'buckets' => $buckets
+                'buckets' => $buckets,
             ]);
         } catch (\Throwable $e) {
             return $this->asFailure($e->getMessage());
@@ -108,8 +107,6 @@ class AwsController extends Controller
 
     /**
      * Load distributions data for specified credentials.
-     *
-     * @return Response
      */
     public function actionLoadDistributionsData(): Response
     {
@@ -125,7 +122,7 @@ class AwsController extends Controller
             $buckets = $this->loadCloudFrontDistributions($keyId, $secret);
 
             return $this->asJson([
-                'distributions' => $buckets
+                'distributions' => $buckets,
             ]);
         } catch (\Throwable $e) {
             return $this->asFailure($e->getMessage());
@@ -139,8 +136,8 @@ class AwsController extends Controller
             'region' => 'us-east-1',
             'credentials' => [
                 'key' => $keyId,
-                'secret' => $secret
-            ]
+                'secret' => $secret,
+            ],
         ]);
 
         $objects = $client->listBuckets();
@@ -179,8 +176,8 @@ class AwsController extends Controller
             'region' => 'us-east-1',
             'credentials' => [
                 'key' => $keyId,
-                'secret' => $secret
-            ]
+                'secret' => $secret,
+            ],
         ]);
 
         $objects = $client->listDistributions();
@@ -195,7 +192,7 @@ class AwsController extends Controller
         foreach ($distributions as $distribution) {
             $distributionList[] = [
                 'id' => $distribution['Id'],
-                'domain' => $distribution['DomainName']
+                'domain' => $distribution['DomainName'],
             ];
         }
 

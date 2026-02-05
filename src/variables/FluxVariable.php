@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright (c) Chris Dyer
  */
@@ -14,16 +15,17 @@ use dyerc\flux\models\SettingsModel;
 class FluxVariable
 {
     public const MIN_LQIP_WIDTH = 20;
+
     public const MIN_LQIP_HEIGHT = 20;
 
     public function transform(Asset $asset, mixed $transform, mixed $filters = null): string
     {
         if (is_array($transform)) {
             if (isset($transform['width'])) {
-                $transform['width'] = round((float)$transform['width']);
+                $transform['width'] = round((float) $transform['width']);
             }
             if (isset($transform['height'])) {
-                $transform['height'] = round((float)$transform['height']);
+                $transform['height'] = round((float) $transform['height']);
             }
         }
 
@@ -45,7 +47,7 @@ class FluxVariable
             'width' => max($lqipWidth, self::MIN_LQIP_WIDTH),
             'height' => max($lqipHeight, self::MIN_LQIP_HEIGHT),
         ], [
-            'blur' => $settings->lqipBlurFactor
+            'blur' => $settings->lqipBlurFactor,
         ]);
     }
 }

@@ -59,6 +59,7 @@
     "codeception/module-asserts": "^3.0.0",
     "codeception/module-yii2": "^1.1.10",
     "vlucas/phpdotenv": "^5.5",
-    "craftcms/aws-s3": "2.2.1"
+    "craftcms/aws-s3": "2.2.1",
+    "laravel/pint": "^1.27"
   }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright (c) Chris Dyer
  */
@@ -13,7 +14,7 @@ class FluxAssets extends AssetBundle
 {
     public function init()
     {
-        $this->sourcePath = "@dyerc/flux/web/assets/dist/assets";
+        $this->sourcePath = '@dyerc/flux/web/assets/dist/assets';
 
         $this->depends = [
             CpAsset::class,
@@ -21,11 +22,11 @@ class FluxAssets extends AssetBundle
         ];
 
         $this->js = [
-            'flux.js'
+            'flux.js',
         ];
 
         $this->css = [
-            'flux.css'
+            'flux.css',
         ];
 
         parent::init();
