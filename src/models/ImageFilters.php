@@ -56,7 +56,7 @@ class ImageFilters extends Model
                 }
             }
 
-            // Normalize tint: must be array with r, g, b keys
+            // Normalize tint: must be array with r, g, b keys or hex string beginning #
             if (isset($filters['tint'])) {
                 if (is_string($filters['tint'])) {
                     [$r, $g, $b] = sscanf($filters['tint'], '#%02x%02x%02x');
