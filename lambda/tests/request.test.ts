@@ -5,6 +5,7 @@ import * as crypto from "crypto";
 import { DefaultConfig, FluxConfig } from "../inc/config";
 
 import { handler } from "../request";
+import { encodeFilters } from "../inc/parser";
 
 const sampleConfig: FluxConfig = Object.assign({}, DefaultConfig, {
   loggingEnabled: false,
@@ -174,6 +175,23 @@ describe("request", () => {
     ]);
   });
 
+  test("processes request with avif image format", async () => {
+    const result = await handle(
+      "/images/image.jpg?mode=fit&w=1920&h=1080&f=avif",
+      {},
+      { verifyQuery: false },
+    );
+    expect(result.uri).toEqual(
+      "/images/_1920x1080_fit_center-center_80/image.avif",
+    );
+    expect(result.headers["x-flux-source-filename"]).toEqual([
+      {
+        key: "X-Flux-Source-Filename",
+        value: "image.jpg",
+      },
+    ]);
+  });
+
   test("processes request with png image format", async () => {
     const result = await handle(
       "/images/image.jpg?mode=fit&w=600&f=png",
@@ -255,6 +273,32 @@ describe("request", () => {
     ]);
   });
 
+  test("responds with an avif if accepted", async () => {
+    const result = await handle(
+      "/images/image.jpg?mode=fit&w=1920&h=1080",
+      {
+        requestHeaders: {
+          accept: [
+            {
+              key: "accept",
+              value: "image/avif",
+            },
+          ],
+        },
+      },
+      { verifyQuery: false, acceptAvif: true },
+    );
+    expect(result.uri).toEqual(
+      "/images/_1920x1080_fit_center-center_80/image.avif",
+    );
+    expect(result.headers["x-flux-source-filename"]).toEqual([
+      {
+        key: "X-Flux-Source-Filename",
+        value: "image.jpg",
+      },
+    ]);
+  });
+
   test("parses blur filter", async () => {
     const result = await handle(
       "/images/image.jpg?mode=fit&h=920&q=70&pos=bottom-center&blur=true",
@@ -264,6 +308,7 @@ describe("request", () => {
     expect(result.uri).toEqual(
       `/images/_AUTOx920_fit_bottom-center_70_f!gaRibHVyww/image.jpg`,
     );
+    expect(encodeFilters({ blur: true })).toEqual("gaRibHVyww");
   });
 
   test("parses gaussian blur filter", async () => {

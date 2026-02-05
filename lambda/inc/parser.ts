@@ -6,7 +6,10 @@ import { CloudFrontRequest } from "aws-lambda";
 import { log } from "./logging";
 import { isNumeric, URLParams, coerceBoolean, coerceInt } from "./helpers";
 
-const WEBP_EXT = "webp";
+export const JPG_EXT = "jpg";
+export const PNG_EXT = "png";
+export const WEBP_EXT = "webp";
+export const AVIF_EXT = "avif";
 
 export enum TransformMode {
   FIT = "fit",
@@ -14,7 +17,7 @@ export enum TransformMode {
   STRETCH = "stretch",
 }
 
-export const ImageFormats = ["jpg", "png", "webp"];
+export const ImageFormats = [JPG_EXT, PNG_EXT, WEBP_EXT, AVIF_EXT];
 
 export const CropPositions = [
   "top-left",
@@ -163,6 +166,11 @@ export function parseRequest(
     if (config.acceptWebp && accepts.includes(WEBP_EXT)) {
       outputExtension = WEBP_EXT;
     }
+
+    // Automatically upgrade to Avif if enabled and supported
+    if (config.acceptAvif && accepts.includes(AVIF_EXT)) {
+      outputExtension = AVIF_EXT;
+    }
   }
 
   // Ensure we have a source if the output format has changed
@@ -235,10 +243,12 @@ export function parseManipulations(
       transform.quality = q as number;
     }
   } else {
-    if (extension == "jpg") {
+    if (extension == JPG_EXT) {
       transform.quality = config.jpegQuality;
-    } else if (extension == "webp") {
+    } else if (extension == WEBP_EXT) {
       transform.quality = config.webpQuality;
+    } else if (extension === AVIF_EXT) {
+      transform.quality = config.avifQuality;
     }
   }
 

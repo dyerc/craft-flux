@@ -99,6 +99,11 @@ class SettingsModel extends Model
     public bool $acceptWebp = true;
 
     /**
+     * @var bool Automatically serve Avif files if the users browser supports it via the Accept header
+     */
+    public bool $acceptAvif = false;
+
+    /**
      * @var int Default JPG transform quality unless specified
      */
     public int $jpegQuality = 80;
@@ -107,6 +112,11 @@ class SettingsModel extends Model
      * @var int Default WebP transform quality unless specified
      */
     public int $webpQuality = 80;
+
+    /**
+     * @var int Default Avif transform quality unless specified
+     */
+    public int $avifQuality = 60;
 
     /**
      * @var bool Log more detailed information to CloudWatch
@@ -141,7 +151,7 @@ class SettingsModel extends Model
     /**
      * @var int Blur sigma value of images created by the lqip function
      */
-    public int $lqipBlurFactor = 25; 
+    public int $lqipBlurFactor = 25;
 
 
     public function isAwsConfigured(): bool
@@ -207,8 +217,10 @@ class SettingsModel extends Model
 
             'jpegQuality' => $this->jpegQuality,
             'webpQuality' => $this->webpQuality,
+            'avifQuality' => $this->avifQuality,
 
-            'acceptWebp' => $this->acceptWebp
+            'acceptWebp' => $this->acceptWebp,
+            'acceptAvif' => $this->acceptAvif,
         ];
     }
 

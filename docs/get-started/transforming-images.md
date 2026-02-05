@@ -56,7 +56,7 @@ _Allowed values:_ `'crop'`, `'fit'`, `'stretch'`
 
 ### format [string]
 
-_Allowed values:_ `'jpg'`, `'png'`, `'webp'`
+_Allowed values:_ `'jpg'`, `'png'`, `'webp'`, `'avif'`
 
 The transform's resulting image format.
 

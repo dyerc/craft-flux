@@ -14,6 +14,18 @@
 }}
 
 {{
+forms.lightswitchField({
+  instructions: 'Automatically serve Avif files if the users browser supports it via the Accept header.'|t(
+    'flux'
+  ),
+  label: 'Accept Avif'|t('flux'),
+  warning: config.acceptAvif is defined ? configWarning('acceptAvif'),
+  name: 'settings[acceptAvif]',
+  on: settings.acceptAvif
+})
+}}
+
+{{
   forms.textField({
     label: 'Default JPG Quality'|t('flux'),
     warning: config.jpegQuality is defined ? configWarning('jpegQuality'),
@@ -31,6 +43,16 @@
     value: settings.webpQuality,
     errors: settings.getErrors('webpQuality')
   })
+}}
+
+{{
+forms.textField({
+  label: 'Default Avif Quality'|t('flux'),
+  warning: config.avifQuality is defined ? configWarning('avifQuality'),
+  name: 'settings[avifQuality]',
+  value: settings.avifQuality,
+  errors: settings.getErrors('avifQuality')
+})
 }}
 
 {{

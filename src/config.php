@@ -66,11 +66,17 @@ return [
         // Automatically serve WebP files if the users browser supports it via the Accept header
         // 'acceptWebp' => true,
 
+        // Automatically serve Avif files if the users browser supports it via the Accept header
+        // 'acceptAvif' => false,
+
         // Default JPG transform quality unless specified
         // 'jpegQuality' => 80,
 
         // Default WebP transform quality unless specified
         // 'webpQuality' => 80,
+
+        // Default Avif transform quality unless specified
+        // 'avifQuality' => 60,
 
         // Log more detailed information to CloudWatch
         // 'loggingEnabled' => true,

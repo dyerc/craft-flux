@@ -45,7 +45,7 @@ class FluxVariable
             'width' => max($lqipWidth, self::MIN_LQIP_WIDTH),
             'height' => max($lqipHeight, self::MIN_LQIP_HEIGHT),
         ], [
-            'blur' => 25
+            'blur' => $settings->lqipBlurFactor
         ]);
     }
 }

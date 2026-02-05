@@ -8,11 +8,14 @@ import sharp, { FitEnum } from "sharp";
 import type { Readable } from "stream";
 
 import {
+  AVIF_EXT,
   compilePath,
   Filters,
   FocalPoint,
+  PNG_EXT,
   TransformMode,
   TransformRequest,
+  WEBP_EXT,
 } from "./parser";
 import { FluxConfig, FluxSourceType } from "./config";
 import { log } from "./logging";
@@ -300,11 +303,15 @@ export function transformSource(
       proc = processFilters(proc, transform.filters);
     }
 
-    if (request.extension === "webp") {
+    if (request.extension === AVIF_EXT) {
+      proc = proc.avif({
+        quality: transform.quality,
+      });
+    } else if (request.extension === WEBP_EXT) {
       proc = proc.webp({
         quality: transform.quality,
       });
-    } else if (request.extension === "png") {
+    } else if (request.extension === PNG_EXT) {
       proc = proc.png();
     } else {
       proc = proc.jpeg({
