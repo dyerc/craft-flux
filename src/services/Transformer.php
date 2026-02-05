@@ -75,6 +75,10 @@ class Transformer extends Component
                 $transformKeys['blur'] = $filters->blur;
             }
 
+            if ($filters->greyscale) {
+                $transformKeys['greyscale'] = $filters->greyscale;
+            }
+
             if ($filters->tint && is_array($filters->tint)) {
                 $transformKeys['tint'] = join(",", $filters->tint);
             }

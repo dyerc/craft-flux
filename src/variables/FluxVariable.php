@@ -38,7 +38,7 @@ class FluxVariable
             'width' => max($asset->width / 4, self::MIN_LQIP_WIDTH),
             'height' => max($asset->height / 4, self::MIN_LQIP_HEIGHT),
         ], [
-          'blur' => 25
+            'blur' => 25
         ]);
     }
 }

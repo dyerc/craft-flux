@@ -72,4 +72,76 @@ class FluxVariableTest extends TestCase
             ]))
         );
     }
+
+
+
+    public function testGeneratesUrlWithBlurFilter(): void
+    {
+        Flux::$plugin->settings->verifyQuery = false;
+
+        $this->assertSame(
+          "https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080&blur=1",
+          $this->_removeCacheKeys($this->flux->transform($this->asset, [
+            'mode' => 'fit',
+            'width' => 1920,
+            'height' => 1080,
+          ], [ 'blur' => true ])
+        ));
+    }
+
+    public function testGeneratesUrlWithGaussianBlurFilter(): void
+    {
+        Flux::$plugin->settings->verifyQuery = false;
+
+        $this->assertSame(
+            "https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080&blur=80",
+            $this->_removeCacheKeys($this->flux->transform($this->asset, [
+              'mode' => 'fit',
+              'width' => 1920,
+              'height' => 1080,
+            ], [ 'blur' => 80 ])
+        ));
+    }
+
+    public function testGeneratesUrlWithGreyscaleFilter(): void
+    {
+        Flux::$plugin->settings->verifyQuery = false;
+
+        $this->assertSame(
+          "https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080&greyscale=1",
+          $this->_removeCacheKeys($this->flux->transform($this->asset, [
+            'mode' => 'fit',
+            'width' => 1920,
+            'height' => 1080,
+          ], [ 'greyscale' => true ])
+          ));
+    }
+
+    public function testGeneratesUrlWithTintFilter(): void
+    {
+        Flux::$plugin->settings->verifyQuery = false;
+
+        $this->assertSame(
+          "https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080&tint=255%2C255%2C255",
+          $this->_removeCacheKeys($this->flux->transform($this->asset, [
+            'mode' => 'fit',
+            'width' => 1920,
+            'height' => 1080,
+          ], [ 'tint' => [ 'r' => 255, 'g' => 255, 'b' => 255 ] ])
+          ));
+    }
+
+    public function testGeneratesUrlWithTintFilterAsHex(): void
+    {
+        Flux::$plugin->settings->verifyQuery = false;
+
+        $this->assertSame(
+          "https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080&tint=255%2C102%2C0",
+          $this->_removeCacheKeys($this->flux->transform($this->asset, [
+            'mode' => 'fit',
+            'width' => 1920,
+            'height' => 1080,
+          ], [ 'tint' => "#FF6600" ])
+          ));
+    }
 }
