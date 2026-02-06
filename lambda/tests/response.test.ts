@@ -17,6 +17,7 @@ import * as fs from "fs";
 import path from "path";
 
 import { handler } from "../response";
+import { encodeFilters } from "../inc/parser";
 
 const sampleConfig: FluxConfig = Object.assign({}, DefaultConfig, {
   loggingEnabled: false,
@@ -342,6 +343,28 @@ describe("response", () => {
 
     const result = await handle(
       "/testAssets/_AUTOx920_fit_bottom-center_70_f!gaRibHVyy0A)MzMzMzMz/image.jpg?mode=fit&h=920&q=70&pos=bottom-center&blur=31.2",
+      {
+        status: "403",
+      },
+      { verifyQuery: false },
+    );
+
+    expect(result.status).toEqual("200");
+  });
+
+  test("combines modulations", async () => {
+    originServer.map({
+      "/uploads/image.jpg": "image.jpg",
+    });
+    const filterBlob = encodeFilters({ brightness: 50, saturation: 2 });
+
+    const mockS3Client = mockClient(S3Client);
+    mockS3Client.on(GetObjectCommand).rejects();
+    mockS3Client.on(PutObjectCommand).resolves({});
+    mockS3Client.on(PutObjectCommand).resolves({});
+
+    const result = await handle(
+      `/testAssets/_AUTOx920_fit_bottom-center_70_f!${filterBlob}/image.jpg?mode=fit&h=920&q=70&pos=bottom-center&saturation=2&brightness=50`,
       {
         status: "403",
       },

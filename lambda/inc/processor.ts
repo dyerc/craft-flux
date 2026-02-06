@@ -340,6 +340,19 @@ function processFilters(proc: sharp.Sharp, filters: Filters) {
     proc = proc.tint(filters.tint);
   }
 
+  const modulate = Object.fromEntries(
+    Object.entries({
+      brightness: filters.brightness,
+      hue: filters.hue,
+      lightness: filters.lightness,
+      saturation: filters.saturation,
+    }).filter(([_, v]) => v !== undefined),
+  );
+
+  if (Object.keys(modulate).length > 0) {
+    proc = proc.modulate(modulate);
+  }
+
   return proc;
 }
 

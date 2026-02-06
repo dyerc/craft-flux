@@ -76,8 +76,24 @@ class Transformer extends Component
                 $transformKeys['blur'] = $filters->blur === true ? 'true' : $filters->blur;
             }
 
+            if ($filters->brightness) {
+                $transformKeys['brightness'] = $filters->brightness;
+            }
+
             if ($filters->greyscale) {
                 $transformKeys['greyscale'] = $filters->greyscale;
+            }
+
+            if ($filters->hue) {
+                $transformKeys['hue'] = $filters->hue;
+            }
+
+            if ($filters->lightness) {
+                $transformKeys['lightness'] = $filters->lightness;
+            }
+
+            if ($filters->saturation) {
+                $transformKeys['saturation'] = $filters->saturation;
             }
 
             if ($filters->tint && is_array($filters->tint)) {

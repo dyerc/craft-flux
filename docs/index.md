@@ -9,7 +9,7 @@ Flux integrates your site image transforms with AWS, using Lambda and CloudFront
 - Image heavy pages will feel more instantaneous to load because high performance CloudFront servers perform the image transformations
 - Process image transforms on demand, only when they are requested by the user
 - Automatically serve WebP and Avif to browsers that support it without having to explicitly define WebP/Avif transforms in your templates
-- Blur, greyscale and other image manipulation support
+- Blur, brightness, greyscale and other image manipulation options
 - Supports all Craft filesystems, including local folders
 - Compatible with your existing Craft template code, named transforms and focal points. Simply enable Flux and your templates don't need to change
 - Transforms are completely URL based, no database queries are needed

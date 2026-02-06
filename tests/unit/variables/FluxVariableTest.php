@@ -145,6 +145,22 @@ class FluxVariableTest extends TestCase
         );
     }
 
+    public function testGeneratesUrlWithBrightnessFilter(): void
+    {
+        Flux::$plugin->settings->verifyQuery = false;
+
+        $this->assertSame(
+            'https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080&brightness=-3.2',
+            $this->_removeCacheKeys($this->flux->transform($this->asset, [
+                'mode' => 'fit',
+                'width' => 1920,
+                'height' => 1080,
+            ], [
+                'brightness' => -3.2,
+            ]))
+        );
+    }
+
     public function testGeneratesUrlWithGreyscaleFilter(): void
     {
         Flux::$plugin->settings->verifyQuery = false;
@@ -157,6 +173,54 @@ class FluxVariableTest extends TestCase
                 'height' => 1080,
             ], [
                 'greyscale' => true,
+            ]))
+        );
+    }
+
+    public function testGeneratesUrlWithHueFilter(): void
+    {
+        Flux::$plugin->settings->verifyQuery = false;
+
+        $this->assertSame(
+            'https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080&hue=180',
+            $this->_removeCacheKeys($this->flux->transform($this->asset, [
+                'mode' => 'fit',
+                'width' => 1920,
+                'height' => 1080,
+            ], [
+                'hue' => 180,
+            ]))
+        );
+    }
+
+    public function testGeneratesUrlWithLightnessFilter(): void
+    {
+        Flux::$plugin->settings->verifyQuery = false;
+
+        $this->assertSame(
+            'https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080&lightness=50',
+            $this->_removeCacheKeys($this->flux->transform($this->asset, [
+                'mode' => 'fit',
+                'width' => 1920,
+                'height' => 1080,
+            ], [
+                'lightness' => 50,
+            ]))
+        );
+    }
+
+    public function testGeneratesUrlWithSaturationFilter(): void
+    {
+        Flux::$plugin->settings->verifyQuery = false;
+
+        $this->assertSame(
+            'https://cloudfront/volume/foo.jpg?mode=fit&pos=center-center&w=1920&h=1080&saturation=0.5',
+            $this->_removeCacheKeys($this->flux->transform($this->asset, [
+                'mode' => 'fit',
+                'width' => 1920,
+                'height' => 1080,
+            ], [
+                'saturation' => 0.5,
             ]))
         );
     }

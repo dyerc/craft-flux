@@ -50,7 +50,11 @@ export interface FocalPoint {
 
 export interface Filters {
   blur?: boolean | number;
+  brightness?: number;
   greyscale?: boolean;
+  hue?: number;
+  lightness?: number;
+  saturation?: number;
   tint?: {
     r: number;
     g: number;
@@ -286,8 +290,40 @@ export function parseFilters(
     }
   }
 
+  if (params.brightness) {
+    const brightness = parseFloat(params.brightness);
+
+    if (!isNaN(brightness)) {
+      filters.brightness = brightness;
+    }
+  }
+
   if (params.greyscale) {
     filters.greyscale = coerceBoolean(params.greyscale);
+  }
+
+  if (params.hue) {
+    const hue = parseFloat(params.hue);
+
+    if (!isNaN(hue)) {
+      filters.hue = hue;
+    }
+  }
+
+  if (params.lightness) {
+    const lightness = parseFloat(params.lightness);
+
+    if (!isNaN(lightness)) {
+      filters.lightness = lightness;
+    }
+  }
+
+  if (params.saturation) {
+    const saturation = parseFloat(params.saturation);
+
+    if (!isNaN(saturation)) {
+      filters.saturation = saturation;
+    }
   }
 
   if (params.tint) {

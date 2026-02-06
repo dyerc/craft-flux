@@ -10,7 +10,15 @@ class ImageFilters extends Model
 {
     public float|bool|null $blur = null;
 
+    public ?float $brightness = null;
+
     public ?bool $greyscale = null;
+
+    public ?float $hue = null;
+
+    public ?float $lightness = null;
+
+    public ?float $saturation = null;
 
     public ?array $tint = null;
 
@@ -18,8 +26,12 @@ class ImageFilters extends Model
     {
         return [
             'blur' => $this->blur,
-            'tint' => $this->tint,
+            'brightness' => $this->brightness,
             'greyscale' => $this->greyscale,
+            'hue' => $this->hue,
+            'lightness' => $this->lightness,
+            'saturation' => $this->saturation,
+            'tint' => $this->tint,
         ];
     }
 
@@ -50,9 +62,45 @@ class ImageFilters extends Model
                 }
             }
 
+            if (isset($filters['brightness'])) {
+                $brightness = $filters['brightness'];
+                if (is_numeric($brightness)) {
+                    $filters['brightness'] = (float) round($brightness, 4);
+                } else {
+                    $filters['brightness'] = null;
+                }
+            }
+
             if (isset($filters['greyscale'])) {
                 if (! is_bool($filters['greyscale'])) {
                     $filters['greyscale'] = null;
+                }
+            }
+
+            if (isset($filters['hue'])) {
+                $hue = $filters['hue'];
+                if (is_numeric($hue)) {
+                    $filters['hue'] = (float) round($hue, 4);
+                } else {
+                    $filters['hue'] = null;
+                }
+            }
+
+            if (isset($filters['lightness'])) {
+                $lightness = $filters['lightness'];
+                if (is_numeric($lightness)) {
+                    $filters['lightness'] = (float) round($lightness, 4);
+                } else {
+                    $filters['lightness'] = null;
+                }
+            }
+
+            if (isset($filters['saturation'])) {
+                $saturation = $filters['saturation'];
+                if (is_numeric($saturation)) {
+                    $filters['saturation'] = (float) round($saturation, 4);
+                } else {
+                    $filters['saturation'] = null;
                 }
             }
 

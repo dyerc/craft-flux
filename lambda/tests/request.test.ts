@@ -333,6 +333,66 @@ describe("request", () => {
     );
   });
 
+  test("parses brightness filter", async () => {
+    const filterBlob = encodeFilters({ brightness: -3.1234 });
+    const result = await handle(
+      "/images/image.jpg?mode=fit&h=920&q=70&pos=bottom-center&brightness=-3.1234",
+      {},
+      { verifyQuery: false },
+    );
+    expect(result.uri).toEqual(
+      `/images/_AUTOx920_fit_bottom-center_70_f!${filterBlob}/image.jpg`,
+    );
+  });
+
+  test("parses greyscale filter", async () => {
+    const filterBlob = encodeFilters({ greyscale: true });
+    const result = await handle(
+      "/images/image.jpg?mode=fit&h=920&q=70&pos=bottom-center&greyscale=1",
+      {},
+      { verifyQuery: false },
+    );
+    expect(result.uri).toEqual(
+      `/images/_AUTOx920_fit_bottom-center_70_f!${filterBlob}/image.jpg`,
+    );
+  });
+
+  test("parses hue filter", async () => {
+    const filterBlob = encodeFilters({ hue: 50 });
+    const result = await handle(
+      "/images/image.jpg?mode=fit&h=920&q=70&pos=bottom-center&hue=50",
+      {},
+      { verifyQuery: false },
+    );
+    expect(result.uri).toEqual(
+      `/images/_AUTOx920_fit_bottom-center_70_f!${filterBlob}/image.jpg`,
+    );
+  });
+
+  test("parses lightness filter", async () => {
+    const filterBlob = encodeFilters({ lightness: 180 });
+    const result = await handle(
+      "/images/image.jpg?mode=fit&h=920&q=70&pos=bottom-center&lightness=180",
+      {},
+      { verifyQuery: false },
+    );
+    expect(result.uri).toEqual(
+      `/images/_AUTOx920_fit_bottom-center_70_f!${filterBlob}/image.jpg`,
+    );
+  });
+
+  test("parses saturation filter", async () => {
+    const filterBlob = encodeFilters({ saturation: 2 });
+    const result = await handle(
+      "/images/image.jpg?mode=fit&h=920&q=70&pos=bottom-center&saturation=2",
+      {},
+      { verifyQuery: false },
+    );
+    expect(result.uri).toEqual(
+      `/images/_AUTOx920_fit_bottom-center_70_f!${filterBlob}/image.jpg`,
+    );
+  });
+
   test("parses tint filter", async () => {
     const result = await handle(
       "/images/image.jpg?mode=fit&h=920&q=70&pos=bottom-center&tint=255,128,0",
