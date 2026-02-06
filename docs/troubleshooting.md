@@ -34,3 +34,7 @@ In your AWS console, under **CloudWatch** → **Logs** → **Log groups**, you s
 If you don't see any entries, make sure you are in the correct AWS region. Flux will always create its Lambda functions in the `us-east-1` region, however logs will appear in the region used to serve that request. This is the nature of Lambda@Edge, the service Flux uses. For instance, if your user reporting an issue is in the UK, switch to the London AWS region and you might see appropriate log entries.
 
 These logs should give a hint of what went wrong. If you submit an issue, please provide as much of the stacktrace as possible, but make sure that you anonymize and sensitive file or bucket names.
+
+## Some images load and others don't
+
+Occasionally new AWS accounts have a quota limit of 10 concurrent executions. If you have a page with 20 images on it, 10 would load and the other 10 fail due to this quota limit. The [default quota is listed as 1,000](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cloudfront-limits.html#limits-lambda-at-edge), but please check this quota if you notice an issue that matches the description above. An increase can be requested from AWS. However unfortunately this quota is specific to each region, so you may need to request an increase in multiple regions or contact support for a wider increase across your account.
