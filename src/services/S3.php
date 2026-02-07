@@ -23,7 +23,7 @@ class S3 extends Component
 
     public function client(): S3Client
     {
-        if (! $this->_client) {
+        if (!$this->_client) {
             /* @var SettingsModel $settings */
             $settings = Flux::getInstance()->getSettings();
 
@@ -54,11 +54,11 @@ class S3 extends Component
             $policy = $response['Policy']->getContents();
 
             // Very basic naive check first
-            $permissions = ! empty($roles) && str_contains($policy, 's3:PutObject') && str_contains($policy, 's3:GetObject');
+            $permissions = !empty($roles) && str_contains($policy, 's3:PutObject') && str_contains($policy, 's3:GetObject');
 
             // Ensure all roles are mentioned by the bucket policy
             foreach ($roles as $role) {
-                if ($permissions && ! str_contains($policy, $role)) {
+                if ($permissions && !str_contains($policy, $role)) {
                     $permissions = false;
                 }
             }
@@ -140,7 +140,7 @@ class S3 extends Component
                 }
             }
 
-            if (! empty($additions)) {
+            if (!empty($additions)) {
                 $policy['Statement'] = array_merge($policy['Statement'], $additions);
                 Craft::info('Adding new items to bucket policy.');
                 $updateRequired = true;
@@ -195,7 +195,7 @@ class S3 extends Component
 
     public function deleteObjects(array $paths, int $chunkSize = 1000): void
     {
-        if (! $paths) {
+        if (!$paths) {
             return;
         }
 
@@ -240,7 +240,7 @@ class S3 extends Component
         /*
          * Remove the file itself if it is a cached object and not the actual asset itself. Double check for S3 based filesystems
          */
-        $originalPath = (! empty($asset->fs->subfolder) ? rtrim($asset->fs->subfolder, '/').'/' : '').$asset->getPath();
+        $originalPath = (!empty($asset->fs->subfolder) ? rtrim($asset->fs->subfolder, '/').'/' : '').$asset->getPath();
 
         if ($originalPath != $path) {
             $deleteObjects[] = $path;
@@ -342,7 +342,7 @@ class S3 extends Component
         }, $needles);
 
         return array_filter($paths, function ($item) use ($prefixedNeedles) {
-            return ! in_array($item, $prefixedNeedles);
+            return !in_array($item, $prefixedNeedles);
         });
     }
 }

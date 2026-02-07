@@ -153,7 +153,7 @@ class SettingsModel extends Model
 
     public function isAwsConfigured(): bool
     {
-        return ! empty($this->awsAccessKeyId) && ! empty($this->awsSecretAccessKey) && ! empty($this->awsBucket) && ! empty($this->cloudFrontDistributionId);
+        return !empty($this->awsAccessKeyId) && !empty($this->awsSecretAccessKey) && !empty($this->awsBucket) && !empty($this->cloudFrontDistributionId);
     }
 
     public function getCloudfrontEndpoint(): string

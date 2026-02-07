@@ -52,7 +52,7 @@ export const DefaultConfig: FluxConfig = {
 
   jpegQuality: 80,
   webpQuality: 80,
-  avifQuality: 80,
+  avifQuality: 60,
 
   acceptWebp: true,
   acceptAvif: false,

@@ -22,4 +22,4 @@ One of two Lambda functions that Flux installs will route this request to a uniq
 
 If this image exists and has already been transformed by Flux, CloudFront will immediately serve it. Alternatively, another Lambda function will use [Sharp](https://sharp.pixelplumbing.com/) to convert and process the image. The original image will be fetched from your Craft site, or from S3 if your site uses an S3 filesystem already.
 
-Flux aims to support exactly the same [transform options](https://craftcms.com/docs/4.x/image-transforms.html) as Craft does itself. This includes `crop`, `fit` and `stretch` modes, as well as focal points, quality and format.
+Flux aims to support exactly the same [transform options](https://craftcms.com/docs/4.x/image-transforms.html) as Craft does itself. This includes `crop`, `fit` and `stretch` modes, as well as focal points, quality and format. Use [image operations](/get-started/image-operations) by calling `craft.flux.transform` directly to additionally process the image.

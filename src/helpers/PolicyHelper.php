@@ -18,11 +18,11 @@ class PolicyHelper
         /* @var SettingsModel */
         $settings = Flux::getInstance()->getSettings();
 
-        if (! $bucket) {
+        if (!$bucket) {
             $bucket = App::parseEnv($settings->awsBucket);
         }
 
-        if (! $rootPrefix) {
+        if (!$rootPrefix) {
             $rootPrefix = App::parseEnv($settings->rootPrefix);
         }
 

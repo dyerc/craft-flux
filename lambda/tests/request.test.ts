@@ -182,7 +182,7 @@ describe("request", () => {
       { verifyQuery: false },
     );
     expect(result.uri).toEqual(
-      "/images/_1920x1080_fit_center-center_80/image.avif",
+      "/images/_1920x1080_fit_center-center_60/image.avif",
     );
     expect(result.headers["x-flux-source-filename"]).toEqual([
       {
@@ -289,7 +289,7 @@ describe("request", () => {
       { verifyQuery: false, acceptAvif: true },
     );
     expect(result.uri).toEqual(
-      "/images/_1920x1080_fit_center-center_80/image.avif",
+      "/images/_1920x1080_fit_center-center_60/image.avif",
     );
     expect(result.headers["x-flux-source-filename"]).toEqual([
       {
@@ -378,6 +378,17 @@ describe("request", () => {
     );
     expect(result.uri).toEqual(
       `/images/_AUTOx920_fit_bottom-center_70_f!${filterBlob}/image.jpg`,
+    );
+  });
+
+  test("ignores invalid lightness filter", async () => {
+    const result = await handle(
+      "/images/image.jpg?mode=fit&h=920&q=70&pos=bottom-center&lightness=abcd",
+      {},
+      { verifyQuery: false },
+    );
+    expect(result.uri).toEqual(
+      `/images/_AUTOx920_fit_bottom-center_70/image.jpg`,
     );
   });
 

@@ -38,7 +38,7 @@ class FluxUtility extends Utility
     {
         $iconPath = Craft::getAlias('@vendor/dyerc/craft-flux/src/icon-mask.svg');
 
-        if (! is_string($iconPath)) {
+        if (!is_string($iconPath)) {
             return null;
         }
 

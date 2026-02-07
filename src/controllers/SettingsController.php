@@ -125,9 +125,9 @@ class SettingsController extends Controller
             Craft::error($e->getTraceAsString());
         }
 
-        if (! $bucketReady) {
+        if (!$bucketReady) {
             Craft::$app->getSession()->setError(Craft::t('flux', 'Unable to access S3 bucket'));
-        } elseif (! $distributionReady) {
+        } elseif (!$distributionReady) {
             Craft::$app->getSession()->setError(Craft::t('flux', 'Unable to access CloudFront distribution'));
         }
 

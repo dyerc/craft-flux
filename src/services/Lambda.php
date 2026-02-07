@@ -32,7 +32,7 @@ class Lambda extends Component
 
     public function client(): LambdaClient
     {
-        if (! $this->_client) {
+        if (!$this->_client) {
             /* @var SettingsModel */
             $settings = Flux::getInstance()->getSettings();
 
@@ -83,7 +83,7 @@ class Lambda extends Component
 
     public function getInstalledVersion(?array $status = null): ?string
     {
-        if (! $status) {
+        if (!$status) {
             $status = $this->getFunctionStatuses();
         }
 
@@ -96,7 +96,7 @@ class Lambda extends Component
 
     public function getConfigVersion(?array $status = null): ?string
     {
-        if (! $status) {
+        if (!$status) {
             $status = $this->getFunctionStatuses();
         }
 
@@ -309,7 +309,7 @@ class Lambda extends Component
         $updated = false;
         $i = 0;
 
-        while (! $updated && $i < 60) {
+        while (!$updated && $i < 60) {
             sleep(3);
 
             $response = $this->client()->getFunctionConfiguration(['FunctionName' => $name]);

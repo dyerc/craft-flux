@@ -43,7 +43,7 @@ class Transformer extends Component
         if ($asset->getHasFocalPoint()) {
             $focal = $asset->getFocalPoint();
             $transformKeys['pos'] = $focal['x'].'-'.$focal['y'];
-        } elseif (! preg_match('/(top|center|bottom)-(left|center|right)/', $transform->position)) {
+        } elseif (!preg_match('/(top|center|bottom)-(left|center|right)/', $transform->position)) {
             $transformKeys['pos'] = 'center-center';
         } else {
             $transformKeys['pos'] = $transform->position;

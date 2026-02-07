@@ -19,7 +19,7 @@ class Cloudfront extends Component
 
     public function client(?string $keyId = null, ?string $secret = null): CloudFrontClient
     {
-        if (! $this->_client) {
+        if (!$this->_client) {
             /* @var SettingsModel $settings */
             $settings = Flux::getInstance()->getSettings();
 

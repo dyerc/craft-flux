@@ -37,7 +37,7 @@ class ImageFilters extends Model
 
     public static function normalize(mixed $filters): ?ImageFilters
     {
-        if (! $filters) {
+        if (!$filters) {
             return null;
         }
 
@@ -72,7 +72,7 @@ class ImageFilters extends Model
             }
 
             if (isset($filters['greyscale'])) {
-                if (! is_bool($filters['greyscale'])) {
+                if (!is_bool($filters['greyscale'])) {
                     $filters['greyscale'] = null;
                 }
             }
@@ -113,8 +113,8 @@ class ImageFilters extends Model
                         'g' => $g,
                         'b' => $b,
                     ];
-                } elseif (! is_array($filters['tint']) ||
-                    ! isset($filters['tint']['r'], $filters['tint']['g'], $filters['tint']['b'])) {
+                } elseif (!is_array($filters['tint']) ||
+                    !isset($filters['tint']['r'], $filters['tint']['g'], $filters['tint']['b'])) {
                     $filters['tint'] = null;
                 }
             }
