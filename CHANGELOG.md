@@ -1,6 +1,6 @@
 # Flux Release Notes
 
-## 5.2.0 - Unreleased
+## 5.2.0 - 2026-02-07
 
 - Add `blur` filter support for a fast 3x3 box blur or Gaussian blur with a sigma factor
 - Add `brightness` filter
