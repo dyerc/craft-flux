@@ -1,24 +1,22 @@
 <?php
+
 /**
  * @copyright Copyright (c) Chris Dyer
  */
 
 namespace dyerc\flux\utilities;
 
-use Aws\CloudFront\CloudFrontClient;
-use Aws\Lambda\LambdaClient;
 use Craft;
 use craft\base\Utility;
 use craft\helpers\App;
 use dyerc\flux\Flux;
 use dyerc\flux\helpers\PolicyHelper;
-use dyerc\flux\jobs\LambdaDeployJob;
 use dyerc\flux\models\SettingsModel;
 
 class FluxUtility extends Utility
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function displayName(): string
     {
@@ -26,7 +24,7 @@ class FluxUtility extends Utility
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function id(): string
     {
@@ -34,7 +32,7 @@ class FluxUtility extends Utility
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function icon(): ?string
     {
@@ -48,7 +46,7 @@ class FluxUtility extends Utility
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function contentHtml(): string
     {
@@ -64,45 +62,45 @@ class FluxUtility extends Utility
             if ($lambda['installed']) {
                 $info[] = [
                     'label' => 'Viewer Request Function',
-                    'value' => $lambda['functions']['viewerRequest']['name']
+                    'value' => $lambda['functions']['viewerRequest']['name'],
                 ];
                 $info[] = [
                     'label' => 'Origin Response Function',
-                    'value' => $lambda['functions']['originResponse']['name']
+                    'value' => $lambda['functions']['originResponse']['name'],
                 ];
                 $info[] = [
                     'label' => 'Origin Response Function Memory',
-                    'value' => $lambda['functions']['originResponse']['memory'] . "MB"
+                    'value' => $lambda['functions']['originResponse']['memory'].'MB',
                 ];
                 $info[] = [
                     'label' => 'Lambda Function Version',
-                    'value' => $lambda['version']
+                    'value' => $lambda['version'],
                 ];
                 $info[] = [
                     'label' => 'Lambda Function Runtime',
-                    'value' => $lambda['functions']['viewerRequest']['runtime']
+                    'value' => $lambda['functions']['viewerRequest']['runtime'],
                 ];
             }
 
             if ($cloudfront) {
                 $info[] = [
                     'label' => 'CloudFront Distribution ID',
-                    'value' => $cloudfront['id']
+                    'value' => $cloudfront['id'],
                 ];
                 $info[] = [
                     'label' => 'CloudFront Domain',
-                    'value' => $cloudfront['domain']
+                    'value' => $cloudfront['domain'],
                 ];
             }
 
             if ($s3) {
                 $info[] = [
                     'label' => 'S3 Bucket',
-                    'value' => $s3['bucket']
+                    'value' => $s3['bucket'],
                 ];
                 $info[] = [
-                    'label' => "S3 Path",
-                    'value' => App::parseEnv($settings->rootPrefix) . "/"
+                    'label' => 'S3 Path',
+                    'value' => App::parseEnv($settings->rootPrefix).'/',
                 ];
             }
 
@@ -117,7 +115,7 @@ class FluxUtility extends Utility
                         return $func['role'];
                     }, $lambda['functions']) : []
                 ),
-                'lambdaRolePolicy' => PolicyHelper::lambdaAssumeRolePolicy()
+                'lambdaRolePolicy' => PolicyHelper::lambdaAssumeRolePolicy(),
             ]);
         } else {
             return Craft::$app->getView()->renderTemplate('flux/_utility_not_configured');
@@ -134,7 +132,7 @@ class FluxUtility extends Utility
         $configHash = $settings->lambdaConfigHash();
 
         if ($installed) {
-            $version = $status['viewerRequest']['version'] == $status['originResponse']['version'] ? $status['viewerRequest']['version'] : "Mismatch";
+            $version = $status['viewerRequest']['version'] == $status['originResponse']['version'] ? $status['viewerRequest']['version'] : 'Mismatch';
 
             $configCurrent = Flux::getInstance()->lambda->getConfigVersion($status) == $configHash;
 
@@ -145,11 +143,11 @@ class FluxUtility extends Utility
                 'updateAvailable' => Flux::getInstance()->version != $version,
                 'configCurrent' => $configCurrent,
                 'lastModified' => $status['viewerRequest']['lastModified'],
-                'functions' => $status
+                'functions' => $status,
             ];
         } else {
             return [
-                'installed' => false
+                'installed' => false,
             ];
         }
     }
@@ -158,7 +156,7 @@ class FluxUtility extends Utility
     {
         $roles = [];
 
-        if (key_exists('functions', $status)) {
+        if (array_key_exists('functions', $status)) {
             $roles = array_map(function ($func) {
                 return $func['role'];
             }, $status['functions']);

@@ -12,7 +12,7 @@ Directly within a template:
     height: 100,
     quality: 75
   })
-  }}" />
+}}" />
 ```
 
 Via named transforms:
@@ -21,7 +21,7 @@ Via named transforms:
 <img src="{{ asset.getUrl('transform') }}" />
 ```
 
-Or using `setTransform()`:
+Using `setTransform()`:
 
 ```twig
 {% do asset.setTransform({
@@ -32,6 +32,8 @@ Or using `setTransform()`:
   width="{{ asset.width }}"
   height="{{ asset.height }}" />
 ```
+
+Or via `craft.flux.transform(asset, { mode: 'crop' })`. This transform function can also accept a 3rd parameter for [image operations](/get-started/image-operations) and additional processing.
 
 ## Defining Transforms
 
@@ -54,7 +56,7 @@ _Allowed values:_ `'crop'`, `'fit'`, `'stretch'`
 
 ### format [string]
 
-_Allowed values:_ `'jpg'`, `'png'`, `'webp'`
+_Allowed values:_ `'jpg'`, `'png'`, `'webp'`, `'avif'`
 
 The transform's resulting image format.
 

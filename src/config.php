@@ -66,11 +66,17 @@ return [
         // Automatically serve WebP files if the users browser supports it via the Accept header
         // 'acceptWebp' => true,
 
+        // Automatically serve Avif files if the users browser supports it via the Accept header
+        // 'acceptAvif' => false,
+
         // Default JPG transform quality unless specified
         // 'jpegQuality' => 80,
 
         // Default WebP transform quality unless specified
         // 'webpQuality' => 80,
+
+        // Default Avif transform quality unless specified
+        // 'avifQuality' => 60,
 
         // Log more detailed information to CloudWatch
         // 'loggingEnabled' => true,
@@ -86,5 +92,15 @@ return [
 
         // Name of the AWS origin request policy, by default shared between all Flux installations within the AWS account. Customize if you reach the AWS limit of 100
         // 'originRequestPolicyName' => "Flux-Origin-Request-Policy",
-    ]
+
+        /*
+         * Internal Defaults
+        */
+
+        // Size of the image created by the lqip function
+        // 'lqipSizeRatio' => 0.25,
+
+        // Blur sigma value of images created by the lqip function
+        // 'lqipBlurFactor' => 25,
+    ],
 ];

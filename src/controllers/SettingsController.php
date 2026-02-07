@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright (c) Chris Dyer
  */
@@ -9,10 +10,11 @@ use Craft;
 use craft\helpers\App;
 use craft\helpers\ArrayHelper;
 use craft\web\Controller;
-use yii\web\Response;
 use dyerc\flux\Flux;
+use yii\web\Response;
 
-class SettingsController extends Controller {
+class SettingsController extends Controller
+{
     public function actionEdit(): ?Response
     {
         $settings = Flux::$plugin->settings;
@@ -20,12 +22,12 @@ class SettingsController extends Controller {
         if (Craft::$app->request->getParam('wizard')) {
             return $this->renderTemplate('flux/_wizard', [
                 'settings' => $settings,
-                'config' => Craft::$app->getConfig()->getConfigFromFile('flux')
+                'config' => Craft::$app->getConfig()->getConfigFromFile('flux'),
             ]);
         } else {
             return $this->renderTemplate('flux/_settings', [
                 'settings' => $settings,
-                'config' => Craft::$app->getConfig()->getConfigFromFile('flux')
+                'config' => Craft::$app->getConfig()->getConfigFromFile('flux'),
             ]);
         }
     }
@@ -37,7 +39,7 @@ class SettingsController extends Controller {
 
         $postedSettings = $request->getBodyParam('settings', []);
 
-        if ($postedSettings['bucketSelectionMode'] === "manual") {
+        if ($postedSettings['bucketSelectionMode'] === 'manual') {
             if (isset($postedSettings['manualBucket'])) {
                 $postedSettings['awsBucket'] = ArrayHelper::remove($postedSettings, 'manualBucket');
             }
@@ -49,7 +51,7 @@ class SettingsController extends Controller {
             unset($postedSettings['manualBucket'], $postedSettings['manualRegion']);
         }
 
-        if ($postedSettings['distributionSelectionMode'] === "manual") {
+        if ($postedSettings['distributionSelectionMode'] === 'manual') {
             if (isset($postedSettings['manualCloudFrontDistributionId'])) {
                 $postedSettings['cloudFrontDistributionId'] = ArrayHelper::remove($postedSettings, 'manualCloudFrontDistributionId');
             }
@@ -87,7 +89,7 @@ class SettingsController extends Controller {
         $request = Craft::$app->getRequest();
 
         $postedSettings = $request->getBodyParam('settings', []);
-        $postedSettings['awsRegion'] = "us-east-1";
+        $postedSettings['awsRegion'] = 'us-east-1';
 
         $settings = Flux::$plugin->settings;
         $settings->setAttributes($postedSettings, false);
@@ -125,7 +127,7 @@ class SettingsController extends Controller {
 
         if (!$bucketReady) {
             Craft::$app->getSession()->setError(Craft::t('flux', 'Unable to access S3 bucket'));
-        } else if (!$distributionReady) {
+        } elseif (!$distributionReady) {
             Craft::$app->getSession()->setError(Craft::t('flux', 'Unable to access CloudFront distribution'));
         }
 
@@ -140,6 +142,7 @@ class SettingsController extends Controller {
             }
 
             Craft::$app->getPlugins()->savePluginSettings(Flux::$plugin, $settings->getAttributes());
+
             return $this->redirect('settings/plugins/flux?wizard=ready');
         } else {
             return $this->redirect('settings/plugins/flux?wizard=1');

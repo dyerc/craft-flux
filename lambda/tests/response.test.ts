@@ -17,6 +17,7 @@ import * as fs from "fs";
 import path from "path";
 
 import { handler } from "../response";
+import { encodeFilters } from "../inc/parser";
 
 const sampleConfig: FluxConfig = Object.assign({}, DefaultConfig, {
   loggingEnabled: false,
@@ -32,7 +33,7 @@ const sampleConfig: FluxConfig = Object.assign({}, DefaultConfig, {
 async function handle(
   url: string,
   options = {},
-  config = {}
+  config = {},
 ): Promise<CloudFrontResultResponse> {
   const context = createCloudfrontContext();
 
@@ -44,8 +45,8 @@ async function handle(
         uri: parts[0],
         querystring: parts[1],
       },
-      options
-    )
+      options,
+    ),
   );
 
   // @ts-ignore
@@ -72,7 +73,7 @@ describe("response", () => {
     const result = await handle(
       "/testAssets/_1920x1080_fit_center-center_80/image.jpg?mode=fit&w=1920&h=1080",
       { status: "200" },
-      { verifyQuery: false }
+      { verifyQuery: false },
     );
 
     expect(result.status).toEqual("200");
@@ -92,7 +93,7 @@ describe("response", () => {
     const result = await handle(
       "/testAssets/data/folder/_500xAUTO_fit_center-center_80/image.jpg?mode=fit&w=500",
       { status: "403" },
-      { verifyQuery: false }
+      { verifyQuery: false },
     );
 
     expect(result.status).toEqual("200");
@@ -136,7 +137,7 @@ describe("response", () => {
           ],
         },
       },
-      { verifyQuery: false }
+      { verifyQuery: false },
     );
 
     expect(result.status).toEqual("200");
@@ -178,7 +179,7 @@ describe("response", () => {
           ],
         },
       },
-      { verifyQuery: false }
+      { verifyQuery: false },
     );
 
     expect(result.status).toEqual("200");
@@ -205,7 +206,7 @@ describe("response", () => {
     const result = await handle(
       "/testAssets/data/folder/_500x300_stretch_center-center_80/image.jpg?mode=stretch&w=500&h=300",
       { status: "403" },
-      { verifyQuery: false }
+      { verifyQuery: false },
     );
 
     expect(result.status).toEqual("200");
@@ -223,7 +224,7 @@ describe("response", () => {
     const result = await handle(
       "/testAssets/data/folder/_2000x2000_stretch_center-center_100/image.jpg?mode=stretch&w=2000&h=2000&q=100",
       { status: "403" },
-      { verifyQuery: false }
+      { verifyQuery: false },
     );
 
     expect(result.status).toEqual("302");
@@ -259,7 +260,7 @@ describe("response", () => {
             subFolder: "data",
           },
         ],
-      }
+      },
     );
 
     expect(result.status).toEqual("200");
@@ -297,7 +298,7 @@ describe("response", () => {
           ],
         },
       },
-      { verifyQuery: false }
+      { verifyQuery: false },
     );
 
     expect(result.status).toEqual("200");
@@ -324,11 +325,52 @@ describe("response", () => {
     const result = await handle(
       "/testAssets/_1400x300_crop_0.476-0.129/image.jpg?mode=fit&pos=0.4763-0.1287&w=1400&h=300",
       { status: "403" },
-      { verifyQuery: false }
+      { verifyQuery: false },
     );
 
     expect(result.status).toEqual("200");
-    // @ts-ignore
-    fs.writeFileSync("test.jpg", result.body, "base64");
+  });
+
+  test("gaussian blurs", async () => {
+    originServer.map({
+      "/uploads/image.jpg": "image.jpg",
+    });
+
+    const mockS3Client = mockClient(S3Client);
+    mockS3Client.on(GetObjectCommand).rejects();
+    mockS3Client.on(PutObjectCommand).resolves({});
+    mockS3Client.on(PutObjectCommand).resolves({});
+
+    const result = await handle(
+      "/testAssets/_AUTOx920_fit_bottom-center_70_f!gaRibHVyy0A)MzMzMzMz/image.jpg?mode=fit&h=920&q=70&pos=bottom-center&blur=31.2",
+      {
+        status: "403",
+      },
+      { verifyQuery: false },
+    );
+
+    expect(result.status).toEqual("200");
+  });
+
+  test("combines modulations", async () => {
+    originServer.map({
+      "/uploads/image.jpg": "image.jpg",
+    });
+    const filterBlob = encodeFilters({ brightness: 50, saturation: 2 });
+
+    const mockS3Client = mockClient(S3Client);
+    mockS3Client.on(GetObjectCommand).rejects();
+    mockS3Client.on(PutObjectCommand).resolves({});
+    mockS3Client.on(PutObjectCommand).resolves({});
+
+    const result = await handle(
+      `/testAssets/_AUTOx920_fit_bottom-center_70_f!${filterBlob}/image.jpg?mode=fit&h=920&q=70&pos=bottom-center&saturation=2&brightness=50`,
+      {
+        status: "403",
+      },
+      { verifyQuery: false },
+    );
+
+    expect(result.status).toEqual("200");
   });
 });

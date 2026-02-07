@@ -59,7 +59,7 @@ $(document).ready(function () {
               data.buckets[i].region +
               '">' +
               data.buckets[i].bucket +
-              "</option>"
+              "</option>",
           );
         }
 
@@ -131,7 +131,7 @@ $(document).ready(function () {
               data.distributions[i].domain +
               '">' +
               data.distributions[i].id +
-              "</option>"
+              "</option>",
           );
         }
 

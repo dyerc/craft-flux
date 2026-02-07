@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright (c) Chris Dyer
  */
@@ -26,7 +27,7 @@ class SettingsModel extends Model
     /**
      * @var string HMAC secret used if `verifyQuery` is enabled. If blank, a secret will be automatically generated when Flux is first installed
      */
-    public string $verifySecret = "";
+    public string $verifySecret = '';
 
     /**
      * @var bool For local asset file systems, store a duplicate in S3 to speed up processing asset variations
@@ -41,12 +42,12 @@ class SettingsModel extends Model
     /**
      * @var string AWS Access Key ID
      */
-    public string $awsAccessKeyId = "";
+    public string $awsAccessKeyId = '';
 
     /**
      * @var string AWS Secret Access Key
      */
-    public string $awsSecretAccessKey = "";
+    public string $awsSecretAccessKey = '';
 
     /**
      * @var bool Uniquely prefix all resources created by Flux, even those that could be shared between Flux instances
@@ -56,47 +57,49 @@ class SettingsModel extends Model
     /**
      * @var string Prefix for auto generated AWS resources
      */
-    public string $awsResourcePrefix = "Flux";
+    public string $awsResourcePrefix = 'Flux';
 
     /**
      * @var string Bucket selection mode ('choose' or 'manual')
      */
     public string $bucketSelectionMode = 'choose';
 
-    /**
-     * @var string
-     */
     public string $distributionSelectionMode = 'choose';
 
     /**
      * @var string S3 Bucket name
      */
-    public string $awsBucket = "";
+    public string $awsBucket = '';
 
     /**
      * @var string CloudFront distribution ID
      */
-    public string $cloudFrontDistributionId = "";
+    public string $cloudFrontDistributionId = '';
 
     /**
      * @var string CloudFront domain
      */
-    public string $cloudFrontDomain = "";
+    public string $cloudFrontDomain = '';
 
     /**
      * @var string S3 bucket region
      */
-    public string $awsRegion = "";
+    public string $awsRegion = '';
 
     /**
      * @var string S3 bucket root prefix
      */
-    public string $rootPrefix = "Flux";
+    public string $rootPrefix = 'Flux';
 
     /**
      * @var bool Automatically serve WebP files if the users browser supports it via the Accept header
      */
     public bool $acceptWebp = true;
+
+    /**
+     * @var bool Automatically serve Avif files if the users browser supports it via the Accept header
+     */
+    public bool $acceptAvif = false;
 
     /**
      * @var int Default JPG transform quality unless specified
@@ -107,6 +110,11 @@ class SettingsModel extends Model
      * @var int Default WebP transform quality unless specified
      */
     public int $webpQuality = 80;
+
+    /**
+     * @var int Default Avif transform quality unless specified
+     */
+    public int $avifQuality = 60;
 
     /**
      * @var bool Log more detailed information to CloudWatch
@@ -133,6 +141,15 @@ class SettingsModel extends Model
      */
     public string $originRequestPolicyName = 'Flux-Origin-Request-Policy';
 
+    /**
+     * @var float Size of the image created by the lqip function
+     */
+    public float $lqipSizeRatio = 0.25;
+
+    /**
+     * @var int Blur sigma value of images created by the lqip function
+     */
+    public int $lqipBlurFactor = 25;
 
     public function isAwsConfigured(): bool
     {
@@ -141,16 +158,17 @@ class SettingsModel extends Model
 
     public function getCloudfrontEndpoint(): string
     {
-        $root = "https://" . App::parseEnv($this->cloudFrontDomain) . '/';
+        $root = 'https://'.App::parseEnv($this->cloudFrontDomain).'/';
+
         return $root;
     }
 
     public function configurationReinstallRequired(array $newSettings): bool
     {
-        $sensitive = ["loggingEnabled", "rootPrefix", "verifyQuery", "cacheEnabled", "awsBucket", "cloudFrontDistributionId", "cloudFrontDomain", "awsRegion", "jpegQuality", "webpQuality", "acceptWebp", "lambdaMemory", "lambdaTimeout"];
+        $sensitive = ['loggingEnabled', 'rootPrefix', 'verifyQuery', 'cacheEnabled', 'awsBucket', 'cloudFrontDistributionId', 'cloudFrontDomain', 'awsRegion', 'jpegQuality', 'webpQuality', 'acceptWebp', 'lambdaMemory', 'lambdaTimeout'];
 
         foreach ($sensitive as $key) {
-            if (key_exists($key, $newSettings) && $newSettings[$key] != $this->{$key}) {
+            if (array_key_exists($key, $newSettings) && $newSettings[$key] != $this->{$key}) {
                 return true;
             }
         }
@@ -163,7 +181,7 @@ class SettingsModel extends Model
         $volumes = Craft::$app->getVolumes()->getAllVolumes();
 
         $sources = array_map(function ($volume) {
-            if (is_a($volume->fs, "craft\\awss3\\Fs") && App::parseEnv($volume->fs->settings['bucket']) == App::parseEnv($this->awsBucket)) {
+            if (is_a($volume->fs, 'craft\\awss3\\Fs') && App::parseEnv($volume->fs->settings['bucket']) == App::parseEnv($this->awsBucket)) {
                 $fs = $volume->fs;
 
                 return [
@@ -171,13 +189,13 @@ class SettingsModel extends Model
                     'handle' => $volume->handle,
                     'region' => App::parseEnv($fs->settings['region']),
                     'bucket' => App::parseEnv($fs->settings['bucket']),
-                    'subFolder' => App::parseEnv($fs->settings['subfolder'])
+                    'subFolder' => App::parseEnv($fs->settings['subfolder']),
                 ];
             } else {
                 return [
                     'type' => 'remote',
                     'handle' => $volume->handle,
-                    'url' => $volume->fs->getRootUrl()
+                    'url' => $volume->fs->getRootUrl(),
                 ];
             }
         }, $volumes);
@@ -197,8 +215,10 @@ class SettingsModel extends Model
 
             'jpegQuality' => $this->jpegQuality,
             'webpQuality' => $this->webpQuality,
+            'avifQuality' => $this->avifQuality,
 
-            'acceptWebp' => $this->acceptWebp
+            'acceptWebp' => $this->acceptWebp,
+            'acceptAvif' => $this->acceptAvif,
         ];
     }
 

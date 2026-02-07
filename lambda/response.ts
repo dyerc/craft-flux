@@ -11,7 +11,7 @@ import { fetchSource, transformSource, writeFile } from "./inc/processor";
 import { log } from "./inc/logging";
 
 export const handler = async (
-  event: CloudFrontResponseEvent
+  event: CloudFrontResponseEvent,
 ): Promise<CloudFrontResponseResult> => {
   const { request, response } = event.Records[0].cf;
   let config = DefaultConfig;
@@ -48,7 +48,7 @@ export const handler = async (
           return writeFile(
             compilePath(config.rootPrefix, request.uri.substring(1)),
             buffer,
-            config
+            config,
           );
         })
         .then((buffer) => {

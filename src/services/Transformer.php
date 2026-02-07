@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright (c) Chris Dyer
  */
@@ -8,6 +9,7 @@ namespace dyerc\flux\services;
 use craft\elements\Asset;
 use craft\models\ImageTransform;
 use dyerc\flux\Flux;
+use dyerc\flux\models\ImageFilters;
 use dyerc\flux\models\SettingsModel;
 use yii\base\Component;
 
@@ -17,15 +19,15 @@ class Transformer extends Component
     {
         $pathComponents = [
             $asset->volume->handle,
-            $asset->path
+            $asset->path,
         ];
 
-        return join("/", array_filter($pathComponents, function ($p) {
+        return implode('/', array_filter($pathComponents, function ($p) {
             return $p && strlen($p) > 0;
         }));
     }
 
-    public function getUrl(Asset $asset, ImageTransform $transform): string
+    public function getUrl(Asset $asset, ImageTransform $transform, ?ImageFilters $filters = null): string
     {
         /* @var SettingsModel */
         $settings = Flux::getInstance()->getSettings();
@@ -35,12 +37,12 @@ class Transformer extends Component
 
         $transformKeys = [
             'mode' => $transform->mode,
-            'pos' => $transform->position
+            'pos' => $transform->position,
         ];
 
         if ($asset->getHasFocalPoint()) {
             $focal = $asset->getFocalPoint();
-            $transformKeys['pos'] = $focal['x'] . '-' . $focal['y'];
+            $transformKeys['pos'] = $focal['x'].'-'.$focal['y'];
         } elseif (!preg_match('/(top|center|bottom)-(left|center|right)/', $transform->position)) {
             $transformKeys['pos'] = 'center-center';
         } else {
@@ -64,30 +66,60 @@ class Transformer extends Component
         }
 
         if ($transform->upscale === false) {
-            $transformKeys['upscale'] = "0";
+            $transformKeys['upscale'] = '0';
         }
 
         $transformKeys['c'] = $this->getCacheKey($asset);
 
-        $path .= '?' . http_build_query($transformKeys);
+        if ($filters) {
+            if ($filters->blur) {
+                $transformKeys['blur'] = $filters->blur === true ? 'true' : $filters->blur;
+            }
+
+            if ($filters->brightness) {
+                $transformKeys['brightness'] = $filters->brightness;
+            }
+
+            if ($filters->greyscale) {
+                $transformKeys['greyscale'] = $filters->greyscale;
+            }
+
+            if ($filters->hue) {
+                $transformKeys['hue'] = $filters->hue;
+            }
+
+            if ($filters->lightness) {
+                $transformKeys['lightness'] = $filters->lightness;
+            }
+
+            if ($filters->saturation) {
+                $transformKeys['saturation'] = $filters->saturation;
+            }
+
+            if ($filters->tint && is_array($filters->tint)) {
+                $transformKeys['tint'] = implode(',', $filters->tint);
+            }
+        }
+
+        $path .= '?'.http_build_query($transformKeys);
 
         // Must be handled last so that only the hmac is appended after hashing
         if ($settings->verifyQuery) {
             $verify = hash_hmac('sha256', $path, $settings->verifySecret);
-            $path .= "&v=" . $verify;
+            $path .= '&v='.$verify;
         }
 
-        return $root . $path;
+        return $root.$path;
     }
 
     public function getCacheKey(Asset $asset): string
     {
-        $key = join("", [
-            $asset->dateCreated ? $asset->dateCreated->getTimestamp() : "0",
-            $asset->dateModified ? $asset->dateModified->getTimestamp() : "0",
-            $asset->dateUpdated ? $asset->dateUpdated->getTimestamp() : "0"
+        $key = implode('', [
+            $asset->dateCreated ? $asset->dateCreated->getTimestamp() : '0',
+            $asset->dateModified ? $asset->dateModified->getTimestamp() : '0',
+            $asset->dateUpdated ? $asset->dateUpdated->getTimestamp() : '0',
         ]);
 
-        return hash("crc32b", $key);
+        return hash('crc32b', $key);
     }
 }

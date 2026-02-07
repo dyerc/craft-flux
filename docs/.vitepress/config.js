@@ -37,6 +37,14 @@ export default {
             text: "Transforming Images",
             link: "/get-started/transforming-images",
           },
+          {
+            text: "Image Operations",
+            link: "/get-started/image-operations",
+          },
+          {
+            text: "Helpers & Utilities",
+            link: "/get-started/helpers-utilities",
+          },
         ],
       },
       {

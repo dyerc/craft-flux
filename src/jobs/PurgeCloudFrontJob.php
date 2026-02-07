@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright (c) Chris Dyer
  */
@@ -13,7 +14,7 @@ class PurgeCloudFrontJob extends BaseJob
 {
     protected function defaultDescription(): ?string
     {
-        return "Purging CloudFront";
+        return 'Purging CloudFront';
     }
 
     public function execute($queue): void
