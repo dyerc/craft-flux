@@ -105,6 +105,17 @@ describe("request", () => {
     );
   });
 
+  test("decodes URL-encoded path segments", async () => {
+    const result = await handle(
+      "/images/%C3%A9/image.jpg?mode=fit&h=920&q=70",
+      {},
+      { verifyQuery: false },
+    );
+    expect(result.uri).toEqual(
+      "/images/é/_AUTOx920_fit_center-center_70/image.jpg",
+    );
+  });
+
   test("processes deeply nested file", async () => {
     const result = await handle(
       "/images/1/2/3/4/5/6/image.jpg?mode=fit&h=920&q=70",
@@ -230,6 +241,24 @@ describe("request", () => {
     );
     expect(result.uri).toEqual(
       "/images/_1920x1080_crop_center-center_80/image.jpg",
+    );
+  });
+
+  test("validates verification token when URL-encoding present", async () => {
+    const url = "images/é/image.jpg?mode=fit&w=1920&h=1080";
+
+    const signer = crypto.createHmac("sha256", "secret");
+    const hmac = signer.update(url).digest("hex");
+
+    const encoded = "/images/%C3%A9/image.jpg?mode=fit&w=1920&h=1080";
+
+    const result = await handle(
+      encoded + "&v=" + hmac,
+      {},
+      { verifyQuery: true, verifySecret: "secret" },
+    );
+    expect(result.uri).toEqual(
+      "/images/é/_1920x1080_fit_center-center_80/image.jpg",
     );
   });
 

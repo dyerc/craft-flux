@@ -27,6 +27,14 @@ export const handler = async (event: CloudFrontRequestEvent) => {
 
   log(config, "Parsing request", request.uri, request.querystring);
 
+  // URL arrives with non-ascii characters encoded in the URI, decode the
+  // request.uri here as path parsing and verification need the original path.
+  try {
+    request.uri = decodeURI(request.uri);
+  } catch {
+    log(config, "Failed to decodeURI, continuing with original URI.");
+  }
+
   const urlParams = new URLSearchParams(request.querystring);
   const params = Object.fromEntries(urlParams);
 
