@@ -5,7 +5,13 @@
 
 import { CloudFrontRequestEvent } from "aws-lambda";
 
-import { parseRequest, transformPath, validHmacToken } from "./inc/parser";
+import {
+  encodeOutboundURI,
+  decodeInboundURI,
+  parseRequest,
+  transformPath,
+  validHmacToken,
+} from "./inc/parser";
 import { DefaultConfig } from "./inc/config";
 import { log } from "./inc/logging";
 
@@ -27,6 +33,10 @@ export const handler = async (event: CloudFrontRequestEvent) => {
 
   log(config, "Parsing request", request.uri, request.querystring);
 
+  // URL arrives with non-ascii characters encoded in the URI, decode the
+  // request.uri here as path parsing and verification need the original path.
+  request.uri = decodeInboundURI(config, request.uri);
+
   const urlParams = new URLSearchParams(request.querystring);
   const params = Object.fromEntries(urlParams);
 
@@ -45,7 +55,7 @@ export const handler = async (event: CloudFrontRequestEvent) => {
       request.headers["x-flux-source-filename"] = [
         {
           key: "X-Flux-Source-Filename",
-          value: transform.sourceFilename,
+          value: encodeOutboundURI(transform.sourceFilename),
         },
       ];
     }

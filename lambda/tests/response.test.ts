@@ -275,6 +275,58 @@ describe("response", () => {
     });
   });
 
+  test("decodes URL-encoded path segments", async () => {
+    const mockS3Client = mockClient(S3Client);
+    mockS3Client.on(GetObjectCommand).rejects();
+    mockS3Client.on(PutObjectCommand).resolves({});
+
+    originServer.map({
+      "/uploads/%C3%A9/image.jpg": "image.jpg",
+    });
+
+    const result = await handle(
+      "/testAssets/%C3%A9/_AUTOx920_fit_center-center_70/image.jpg?mode=fit&h=920&q=70",
+      { status: "403" },
+      { verifyQuery: false },
+    );
+
+    expect(result.status).toEqual("200");
+    expect(result.body).toBeDefined();
+
+    expect(mockS3Client).toHaveReceivedCommandWith(GetObjectCommand, {
+      Key: "Flux/testAssets/é/image.jpg",
+    });
+
+    expect(mockS3Client).toHaveReceivedCommandWith(PutObjectCommand, {
+      Key: "Flux/testAssets/é/_AUTOx920_fit_center-center_70/image.jpg",
+    });
+  });
+
+  test("re-encodes non-ASCII characters in redirect Location header", async () => {
+    const mockS3Client = mockClient(S3Client);
+    mockS3Client.on(GetObjectCommand).resolves({
+      // @ts-ignore
+      Body: fs.createReadStream(path.join(__dirname, "fixtures", "image.jpg")),
+    });
+    mockS3Client.on(PutObjectCommand).resolves({});
+
+    const result = await handle(
+      "/testAssets/%C3%A9/_2000x2000_stretch_center-center_100/image.jpg?mode=stretch&w=2000&h=2000&q=100",
+      { status: "403" },
+      { verifyQuery: false },
+    );
+
+    expect(result.status).toEqual("302");
+    // @ts-ignore
+    expect(result.headers["Location"]).toEqual([
+      {
+        key: "Location",
+        value:
+          "/testAssets/%C3%A9/_2000x2000_stretch_center-center_100/image.jpg",
+      },
+    ]);
+  });
+
   test("responds with png image", async () => {
     originServer.map({
       "/uploads/image.jpg": "image.jpg",
