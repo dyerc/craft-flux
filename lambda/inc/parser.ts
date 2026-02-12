@@ -72,6 +72,24 @@ export interface Manipulations {
   filters?: Filters;
 }
 
+export function decodeInboundURI(config: FluxConfig, uri: string): string {
+  try {
+    return decodeURI(uri);
+  } catch (e) {
+    log(
+      config,
+      "Failed to parse inbound URI, continuing with original URI: ",
+      e,
+    );
+  }
+
+  return uri;
+}
+
+export function encodeOutboundURI(uri: string): string {
+  return encodeURI(uri);
+}
+
 export function requestAccepts(request: CloudFrontRequest) {
   return request.headers["accept"] ? request.headers["accept"][0].value : "";
 }
@@ -133,7 +151,8 @@ export function parseRequest(
 
   // Parse source
   if (request.headers["x-flux-source-filename"]) {
-    sourceFilename = request.headers["x-flux-source-filename"][0].value;
+    const fileNameHeader = request.headers["x-flux-source-filename"][0].value;
+    sourceFilename = decodeInboundURI(config, fileNameHeader);
   }
 
   const transformPathSegment = parseTransformPathSegment(prefix);

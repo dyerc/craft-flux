@@ -107,12 +107,12 @@ describe("request", () => {
 
   test("decodes URL-encoded path segments", async () => {
     const result = await handle(
-      "/images/%C3%A9/image.jpg?mode=fit&h=920&q=70",
+      "/images/%C3%A9/image-%F0%9F%91%8D.jpg?mode=fit&h=920&q=70",
       {},
       { verifyQuery: false },
     );
     expect(result.uri).toEqual(
-      "/images/é/_AUTOx920_fit_center-center_70/image.jpg",
+      "/images/é/_AUTOx920_fit_center-center_70/image-👍.jpg",
     );
   });
 
@@ -245,12 +245,13 @@ describe("request", () => {
   });
 
   test("validates verification token when URL-encoding present", async () => {
-    const url = "images/é/image.jpg?mode=fit&w=1920&h=1080";
+    const url = "images/é/image-👍.jpg?mode=fit&w=1920&h=1080";
 
     const signer = crypto.createHmac("sha256", "secret");
     const hmac = signer.update(url).digest("hex");
 
-    const encoded = "/images/%C3%A9/image.jpg?mode=fit&w=1920&h=1080";
+    const encoded =
+      "/images/%C3%A9/image-%F0%9F%91%8D.jpg?mode=fit&w=1920&h=1080";
 
     const result = await handle(
       encoded + "&v=" + hmac,
@@ -258,7 +259,7 @@ describe("request", () => {
       { verifyQuery: true, verifySecret: "secret" },
     );
     expect(result.uri).toEqual(
-      "/images/é/_1920x1080_fit_center-center_80/image.jpg",
+      "/images/é/_1920x1080_fit_center-center_80/image-👍.jpg",
     );
   });
 
