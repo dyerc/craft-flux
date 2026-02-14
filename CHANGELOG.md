@@ -1,5 +1,9 @@
 # Flux Release Notes
 
+## 5.2.1 - 2026-02-14
+
+- Fix handling of unicode/non-ascii characters in file paths (thanks [@neilh-cogapp](https://github.com/dyerc/craft-flux/pull/22))
+
 ## 5.2.0 - 2026-02-07
 
 - Add `blur` filter support for a fast 3x3 box blur or Gaussian blur with a sigma factor
