@@ -291,11 +291,15 @@ class Lambda extends Component
         $updatedConfig['Id'] = $distributionId;
         $updatedConfig['IfMatch'] = $distribution['ETag'];
 
-        $updatedConfig['DistributionConfig']['Origins']['Items'] = array_map(function ($item) use ($settings) {
-            if (strlen($settings->rootPrefix) > 0) {
-                $item['OriginPath'] = '/'.App::parseEnv($settings->rootPrefix);
-            } else {
-                $item['OriginPath'] = '';
+        $defaultOriginId = $updatedConfig['DistributionConfig']['DefaultCacheBehavior']['TargetOriginId'];
+
+        $updatedConfig['DistributionConfig']['Origins']['Items'] = array_map(function ($item) use ($settings, $defaultOriginId) {
+            if ($item['Id'] === $defaultOriginId) {
+                if (strlen($settings->rootPrefix) > 0) {
+                    $item['OriginPath'] = '/'.App::parseEnv($settings->rootPrefix);
+                } else {
+                    $item['OriginPath'] = '';
+                }
             }
 
             return $item;
